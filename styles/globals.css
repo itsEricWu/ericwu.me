@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.react-grid-item.react-grid-placeholder {
+  background: gray;
+  transition-duration: 300ms;
+  border-radius: 1.5rem;
+  z-index: 0;
+}
+
+.react-grid-item {
+  transition-duration: 400ms;
+}
+
+.mapboxgl-control-container {
+  display: none !important;
+}
+
+.medium-zoom-image {
+  border-radius: 2rem;
+}
+
+.notion-code {
+  border-radius: 1rem;
+}
+
+.notion-code-copy-button {
+  display: none;
+}
+
+iframe.notion-asset-object-fit {
+  background-color: transparent;
+  border-radius: 1rem;
+}
+
+.video-stream html5-main-video {
+  border-radius: 1rem;
+  background-color: transparent;
+}
+
+.notion-yt-lite {
+  border-radius: 1rem;
+  background-color: transparent;
+}
