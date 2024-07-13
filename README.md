@@ -1,6 +1,6 @@
 # My personal Website
 
-![Google Chrome 2024-07-12 22 33 06](https://github.com/user-attachments/assets/74565fd4-9f8b-4016-b212-2b78b2e64ed7)
+![image](https://github.com/user-attachments/assets/38e4b0b4-b942-4e46-9248-4423e820bba9)
 
 ![Google Chrome 2024-07-12 22 33 34](https://github.com/user-attachments/assets/7949a952-580f-4577-ab7f-e7ccfc1dd57e)
 
