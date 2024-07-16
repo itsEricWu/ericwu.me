@@ -54,6 +54,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 This website is ready to be deployed on platforms like Vercel, Netlify, or any other platform that supports Next.js. Follow the deployment documentation of your chosen platform for specific instructions.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=itsEricWu/ericwu.me&type=Date)](https://star-history.com/#itsEricWu/ericwu.me&Date)
+
 ## Contributing
 
 Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change.
