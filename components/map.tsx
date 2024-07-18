@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { useTheme } from "next-themes";
 import Image from "next/image";
@@ -6,6 +6,7 @@ import Image from "next/image";
 const MapComponent: React.FC = () => {
   const { theme } = useTheme();
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
 
   const style = useMemo(() => {
     return theme === "dark"
@@ -22,11 +23,24 @@ const MapComponent: React.FC = () => {
       zoom: 10,
     });
 
+    map.on("load", () => {
+      setMapLoaded(true);
+    });
+
     return () => map.remove(); // Cleanup on unmount
   }, [style]);
 
   return (
     <div className="w-full h-full rounded-3xl overflow-hidden">
+      {!mapLoaded && (
+        <Image
+          alt="Map"
+          className="w-full h-full object-cover"
+          height={300}
+          src="/map.jpg"
+          width={300}
+        />
+      )}
       <div ref={mapContainerRef} className="w-full h-full" />
       <div
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
