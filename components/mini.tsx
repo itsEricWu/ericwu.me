@@ -138,7 +138,7 @@ function CameraRig({ v = new THREE.Vector3() }) {
 
     state.camera.position.lerp(
       v.set(Math.sin(t / 2) * 1.2, 0, 12 + Math.cos(t / 5) / 2),
-      0.05
+      0.05,
     );
     state.camera.lookAt(0, 0, 0);
   });
@@ -150,7 +150,7 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
   useFrame(
     (state, delta) =>
       (group.current!.position.z += delta * 10) > 20 &&
-      (group.current!.position.z = -60)
+      (group.current!.position.z = -60),
   );
 
   return (

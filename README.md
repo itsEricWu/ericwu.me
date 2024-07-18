@@ -19,17 +19,20 @@ Built using Next.js 14. The website features a blog powered by the Notion API, s
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
+
 - Node.js (v16.x or later recommended)
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/itsEricWu/ericwu.me.git
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -45,9 +48,11 @@ Before you begin, ensure you have the following installed:
 ### Running the project
 
 To run the development server:
+
 ```bash
 npm run dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Deployment

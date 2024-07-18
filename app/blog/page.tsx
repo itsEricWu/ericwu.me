@@ -39,7 +39,7 @@ const Page = async () => {
                       height={500}
                       src={customMapImageUrl(
                         value.value.format?.page_cover,
-                        value.value
+                        value.value,
                       )}
                       width={500}
                     />
