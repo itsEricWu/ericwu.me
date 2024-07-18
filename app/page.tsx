@@ -5,7 +5,7 @@ export default async function App() {
   const photosPromise = listPhotos("photos");
   const avatarUrlPromise = getPhotoUrl("avatar/eric.jpg");
   const dogUrlPromise = getPhotoUrl("avatar/dog.jpg");
-  const actionImageUrlPromise = await getPhotoUrl("projects/actions.jpg");
+  const actionImageUrlPromise = getPhotoUrl("projects/actions.jpg");
   const webagentUrlPromise = getPhotoUrl("projects/webagent.jpg");
   const chatbotUrlPromise = getPhotoUrl("projects/chatbot.jpg");
   const resumeUrlPromise = getPhotoUrl("Chengxiang-Wu-Resume-2024.pdf");

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import mapboxgl from "mapbox-gl";
-import { Image } from "@nextui-org/react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 const MapComponent: React.FC = () => {
   const { theme } = useTheme();
@@ -37,7 +37,9 @@ const MapComponent: React.FC = () => {
         <Image
           alt="Icon"
           className="w-8 h-8 md:w-10 md:h-10"
+          height={300}
           src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Hugging%20Face.png"
+          width={300}
         />
       </div>
     </div>

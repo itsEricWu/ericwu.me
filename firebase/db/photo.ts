@@ -7,9 +7,9 @@ export async function getPhotoUrl(filePath: string): Promise<string> {
 
   try {
     const url = await getDownloadURL(storageRef);
+
     return url;
   } catch (error) {
-    console.error("Error fetching photo URL:", error);
     throw error;
   }
 }
@@ -24,7 +24,6 @@ export async function listPhotos(folderPath: string): Promise<string[]> {
 
     return urls;
   } catch (error) {
-    console.error("Error listing photos:", error);
     throw error;
   }
 }

@@ -1,5 +1,6 @@
-import { Image, Link } from "@nextui-org/react";
+import { Link } from "@nextui-org/react";
 import { GoArrowUpRight } from "react-icons/go";
+import Image from "next/image";
 
 interface ActionsProps {
   photoUrl: string;
@@ -8,12 +9,14 @@ interface ActionsProps {
 const Actions = ({ photoUrl }: ActionsProps) => {
   return (
     <div className="relative bg-cardBlue w-full h-full group dark:bg-darkBg">
-      <div className="absolute -bottom-28 md:-bottom-52 left-1/2 -translate-x-1/2 bg-cardPink w-56 h-56 md:w-96 md:h-96 rounded-full dark:hidden" />
-      <div className="absolute top-14 md:top-24 -translate-y-1/2 left-20 md:left-48 right-10 transform -rotate-[30deg] rounded-2xl w-full">
+      <div className="absolute -bottom-32 md:-bottom-52 left-1/2 -translate-x-1/2 bg-cardPink w-64 h-56 md:w-96 md:h-96 rounded-full dark:hidden" />
+      <div className="absolute top-16 md:top-36 -translate-y-1/2 left-20 md:left-44 transform -rotate-[30deg] rounded-2xl w-[80%]">
         <Image
           alt="Actions"
-          className="h-36 md:h-72 object-cover rounded-2xl md:w-[450px]"
+          className="w-full h-full rounded-2xl object-contain"
+          height={1280}
           src={photoUrl}
+          width={2259}
         />
       </div>
       <button className="absolute bg-white dark:bg-darkBg bottom-2 left-2 transition-all w-10 h-10 md:w-[2.75rem] md:h-[2.75rem] duration-500 ease-in-out group-hover:w-40 p-2 rounded-full hover:bg-default-100 dark:border-2 dark:border-knight">

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Button, Image } from "@nextui-org/react";
-import NextImage from "next/image";
+import { Button } from "@nextui-org/react";
+import Image from "next/image";
 import { MdOutlineSync } from "react-icons/md";
 
 interface AvatarTransitionProps {
@@ -55,12 +55,10 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           variants={avatarVariants}
         >
           <Image
-            removeWrapper
+            unoptimized
             alt="Avatar"
-            as={NextImage}
-            className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 dark:border-2 dark:border-knight"
+            className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 dark:border-2 dark:border-knight rounded-full"
             height={128}
-            radius="full"
             src={avatarUrl}
             width={128}
           />
@@ -73,12 +71,10 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           variants={avatarVariants}
         >
           <Image
-            removeWrapper
+            unoptimized
             alt="Dog Avatar"
-            as={NextImage}
-            className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 dark:border-2 dark:border-knight"
+            className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 dark:border-2 dark:border-knight rounded-full"
             height={128}
-            radius="full"
             src={dogUrl}
             width={128}
           />

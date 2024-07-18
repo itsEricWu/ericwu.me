@@ -1,7 +1,6 @@
-import { Image } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
-import NextImage from "next/image";
+import Image from "next/image";
 
 const CARD_OFFSET = 4;
 const ROTATION_FACTOR = 6;
@@ -66,12 +65,9 @@ const CardStack: React.FC<CardStackProps> = ({ photos }) => {
           onMouseDown={(e) => e.stopPropagation()}
         >
           <Image
-            removeWrapper
             alt="Card image"
-            as={NextImage}
-            className="object-cover w-[80%] mx-auto md:w-full"
+            className="object-cover w-[80%] mx-auto md:w-full rounded-2xl aspect-video"
             height={200}
-            radius="lg"
             src={card.imageUrl}
             width={355}
           />

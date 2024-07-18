@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@nextui-org/button";
-import { Image } from "@nextui-org/image";
+
+import Image from "next/image";
 import { Input } from "@nextui-org/input";
 import { useState } from "react";
 import { default as emojiMap } from "unicode-emoji-json";
@@ -13,7 +14,7 @@ import { wavingHand } from "@/lib/emojis";
 const AnimatedEmoji = () => {
   const [prompt, setPrompt] = useState<string>("Hello");
   const [loading, setLoading] = useState<boolean>(false);
-  const [emoji, setEmoji] = useState<Emoji | null>(wavingHand);
+  const [emoji, setEmoji] = useState<Emoji>(wavingHand);
 
   return (
     <div className="w-full h-full p-4 flex flex-col justify-between items-center">
@@ -22,7 +23,7 @@ const AnimatedEmoji = () => {
           <HashLoader color="#eef0f7" size={80} />
         </div>
       ) : (
-        <Image alt="Animated Emoji" height={150} src={emoji?.url} width={150} />
+        <Image alt="Animated Emoji" height={150} src={emoji.url} width={150} />
       )}
       <div className="w-full space-y-3 flex flex-col items-center justify-center">
         <Input

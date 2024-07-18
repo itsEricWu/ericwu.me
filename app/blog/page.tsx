@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Card, CardBody, Image, CardFooter, Button } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Button } from "@nextui-org/react";
 import { RxCross2 } from "react-icons/rx";
+import Image from "next/image";
 
 import { customMapImageUrl, getPageContent } from "@/lib/notion";
 import { notionBlogConfig } from "@/config/site";
@@ -35,11 +36,12 @@ const Page = async () => {
                     <Image
                       alt="cover"
                       className="rounded-b-none object-cover h-[200px]"
+                      height={500}
                       src={customMapImageUrl(
                         value.value.format?.page_cover,
                         value.value
                       )}
-                      width="100%"
+                      width={500}
                     />
                   </CardBody>
                   <CardFooter className="flex justify-between">
