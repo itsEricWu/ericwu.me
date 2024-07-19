@@ -55,7 +55,6 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           variants={avatarVariants}
         >
           <Image
-            unoptimized
             alt="Avatar"
             className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 dark:border-2 dark:border-knight rounded-full"
             height={128}
@@ -71,7 +70,6 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           variants={avatarVariants}
         >
           <Image
-            unoptimized
             alt="Dog Avatar"
             className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 dark:border-2 dark:border-knight rounded-full"
             height={128}
