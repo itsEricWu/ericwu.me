@@ -47,7 +47,7 @@ export default function RootLayout({
       >
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col bg-[#f6f2f2] dark:bg-[#0b0f11] overflow-y-auto scrollbar-hide min-h-screen">
-            <main className="container mx-auto max-w-7xl pt-10 md:pt-16 flex flex-col">
+            <main className="container mx-auto max-w-7xl pt-10 pb-[25px] md:pt-16 flex flex-col">
               {children}
               <Analytics />
             </main>
