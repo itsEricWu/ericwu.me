@@ -19,11 +19,11 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
   };
 
   return (
-    <div className="dark:border-2 dark:border-knight rounded-full">
+    <div className="border-2 border-transparent dark:border-knight rounded-full">
       <Switch
         className={clsx(
           "transition-opacity hover:opacity-80 cursor-pointer",
-          className,
+          className
         )}
         classNames={{
           wrapper:

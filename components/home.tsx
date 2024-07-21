@@ -56,11 +56,11 @@ const Home = ({
     <div className="flex justify-center flex-col items-center">
       <Tabs
         aria-label="Tabs"
-        className="mb-6 rounded-full"
+        className="mb-2 md:mb-6 rounded-full"
         classNames={{
           cursor: "shadow-none",
           tabList:
-            "bg-[#ece7e7] dark:bg-darkBg dark:border-2 dark:border-knight rounded-full",
+            "bg-[#ece7e7] dark:bg-darkBg border-2 border-transparent dark:border-knight rounded-full",
         }}
         motionProps={{
           initial: { scale: 0.8 },
@@ -97,7 +97,7 @@ const Home = ({
         <div
           key="avatar"
           className={cn(
-            "bg-white dark:bg-darkBg dark:border-2 dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex flex-col justify-between p-5 overflow-hidden z-[1]",
+            "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex flex-col justify-between p-5 overflow-hidden z-[1]",
             selectedCard[tabSelected]["avatar"] ? "opacity-100" : "opacity-50"
           )}
         >
@@ -114,7 +114,7 @@ const Home = ({
         <div
           key="themeSwitch"
           className={cn(
-            "bg-white dark:bg-darkBg dark:border-2 dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1]",
+            "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1]",
             selectedCard[tabSelected]["themeSwitch"]
               ? "opacity-100"
               : "opacity-50"
@@ -125,7 +125,7 @@ const Home = ({
         <div
           key="cardStack"
           className={cn(
-            "bg-white dark:bg-darkBg dark:border-2 dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[2]",
+            "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[2]",
             selectedCard[tabSelected]["cardStack"]
               ? "opacity-100"
               : "opacity-50"
@@ -136,7 +136,7 @@ const Home = ({
         <div
           key="animatedEmoji"
           className={cn(
-            "bg-white dark:bg-darkBg dark:border-2 dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1]",
+            "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1]",
             selectedCard[tabSelected]["animatedEmoji"]
               ? "opacity-100"
               : "opacity-50"
@@ -158,7 +158,7 @@ const Home = ({
         <div
           key="iconCloud"
           className={cn(
-            "bg-white dark:bg-darkBg dark:border-2 dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center relative overflow-hidden p-10 md:p-8 z-[1]",
+            "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center relative overflow-hidden p-10 md:p-8 z-[1]",
             selectedCard[tabSelected]["iconCloud"]
               ? "opacity-100"
               : "opacity-50"
@@ -187,7 +187,7 @@ const Home = ({
         <div
           key="miniModel"
           className={cn(
-            "bg-white dark:bg-darkBg dark:border-2 dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1] overflow-hidden",
+            "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1] overflow-hidden",
             selectedCard[tabSelected]["miniModel"]
               ? "opacity-100"
               : "opacity-50"
