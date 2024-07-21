@@ -12,7 +12,7 @@ const Page = async () => {
   const { blocks } = await getPageContent(notionBlogConfig.blogParentId);
 
   return (
-    <div className="px-4">
+    <div className="px-4 pb-10">
       <div className="flex flex-col items-center mb-4 gap-2">
         <Link href="/">
           <Button
@@ -39,7 +39,7 @@ const Page = async () => {
                       height={500}
                       src={customMapImageUrl(
                         value.value.format?.page_cover,
-                        value.value,
+                        value.value
                       )}
                       width={500}
                     />
