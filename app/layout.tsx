@@ -42,7 +42,7 @@ export default function RootLayout({
         className={clsx(
           fontUbuntu.className,
           "tracking-wide",
-          fontOleoScript.variable
+          fontOleoScript.variable,
         )}
       >
         <Providers themeProps={{ attribute: "class" }}>
