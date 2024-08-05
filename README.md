@@ -34,7 +34,7 @@ Before you begin, ensure you have the following installed:
 2. Install dependencies:
 
    ```bash
-   npm install
+   yarn install
    ```
 
 3. Set up environment variables:
@@ -43,6 +43,7 @@ Before you begin, ensure you have the following installed:
     OPENAI_API_KEY=exampleAPIKey
     NEXT_PUBLIC_MAPBOX_TOKEN=exampleAPIKey
     NEXT_PUBLIC_FIREBASE_API_KEY=exampleAPIKey
+    SITE_URL=https://www.example.com
    ```
 
 ### Running the project
@@ -50,7 +51,7 @@ Before you begin, ensure you have the following installed:
 To run the development server:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
