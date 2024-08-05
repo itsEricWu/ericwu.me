@@ -1,6 +1,9 @@
-import { getPageTitle } from "notion-utils";
 import { NotionAPI } from "notion-client";
 import { Block } from "notion-types";
+import { getPageTitle } from "notion-utils";
+
+import { Blog } from "@/types/blog";
+import { notionBlogConfig } from "@/config/site";
 
 const notion = new NotionAPI();
 
@@ -10,6 +13,27 @@ export async function getPageContent(pageId: string) {
   const blocks = recordMap.block;
 
   return { title, blocks, recordMap };
+}
+
+export async function getAllBlogPosts(pageId: string) {
+  const recordMap = await notion.getPage(pageId);
+  const blocks = recordMap.block;
+
+  let blogPosts: Blog[] = [];
+
+  Object.entries(blocks).map(([key, value]) => {
+    if (key !== notionBlogConfig.blogParentId) {
+      blogPosts.push({
+        id: key,
+        block: value.value,
+        pageCover: value.value.format?.page_cover,
+        title: value.value.properties?.title[0][0],
+        createdAt: new Date(value.value.created_time).toDateString(),
+      });
+    }
+  });
+
+  return blogPosts;
 }
 
 export const customMapImageUrl = (url: string, block: Block): string => {
