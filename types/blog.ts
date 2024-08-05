@@ -5,5 +5,5 @@ export type Blog = {
   title: string;
   block: Block;
   pageCover: string;
-  createdAt: string;
+  createdAt: Date;
 };
