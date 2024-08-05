@@ -28,7 +28,7 @@ export async function getAllBlogPosts(pageId: string) {
         block: value.value,
         pageCover: value.value.format?.page_cover,
         title: value.value.properties?.title[0][0],
-        createdAt: new Date(value.value.created_time).toDateString(),
+        createdAt: new Date(value.value.created_time),
       });
     }
   });

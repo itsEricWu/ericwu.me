@@ -41,7 +41,7 @@ const Page = async () => {
               </CardBody>
               <CardFooter className="flex justify-between">
                 <h3 className="font-[500] text-lg">{title}</h3>
-                <h3 className="text-sm">{createdAt}</h3>
+                <h3 className="text-sm">{createdAt.toDateString()}</h3>
               </CardFooter>
             </Card>
           </Link>
