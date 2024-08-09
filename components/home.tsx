@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import Paper from "./paper";
+import { AnimationSwitch } from "./animation-swith";
+import MiniPic from "./mini-pic";
 
 import { cn } from "@/lib/utils";
 import AvatarTransition from "@/components/avatar";
@@ -46,6 +48,7 @@ const Home = ({
 }: HomeProps) => {
   const width = useWindowWidth();
   const [tabSelected, setTabSelected] = useState("all");
+  const [animated, setAnimated] = useState(false);
   const router = useRouter();
 
   if (!width) {
@@ -195,7 +198,12 @@ const Home = ({
               : "opacity-50",
           )}
         >
-          <MiniModel />
+          {animated ? <MiniModel /> : <MiniPic />}
+          <AnimationSwitch
+            animated={animated}
+            className="absolute top-4 right-4 z-50"
+            setAnimated={setAnimated}
+          />
         </div>
         <div
           key="actions"
