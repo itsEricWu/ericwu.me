@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI();
-
 function promptConstructor(prompt: string) {
   return `Provide a single emoji for the following prompt: ${prompt}`;
 }
@@ -18,8 +16,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const openai = new OpenAI();
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: promptConstructor(prompt) }],
     });
 
@@ -27,9 +26,11 @@ export async function POST(req: NextRequest) {
       { result: completion.choices[0].message.content },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+
     return NextResponse.json(
-      { message: "Error generating completion", error: error.message },
+      { message: "Error generating completion", error: message },
       { status: 500 },
     );
   }

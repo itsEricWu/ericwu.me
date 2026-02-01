@@ -62,19 +62,12 @@ export type DynamicCloudProps = {
 type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>;
 
 const IconCloud = ({ iconSlugs }: DynamicCloudProps) => {
-  const [isClient, setIsClient] = useState(false);
   const [data, setData] = useState<IconData | null>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (isClient) {
-      fetchSimpleIcons({ slugs: iconSlugs }).then(setData);
-    }
-  }, [iconSlugs, isClient]);
+    fetchSimpleIcons({ slugs: iconSlugs }).then(setData);
+  }, [iconSlugs]);
 
   const renderedIcons = useMemo(() => {
     if (!data) return null;
@@ -84,8 +77,8 @@ const IconCloud = ({ iconSlugs }: DynamicCloudProps) => {
     );
   }, [data, theme]);
 
-  if (!isClient) {
-    return null; // Do not render anything server-side
+  if (!data) {
+    return null;
   }
 
   return (

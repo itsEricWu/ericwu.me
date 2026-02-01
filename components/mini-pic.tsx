@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes";
-import { Image } from "@nextui-org/react";
+import { Image } from "@heroui/react";
 
 const MiniPic = () => {
   const { theme } = useTheme();

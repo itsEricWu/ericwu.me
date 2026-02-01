@@ -1,6 +1,6 @@
-import { Layouts } from "react-grid-layout";
+import type { ResponsiveLayouts } from "react-grid-layout";
 
-export const layouts: Record<string, Layouts> = {
+export const layouts: Record<string, ResponsiveLayouts> = {
   all: {
     lg: [
       { i: "avatar", x: 0, y: 0, w: 2, h: 2 },

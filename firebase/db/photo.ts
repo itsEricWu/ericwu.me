@@ -31,7 +31,7 @@ export async function getPhotoUrl(filePath: string): Promise<string> {
 
 // Batch fetch URLs
 export async function batchGetPhotoUrls(
-  filePaths: string[]
+  filePaths: string[],
 ): Promise<Record<string, string>> {
   const results: Record<string, string> = {};
   const fetchNeeded: string[] = [];
@@ -77,7 +77,7 @@ export async function listPhotos(folderPath: string): Promise<string[]> {
   try {
     const res = await listAll(folderRef);
     const urls = await Promise.all(
-      res.items.map((itemRef) => getDownloadURL(itemRef))
+      res.items.map((itemRef) => getDownloadURL(itemRef)),
     );
 
     // Cache the results

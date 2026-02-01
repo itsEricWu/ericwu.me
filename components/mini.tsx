@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as THREE from "three";
-import { useLayoutEffect, useRef, useState } from "react";
-import { Canvas, applyProps, useFrame } from "@react-three/fiber";
+import { useLayoutEffect, useRef, useState, useEffect } from "react";
+import { Canvas, applyProps, useFrame, useThree } from "@react-three/fiber";
 import {
   PerformanceMonitor,
   AccumulativeShadows,
@@ -11,15 +11,28 @@ import {
   Float,
   useGLTF,
 } from "@react-three/drei";
-import { LayerMaterial, Color, Depth } from "lamina";
 import { useTheme } from "next-themes";
 
 export function MiniModel() {
   const [degraded, degrade] = useState(false);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
-    <Canvas shadows camera={{ position: [5, 0, 15], fov: 30 }}>
+    <Canvas
+      shadows
+      camera={{ position: [5, 0, 15], fov: 30 }}
+      onCreated={({ scene }) => {
+        scene.environmentIntensity = 2;
+      }}
+    >
+      <Background theme={resolvedTheme} />
       <spotLight
         position={[0, 15, 0]}
         angle={0.3}
@@ -37,7 +50,7 @@ export function MiniModel() {
       <AccumulativeShadows
         position={[0, -1.16, 0]}
         frames={50}
-        alphaTest={0.9}
+        alphaTest={0.75}
         scale={10}
       >
         <RandomizedLight
@@ -51,13 +64,19 @@ export function MiniModel() {
       <Environment frames={degraded ? 1 : Infinity} resolution={128} blur={1}>
         <Lightformers />
       </Environment>
-      <color
-        attach="background"
-        args={[theme === "dark" ? "#0f1217" : "white"]}
-      />
       <CameraRig />
     </Canvas>
   );
+}
+
+function Background({ theme }: { theme: string | undefined }) {
+  const { scene } = useThree();
+  
+  useEffect(() => {
+    scene.background = new THREE.Color(theme === "dark" ? "#0f1217" : "white");
+  }, [theme, scene]);
+  
+  return null;
 }
 
 function Mini(props: any) {
@@ -77,7 +96,6 @@ function Mini(props: any) {
         envMapIntensity: 2,
       });
     }
-
     if (materials["MATT"]) {
       applyProps(materials["MATT"], {
         color: "black",
@@ -86,7 +104,6 @@ function Mini(props: any) {
         envMapIntensity: 2,
       });
     }
-
     if (materials["WINDOW_GLASS"]) {
       applyProps(materials["WINDOW_GLASS"], {
         color: "black",
@@ -94,7 +111,6 @@ function Mini(props: any) {
         clearcoat: 0.1,
       });
     }
-
     if (materials["LIGHT_GLASS"]) {
       applyProps(materials["LIGHT_GLASS"], {
         color: "black",
@@ -102,14 +118,12 @@ function Mini(props: any) {
         clearcoat: 0.1,
       });
     }
-
     if (materials["LIGHTS_POD"]) {
       applyProps(materials["LIGHTS_POD"], {
         roughness: 0,
         clearcoat: 0.1,
       });
     }
-
     if (materials["SHINY_METAL"]) {
       applyProps(materials["SHINY_METAL"], {
         color: "black",
@@ -118,7 +132,6 @@ function Mini(props: any) {
         metalness: 1,
       });
     }
-
     if (materials["CALIPER"]) {
       applyProps(materials["CALIPER"], {
         color: "red",
@@ -135,10 +148,9 @@ function Mini(props: any) {
 function CameraRig({ v = new THREE.Vector3() }) {
   return useFrame((state) => {
     const t = state.clock.elapsedTime;
-
     state.camera.position.lerp(
       v.set(Math.sin(t / 2) * 1.2, 0, 12 + Math.cos(t / 5) / 2),
-      0.05,
+      0.05
     );
     state.camera.lookAt(0, 0, 0);
   });
@@ -150,12 +162,11 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
   useFrame(
     (state, delta) =>
       (group.current!.position.z += delta * 10) > 20 &&
-      (group.current!.position.z = -60),
+      (group.current!.position.z = -60)
   );
 
   return (
     <>
-      {/* Ceiling */}
       <Lightformer
         intensity={0.5}
         rotation-x={Math.PI / 2}
@@ -176,7 +187,6 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
           ))}
         </group>
       </group>
-      {/* Sides */}
       <Lightformer
         intensity={4}
         rotation-y={Math.PI / 2}
@@ -193,7 +203,6 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
         position={[10, 1, 0]}
         scale={[20, 1, 1]}
       />
-      {/* Accent (red) */}
       <Float speed={5} floatIntensity={2} rotationIntensity={2}>
         <Lightformer
           form="ring"
@@ -204,21 +213,10 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
           target={[0, 0, 0]}
         />
       </Float>
-      {/* Background */}
+      {/* White environment background for reflections */}
       <mesh scale={100}>
         <sphereGeometry args={[1, 64, 64]} />
-        <LayerMaterial side={THREE.BackSide}>
-          <Color alpha={0.8} color="white" mode="normal" />
-          <Depth
-            alpha={0.5}
-            colorA="black"
-            colorB="white"
-            far={300}
-            mode="normal"
-            near={0}
-            origin={[100, 100, 100]}
-          />
-        </LayerMaterial>
+        <meshBasicMaterial color="white" side={THREE.BackSide} />
       </mesh>
     </>
   );

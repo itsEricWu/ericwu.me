@@ -1,6 +1,8 @@
+"use client";
+
 import { motion } from "framer-motion";
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import React, { useState, useMemo } from "react";
+import { BlurImage } from "./blur-image";
 
 const CARD_OFFSET = 4;
 const ROTATION_FACTOR = 6;
@@ -15,20 +17,27 @@ interface CardStackProps {
   photos: string[];
 }
 
+// Generate stable rotations based on index (deterministic)
+function getRotation(index: number): number {
+  // Use a seeded pseudo-random based on index for consistency
+  const seed = (index * 9301 + 49297) % 233280;
+  const random = seed / 233280;
+
+  return (index % 2 === 0 ? 1 : -1) * ROTATION_FACTOR * random;
+}
+
 const CardStack: React.FC<CardStackProps> = ({ photos }) => {
-  const [cards, setCards] = useState<Card[]>([]);
-
-  useEffect(() => {
-    if (photos.length > 0) {
-      const initialCards = photos.map((imageUrl, index) => ({
+  const initialCards = useMemo(
+    () =>
+      photos.map((imageUrl, index) => ({
         id: index,
-        imageUrl: imageUrl,
-        rotation: (index % 2 === 0 ? 1 : -1) * ROTATION_FACTOR * Math.random(),
-      }));
+        imageUrl,
+        rotation: getRotation(index),
+      })),
+    [photos],
+  );
 
-      setCards(initialCards);
-    }
-  }, [photos]);
+  const [cards, setCards] = useState<Card[]>(initialCards);
 
   const moveToEnd = (from: number) => {
     setCards((prevCards) => {
@@ -52,21 +61,17 @@ const CardStack: React.FC<CardStackProps> = ({ photos }) => {
           }}
           className="absolute origin-center list-none rounded-lg cursor-grab"
           drag="y"
-          dragConstraints={{
-            top: 0,
-            bottom: 0,
-          }}
+          dragConstraints={{ top: 0, bottom: 0 }}
           initial={{ rotate: card.rotation }}
-          style={{
-            zIndex: cards.length - index,
-          }}
-          transition={{ type: "spring", stiffness: 50 }}
+          style={{ zIndex: cards.length - index }}
+          transition={{ type: "spring" as const, stiffness: 50 }}
           onDragEnd={() => moveToEnd(index)}
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <Image
+          <BlurImage
             alt="Card image"
             className="object-cover w-[80%] mx-auto md:w-full rounded-2xl aspect-video"
+            containerClassName="rounded-2xl"
             height={200}
             quality={80}
             src={card.imageUrl}

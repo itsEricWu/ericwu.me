@@ -1,4 +1,4 @@
-import { Link } from "@nextui-org/react";
+import { Link } from "@heroui/react";
 import { GoArrowUpRight } from "react-icons/go";
 import Image from "next/image";
 

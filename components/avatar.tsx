@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@nextui-org/react";
-import Image from "next/image";
+import { Button } from "@heroui/react";
 import { MdOutlineSync } from "react-icons/md";
+import { BlurImage } from "./blur-image";
 
 interface AvatarTransitionProps {
   avatarUrl: string;
@@ -21,7 +21,7 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
   };
 
   const spring = {
-    type: "spring",
+    type: "spring" as const,
     stiffness: 50,
     damping: 10,
     mass: 0.8,
@@ -54,9 +54,10 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           transition={spring}
           variants={avatarVariants}
         >
-          <Image
+          <BlurImage
             alt="Avatar"
             className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 border-2 border-transparent dark:border-knight rounded-full"
+            containerClassName="rounded-full"
             height={128}
             src={avatarUrl}
             width={128}
@@ -69,9 +70,10 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           transition={spring}
           variants={avatarVariants}
         >
-          <Image
+          <BlurImage
             alt="Dog Avatar"
             className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 border-2 border-transparent dark:border-knight rounded-full"
+            containerClassName="rounded-full"
             height={128}
             src={dogUrl}
             width={128}

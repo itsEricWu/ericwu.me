@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { Dispatch, FC, SetStateAction } from "react";
 import { FaMagic } from "react-icons/fa";
 import { FaImage } from "react-icons/fa6";
+import { Tooltip } from "@heroui/react";
 
 import { cn } from "@/lib/utils";
-import { Tooltip } from "@nextui-org/react";
 
 export interface AnimationSwitchProps {
   className?: string;

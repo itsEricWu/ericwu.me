@@ -2,12 +2,12 @@
 
 import { Tab, Tabs } from "@heroui/react";
 import { Responsive } from "react-grid-layout";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+import { HashLoader } from "react-spinners";
 
 import Paper from "./paper";
-import { AnimationSwitch } from "./animation-swith";
-import MiniPic from "./mini-pic";
 
 import { cn } from "@/lib/utils";
 import AvatarTransition from "@/components/avatar";
@@ -15,17 +15,41 @@ import { DockDemo } from "@/components/dock-demo";
 import { ThemeSwitch } from "@/components/theme-switch";
 import CardStack from "@/components/card-stack";
 import AnimatedEmoji from "@/components/animated-emoji";
-import IconCloud from "@/components/icon-cloud";
-import MapComponent from "@/components/map";
 import WebAgent from "@/components/webagent";
 import Chatbot from "@/components/chatbot";
-import { MiniModel } from "@/components/mini";
 import Actions from "@/components/actions";
 import { layouts, selectedCard } from "@/config/layout";
 import { icons } from "@/config/icons";
 import useWindowWidth from "@/hooks/useWindowWidth";
 
-interface HomeProps {
+const LoadingPlaceholder = () => (
+  <div className="w-full h-full flex justify-center items-center">
+    <HashLoader color="#eef0f7" size={50} />
+  </div>
+);
+
+// Lazy load heavy client components with next/dynamic
+// These components use browser APIs (WebGL, Mapbox) so ssr: false is required
+const IconCloud = dynamic(() => import("@/components/icon-cloud"), {
+  ssr: false,
+  loading: LoadingPlaceholder,
+});
+
+const MapComponent = dynamic(() => import("@/components/map"), {
+  ssr: false,
+  loading: LoadingPlaceholder,
+});
+
+// Named export requires .then(mod => mod.Name)
+const MiniModel = dynamic(
+  () => import("@/components/mini").then((mod) => mod.MiniModel),
+  {
+    ssr: false,
+    loading: LoadingPlaceholder,
+  },
+);
+
+interface HomeClientProps {
   photos: string[];
   avatarUrl: string;
   dogUrl: string;
@@ -36,7 +60,7 @@ interface HomeProps {
   paperUrl: string;
 }
 
-const Home = ({
+export default function HomeClient({
   photos,
   avatarUrl,
   dogUrl,
@@ -45,10 +69,10 @@ const Home = ({
   webagentUrl,
   chatbotUrl,
   paperUrl,
-}: HomeProps) => {
+}: HomeClientProps) {
   const width = useWindowWidth();
   const [tabSelected, setTabSelected] = useState("all");
-  const [animated, setAnimated] = useState(false);
+  const [, startTransition] = useTransition();
   const router = useRouter();
 
   useEffect(() => {
@@ -72,8 +96,9 @@ const Home = ({
         radius={"full"}
         onSelectionChange={(selected) => {
           if (selected === "blog") {
-            router.push("/blog");
-
+            startTransition(() => {
+              router.push("/blog");
+            });
             return;
           }
           setTabSelected(selected as string);
@@ -102,11 +127,11 @@ const Home = ({
         >
           <AvatarTransition avatarUrl={avatarUrl} dogUrl={dogUrl} />
           <p className="text-sm md:text-medium">
-            Hey! I’m <span className="font-oleo text-2xl"> Eric</span>, a
-            software engineer, hailing from UCLA and Purdue. Currently, I’m
-            building a cool marketing AI agent. My world revolves around web
-            development, deep learning, and data science. And yes, I have an
-            adorable dog named Bert!
+            Hey! I&apos;m <span className="font-oleo text-2xl"> Eric</span>, a
+            SDE at AWS building agentic systems and generative UI. UCLA &amp;
+            Purdue alum. Passionate about crafting AI experiences that make
+            life easier. Outside work, I&apos;m hiking with my dog Bert and
+            planning to summit Mount Rainier in 2027!
           </p>
           <DockDemo resumeUrl={resumeUrl} />
         </div>
@@ -194,12 +219,7 @@ const Home = ({
               : "opacity-50",
           )}
         >
-          {animated ? <MiniModel /> : <MiniPic />}
-          <AnimationSwitch
-            animated={animated}
-            className="absolute top-4 right-4 z-50"
-            setAnimated={setAnimated}
-          />
+          <MiniModel />
         </div>
         <div
           key="actions"
@@ -222,6 +242,4 @@ const Home = ({
       </Responsive>
     </div>
   );
-};
-
-export default Home;
+}

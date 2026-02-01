@@ -19,7 +19,7 @@ const MapComponent: React.FC = () => {
       accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
       container: mapContainerRef.current as HTMLElement,
       style: style,
-      center: [-118.4438, 34.0699],
+      center: [-122.3321, 47.6062],
       zoom: 10,
     });
 
@@ -46,7 +46,7 @@ const MapComponent: React.FC = () => {
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
             flex items-center justify-center
             w-14 h-14 md:w-20 md:h-20 rounded-full 
-            shadow-lg cursor-pointer bg-blue-400 bg-opacity-40 border-2 md:border-4 border-white border-opacity-80 hover:animate-pulse"
+            shadow-lg cursor-pointer bg-blue-400/40 border-2 md:border-4 border-white/80 hover:animate-pulse"
       >
         <Image
           alt="Icon"

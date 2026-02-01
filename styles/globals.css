@@ -1,7 +1,33 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+@plugin '../hero.ts';
+
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "font", sans-serif;
+  --font-mono: "monospace", monospace;
+  
+  --color-midnight: #eef0f7;
+  --color-knight: #2a2f35;
+  --color-darkBg: #0f1217;
+  --color-cardBlue: #8cc9fe;
+  --color-cardGreen: #63ccae;
+  --color-cardPink: #ffbfd1;
+  --color-cardYellow: #ffdf9a;
+  
+  --font-oleo: var(--font-oleo);
+  --animate-fade: fade 1s ease-in-out;
+}
+
+@keyframes fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* react-grid-layout styles */
 .react-grid-item.react-grid-placeholder {
   background: gray;
   transition-duration: 300ms;
@@ -13,10 +39,16 @@
   transition-duration: 400ms;
 }
 
+.react-grid-item > .react-resizable-handle {
+  display: none;
+}
+
+/* Mapbox */
 .mapboxgl-control-container {
   display: none !important;
 }
 
+/* Notion styles */
 .medium-zoom-image {
   border-radius: 2rem;
 }

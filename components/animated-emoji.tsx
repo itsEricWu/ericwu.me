@@ -1,7 +1,7 @@
 "use client";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import Image from "next/image";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import { useState } from "react";
 import { default as emojiMap } from "unicode-emoji-json";
 import { HashLoader } from "react-spinners";
@@ -58,13 +58,14 @@ const AnimatedEmoji = () => {
               },
             });
             const data = await response.json();
-            const emojiName =
-              emojiMap[`${data.result}` as keyof typeof emojiMap]["name"];
+            const emojiEntry =
+              emojiMap[`${data.result}` as keyof typeof emojiMap];
 
-            const searchedResult = fuzzySearch(emojiName);
-
-            if (searchedResult) {
-              setEmoji(searchedResult);
+            if (emojiEntry) {
+              const searchedResult = fuzzySearch(emojiEntry.name);
+              if (searchedResult) {
+                setEmoji(searchedResult);
+              }
             }
             setLoading(false);
           }}

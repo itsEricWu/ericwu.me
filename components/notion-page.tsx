@@ -2,10 +2,10 @@
 
 import { useTheme } from "next-themes";
 import { ExtendedRecordMap } from "notion-types";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { NotionRenderer } from "react-notion-x";
 import dynamic from "next/dynamic";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { RxCross2 } from "react-icons/rx";
 import Link from "next/link";
 
@@ -47,41 +47,36 @@ const Code = dynamic(
   () =>
     import("react-notion-x/build/third-party/code").then(async (m) => {
       const importPromises = prismComponents.map(
-        (component) => import(`prismjs/components/${component}.js`)
+        (component) => import(`prismjs/components/${component}.js`),
       );
 
       await Promise.allSettled(importPromises);
 
       return m.Code;
     }),
-  {
-    ssr: false,
-  }
+  { ssr: false },
 );
 
 const Collection = dynamic(
   () =>
     import("react-notion-x/build/third-party/collection").then(
-      (m) => m.Collection
+      (m) => m.Collection,
     ),
-  {
-    ssr: false,
-  }
+  { ssr: false },
 );
+
 const Equation = dynamic(() =>
-  import("react-notion-x/build/third-party/equation").then((m) => m.Equation)
+  import("react-notion-x/build/third-party/equation").then((m) => m.Equation),
 );
+
 const Pdf = dynamic(
   () => import("react-notion-x/build/third-party/pdf").then((m) => m.Pdf),
-  {
-    ssr: false,
-  }
+  { ssr: false },
 );
+
 const Modal = dynamic(
   () => import("react-notion-x/build/third-party/modal").then((m) => m.Modal),
-  {
-    ssr: false,
-  }
+  { ssr: false },
 );
 
 export const NotionPage = ({
@@ -93,7 +88,6 @@ export const NotionPage = ({
   rootPageId: string;
   title?: string;
 }) => {
-  const [isClient, setIsClient] = useState(false);
   const { theme } = useTheme();
   const [hover, setHover] = useState(false);
 
@@ -105,16 +99,8 @@ export const NotionPage = ({
       Pdf,
       Modal,
     }),
-    []
+    [],
   );
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null;
-  }
 
   if (!recordMap) {
     return null;
@@ -143,7 +129,7 @@ export const NotionPage = ({
         <div className="ml-[15px] md:mx-[296px] mb-4">
           <h3 className="w-fit dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0 py-1 px-4 rounded-full">
             {new Date(
-              recordMap.block[rootPageId].value?.created_time
+              recordMap.block[rootPageId].value?.created_time,
             ).toDateString()}
           </h3>
         </div>

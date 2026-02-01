@@ -33,6 +33,9 @@ export async function getAllBlogPosts(pageId: string) {
     }
   });
 
+  // Sort by newest first
+  blogPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
   return blogPosts;
 }
 
