@@ -36,7 +36,11 @@ const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
     >
       <Image
         alt="Mini Cooper"
-        className="rounded-b-none object-cover"
+        classNames={{
+          wrapper: "!max-w-none w-full h-full",
+          img: "w-full h-full object-cover",
+        }}
+        radius="none"
         src={isDark ? "mini-dark.jpg" : "mini-light.jpg"}
       />
       {showOverlay && (
