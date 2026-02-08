@@ -1,4 +1,3 @@
-import { useTheme } from "next-themes";
 import { Image } from "@heroui/react";
 import { useRef } from "react";
 
@@ -8,8 +7,6 @@ interface MiniPicProps {
 }
 
 const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   const startPos = useRef<{ x: number; y: number } | null>(null);
 
   const handleStart = (x: number, y: number) => {
@@ -38,10 +35,10 @@ const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
         alt="Mini Cooper"
         classNames={{
           wrapper: "!max-w-none w-full h-full",
-          img: "w-full h-full object-cover",
+          img: "w-full h-full object-contain",
         }}
         radius="none"
-        src={isDark ? "mini-dark.jpg" : "mini-light.jpg"}
+        src="mini.png"
       />
       {showOverlay && (
         <div className="absolute inset-0 flex items-end justify-center pb-4 z-10 pointer-events-none">
