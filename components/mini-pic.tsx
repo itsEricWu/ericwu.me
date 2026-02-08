@@ -34,19 +34,11 @@ const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
       onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)}
       onTouchEnd={(e) => handleEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
     >
-      {isDark ? (
-        <Image
-          alt="cover"
-          className="rounded-b-none object-cover"
-          src="mini-dark.jpg"
-        />
-      ) : (
-        <Image
-          alt="cover"
-          className="rounded-b-none object-cover"
-          src="mini-light.jpg"
-        />
-      )}
+      <Image
+        alt="Mini Cooper"
+        className="rounded-b-none object-cover"
+        src={isDark ? "mini-dark.jpg" : "mini-light.jpg"}
+      />
       {showOverlay && (
         <div className="absolute inset-0 flex items-end justify-center pb-4 z-10 pointer-events-none">
           <span className="bg-black/50 text-white text-xs px-3 py-1.5 rounded-full backdrop-blur-sm">
