@@ -19,7 +19,7 @@ const AnimatedEmoji = () => {
     <div className="w-full h-full p-4 flex flex-col justify-between items-center">
       {loading ? (
         <div className="flex h-full w-full justify-center items-center">
-          <HashLoader color="#eef0f7" size={80} />
+          <HashLoader color="#eef0f7" size={50} />
         </div>
       ) : (
         <Image alt="Animated Emoji" height={150} src={emoji.url} width={150} />
@@ -37,6 +37,9 @@ const AnimatedEmoji = () => {
           onMouseDown={(e) => {
             e.stopPropagation();
           }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+          }}
           onValueChange={(value) => {
             setPrompt(value);
           }}
@@ -46,6 +49,9 @@ const AnimatedEmoji = () => {
           radius="full"
           variant="bordered"
           onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
+          onTouchStart={(e) => {
             e.stopPropagation();
           }}
           onPress={async () => {

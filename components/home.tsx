@@ -46,7 +46,7 @@ const Home = ({
   chatbotUrl,
   paperUrl,
 }: HomeProps) => {
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
   const [tabSelected, setTabSelected] = useState("all");
   const [animated, setAnimated] = useState(false);
   const router = useRouter();

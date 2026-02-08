@@ -4,7 +4,7 @@ import { NotionPage } from "@/components/notion-page";
 import { getPageContent } from "@/lib/notion";
 import { siteConfig } from "@/config/site";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,

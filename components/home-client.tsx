@@ -84,7 +84,7 @@ export default function HomeClient({
   chatbotUrl,
   paperUrl,
 }: HomeClientProps) {
-  const width = useWindowWidth();
+  const { width, ready } = useWindowWidth();
   const [tabSelected, setTabSelected] = useState("all");
   const [, startTransition] = useTransition();
   const router = useRouter();
@@ -127,7 +127,10 @@ export default function HomeClient({
 
       <Responsive
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-        className="layout w-full h-full"
+        className={cn(
+          "layout w-full h-full transition-opacity duration-300",
+          ready ? "opacity-100" : "opacity-0",
+        )}
         cols={{ lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 }}
         layouts={layouts[tabSelected]}
         margin={[15, 15]}

@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { NotionAPI } from "notion-client";
 import { Block } from "notion-types";
 import { getPageTitle } from "notion-utils";
@@ -7,13 +9,13 @@ import { notionBlogConfig } from "@/config/site";
 
 const notion = new NotionAPI();
 
-export async function getPageContent(pageId: string) {
+export const getPageContent = cache(async (pageId: string) => {
   const recordMap = await notion.getPage(pageId);
   const title = getPageTitle(recordMap);
   const blocks = recordMap.block;
 
   return { title, blocks, recordMap };
-}
+});
 
 export async function getAllBlogPosts(pageId: string) {
   const recordMap = await notion.getPage(pageId);

@@ -4,7 +4,7 @@ import { customMapImageUrl, getAllBlogPosts } from "@/lib/notion";
 import { notionBlogConfig } from "@/config/site";
 import { BlogList } from "@/components/blog-list";
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Blog",

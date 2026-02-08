@@ -33,11 +33,12 @@ export function BlogList({ blogPosts }: BlogListProps) {
             <Card className="dark:bg-darkBg dark:border-2 dark:border-knight rounded-[2rem]">
               <CardBody className="p-0">
                 <Image
-                  alt="cover"
+                  alt={title}
                   className="rounded-b-none object-cover h-[200px]"
-                  height={500}
+                  height={200}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src={imageUrl}
-                  width={500}
+                  width={400}
                 />
               </CardBody>
               <CardFooter className="flex justify-between">
