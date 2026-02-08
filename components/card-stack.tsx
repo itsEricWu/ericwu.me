@@ -74,8 +74,7 @@ const CardStack: React.FC<CardStackProps> = ({ photos }) => {
             containerClassName="rounded-2xl"
             height={200}
             loading={index === cards.length - 1 ? "eager" : "lazy"}
-            quality={60}
-            sizes="(max-width: 768px) 200px, 355px"
+            quality={70}
             src={card.imageUrl}
             width={355}
           />

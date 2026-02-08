@@ -46,24 +46,20 @@ const MiniModel = dynamic(
   },
 );
 
-// Lazy load components that were previously eagerly imported
+// Lazy load for code splitting, but allow SSR (these don't need browser APIs)
 const AnimatedEmoji = dynamic(() => import("@/components/animated-emoji"), {
-  ssr: false,
   loading: LoadingPlaceholder,
 });
 
 const CardStack = dynamic(() => import("@/components/card-stack"), {
-  ssr: false,
   loading: LoadingPlaceholder,
 });
 
 const WebAgent = dynamic(() => import("@/components/webagent"), {
-  ssr: false,
   loading: LoadingPlaceholder,
 });
 
 const Chatbot = dynamic(() => import("@/components/chatbot"), {
-  ssr: false,
   loading: LoadingPlaceholder,
 });
 
@@ -101,10 +97,6 @@ export default function HomeClient({
   useEffect(() => {
     router.prefetch("/blog");
   }, [router]);
-
-  if (!width) {
-    return null;
-  }
 
   return (
     <div className="flex justify-center flex-col items-center">
