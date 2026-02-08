@@ -2,13 +2,7 @@
 
 import { Tab, Tabs } from "@heroui/react";
 import { Responsive } from "react-grid-layout";
-import {
-  useEffect,
-  useState,
-  useTransition,
-  useRef,
-  useCallback,
-} from "react";
+import { useEffect, useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { HashLoader } from "react-spinners";
@@ -73,29 +67,6 @@ const Chatbot = dynamic(() => import("@/components/chatbot"), {
   loading: LoadingPlaceholder,
 });
 
-// Hook for viewport detection via Intersection Observer
-function useInView(options?: IntersectionObserverInit) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setInView(true);
-        observer.disconnect();
-      }
-    }, options);
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [options]);
-
-  return { ref, inView };
-}
-
 interface HomeClientProps {
   photos: string[];
   avatarUrl: string;
@@ -122,14 +93,6 @@ export default function HomeClient({
   const [, startTransition] = useTransition();
   const router = useRouter();
   const [show3D, setShow3D] = useState(false);
-
-  // Intersection observers for heavy components
-  const ioOptions = useRef<IntersectionObserverInit>({
-    rootMargin: "200px",
-  }).current;
-  const mapIO = useInView(ioOptions);
-  const iconCloudIO = useInView(ioOptions);
-  const miniIO = useInView(ioOptions);
 
   const handleMiniClick = useCallback(() => {
     setShow3D(true);
@@ -229,7 +192,6 @@ export default function HomeClient({
           <AnimatedEmoji />
         </div>
         <div
-          ref={mapIO.ref}
           key="mapComponent"
           className={cn(
             "bg-white dark:bg-darkBg cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1]",
@@ -238,10 +200,9 @@ export default function HomeClient({
               : "opacity-50",
           )}
         >
-          {mapIO.inView ? <MapComponent /> : <LoadingPlaceholder />}
+          <MapComponent />
         </div>
         <div
-          ref={iconCloudIO.ref}
           key="iconCloud"
           className={cn(
             "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center relative overflow-hidden p-10 md:p-8 z-[1]",
@@ -250,11 +211,7 @@ export default function HomeClient({
               : "opacity-50",
           )}
         >
-          {iconCloudIO.inView ? (
-            <IconCloud iconSlugs={icons} />
-          ) : (
-            <LoadingPlaceholder />
-          )}
+          <IconCloud iconSlugs={icons} />
         </div>
         <div
           key="webAgent"
@@ -277,7 +234,6 @@ export default function HomeClient({
           <Chatbot chatbotUrl={chatbotUrl} />
         </div>
         <div
-          ref={miniIO.ref}
           key="miniModel"
           className={cn(
             "bg-white dark:bg-darkBg border-2 border-transparent dark:border-knight cursor-grab active:cursor-grabbing rounded-[2rem] flex justify-center items-center z-[1] overflow-hidden",
@@ -286,10 +242,10 @@ export default function HomeClient({
               : "opacity-50",
           )}
         >
-          {show3D && miniIO.inView ? (
+          {show3D ? (
             <MiniModel />
           ) : (
-            <MiniPic onClick={handleMiniClick} showOverlay={miniIO.inView} />
+            <MiniPic onClick={handleMiniClick} showOverlay />
           )}
         </div>
         <div
