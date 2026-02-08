@@ -24,11 +24,7 @@ const AnimatedEmoji = () => {
       ) : (
         <Image alt="Animated Emoji" height={150} src={emoji.url} width={150} />
       )}
-      <div
-        className="w-full space-y-3 flex flex-col items-center justify-center"
-        onMouseDown={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
-      >
+      <div className="no-drag w-full space-y-3 flex flex-col items-center justify-center">
         <Input
           className="w-[95%]"
           classNames={{

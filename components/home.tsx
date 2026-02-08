@@ -89,6 +89,7 @@ const Home = ({
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         className="layout w-full h-full"
         cols={{ lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 }}
+        dragConfig={{ cancel: ".no-drag" }}
         layouts={layouts[tabSelected]}
         margin={[15, 15]}
         width={width}

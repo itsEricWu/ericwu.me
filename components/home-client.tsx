@@ -132,6 +132,7 @@ export default function HomeClient({
           settled ? "layout-settled" : "layout-initializing",
         )}
         cols={{ lg: 4, md: 4, sm: 2, xs: 2, xxs: 2 }}
+        dragConfig={{ cancel: ".no-drag" }}
         layouts={layouts[tabSelected]}
         margin={[15, 15]}
         width={width}
