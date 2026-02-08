@@ -39,6 +39,20 @@
   transition-duration: 400ms;
 }
 
+/* Hide grid and disable item transitions until layout settles with correct width */
+.layout-initializing {
+  opacity: 0;
+}
+
+.layout-initializing .react-grid-item {
+  transition: none !important;
+}
+
+/* Fade in smoothly once layout is correct */
+.layout-settled {
+  animation: fade 0.4s ease-out;
+}
+
 .react-grid-item > .react-resizable-handle {
   display: none;
 }
