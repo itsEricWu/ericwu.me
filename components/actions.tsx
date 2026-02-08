@@ -15,6 +15,8 @@ const Actions = ({ photoUrl }: ActionsProps) => {
           alt="SecondSelf - AI Agent Social Network"
           className="w-full h-full rounded-2xl object-contain"
           height={1280}
+          quality={60}
+          sizes="(max-width: 768px) 300px, 500px"
           src={photoUrl}
           width={2259}
         />

@@ -55,10 +55,12 @@ const AvatarTransition: React.FC<AvatarTransitionProps> = ({
           variants={avatarVariants}
         >
           <BlurImage
+            priority
             alt="Avatar"
             className="w-24 h-24 md:w-28 md:h-28 object-cover mb-4 border-2 border-transparent dark:border-knight rounded-full"
             containerClassName="rounded-full"
             height={128}
+            sizes="(max-width: 768px) 96px, 112px"
             src={avatarUrl}
             width={128}
           />

@@ -13,12 +13,11 @@ const WebAgent = ({ webAgentUrl }: WebAgentProps) => {
 
       <div className="absolute top-1/2 -translate-y-1/2 left-24 md:left-32 transform -rotate-[30deg] rounded-2xl w-[80%]">
         <Image
-          priority
           alt="Web Agent Interface Preview"
           className="w-full h-full object-contain rounded-2xl"
           height={800}
-          loading="eager"
-          quality={75}
+          quality={60}
+          sizes="(max-width: 768px) 300px, 500px"
           src={webAgentUrl}
           width={1000}
         />

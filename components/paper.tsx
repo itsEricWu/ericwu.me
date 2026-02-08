@@ -14,7 +14,8 @@ const Paper = ({ paperUrl }: PaperProps) => {
           alt="Paper"
           className="h-full w-full rounded-2xl object-contain"
           height={1280}
-          quality={75}
+          quality={60}
+          sizes="(max-width: 768px) 300px, 500px"
           src={paperUrl}
           width={1577}
         />
