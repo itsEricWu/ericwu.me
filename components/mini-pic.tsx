@@ -12,15 +12,14 @@ const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
   const isDark = theme === "dark";
   const startPos = useRef<{ x: number; y: number } | null>(null);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    startPos.current = { x: e.clientX, y: e.clientY };
+  const handleStart = (x: number, y: number) => {
+    startPos.current = { x, y };
   };
 
-  const handleMouseUp = (e: React.MouseEvent) => {
+  const handleEnd = (x: number, y: number) => {
     if (!startPos.current) return;
-    const dx = Math.abs(e.clientX - startPos.current.x);
-    const dy = Math.abs(e.clientY - startPos.current.y);
-    // Only trigger click if mouse didn't move much (not a drag)
+    const dx = Math.abs(x - startPos.current.x);
+    const dy = Math.abs(y - startPos.current.y);
     if (dx < 5 && dy < 5) {
       onClick?.();
     }
@@ -30,8 +29,10 @@ const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
   return (
     <div
       className="relative w-full h-full cursor-pointer"
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
+      onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
+      onMouseUp={(e) => handleEnd(e.clientX, e.clientY)}
+      onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)}
+      onTouchEnd={(e) => handleEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
     >
       {isDark ? (
         <Image
