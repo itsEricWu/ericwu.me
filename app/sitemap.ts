@@ -1,11 +1,9 @@
 import { MetadataRoute } from "next";
 
-import { notionBlogConfig } from "@/config/site";
+import { notionBlogConfig, siteConfig } from "@/config/site";
 import { getAllBlogPosts } from "@/lib/notion";
 
-const WEBSITE_HOST_URL = process.env.SITE_URL;
-
-type changeFrequency =
+type ChangeFrequency =
   | "always"
   | "hourly"
   | "daily"
@@ -15,20 +13,30 @@ type changeFrequency =
   | "never";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  let blogPosts = await getAllBlogPosts(notionBlogConfig.blogParentId);
-  const changeFrequency = "daily" as changeFrequency;
+  const blogPosts = await getAllBlogPosts(notionBlogConfig.blogParentId);
+  const changeFrequency: ChangeFrequency = "weekly";
 
   const blogs = blogPosts.map(({ id, createdAt }) => ({
-    url: `${WEBSITE_HOST_URL}/blog/${id}`,
+    url: `${siteConfig.url}/blog/${id}`,
     lastModified: createdAt.toISOString(),
     changeFrequency,
+    priority: 0.7,
   }));
 
-  const routes = ["", "/blog"].map((route) => ({
-    url: `${WEBSITE_HOST_URL}${route}`,
-    lastModified: new Date().toISOString(),
-    changeFrequency,
-  }));
+  const routes: MetadataRoute.Sitemap = [
+    {
+      url: siteConfig.url,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "weekly" as ChangeFrequency,
+      priority: 1.0,
+    },
+    {
+      url: `${siteConfig.url}/blog`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "daily" as ChangeFrequency,
+      priority: 0.8,
+    },
+  ];
 
   return [...routes, ...blogs];
 }

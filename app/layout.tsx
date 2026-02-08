@@ -14,30 +14,50 @@ import { siteConfig } from "@/config/site";
 import { fontOleoScript, fontUbuntu } from "@/config/fonts";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
   keywords: siteConfig.keywords,
-  authors: [{ name: siteConfig.author, url: "https://ericwu.me" }],
+  authors: [{ name: siteConfig.author, url: siteConfig.url }],
   creator: siteConfig.author,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ericwu.me",
+    url: siteConfig.url,
     siteName: siteConfig.name,
     title: siteConfig.name,
     description: siteConfig.description,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: "/favicon.ico",
@@ -51,6 +71,43 @@ export const viewport: Viewport = {
   ],
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${siteConfig.url}/#website`,
+      url: siteConfig.url,
+      name: siteConfig.name,
+      description: siteConfig.description,
+      inLanguage: "en-US",
+    },
+    {
+      "@type": "Person",
+      "@id": `${siteConfig.url}/#person`,
+      name: "Eric Wu",
+      alternateName: "Chengxiang Wu",
+      url: siteConfig.url,
+      jobTitle: "Software Development Engineer",
+      worksFor: {
+        "@type": "Organization",
+        name: "Amazon Web Services",
+      },
+      alumniOf: [
+        {
+          "@type": "CollegeOrUniversity",
+          name: "University of California, Los Angeles",
+        },
+        {
+          "@type": "CollegeOrUniversity",
+          name: "Purdue University",
+        },
+      ],
+      sameAs: [siteConfig.links.github, siteConfig.links.linkedin],
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -58,7 +115,12 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-      <head />
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={clsx(
           fontUbuntu.className,

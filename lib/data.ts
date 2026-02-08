@@ -9,7 +9,7 @@ export const getHomeData = cache(async () => {
     photos: "photos",
     avatar: "avatar/eric.jpg",
     dog: "avatar/dog.jpg",
-    action: "projects/actions.jpg",
+    action: "projects/secondself.jpg",
     webagent: "projects/webagent.jpg",
     chatbot: "projects/chatbot.jpg",
     resume: "Chengxiang-Wu-Resume-2024.pdf",
