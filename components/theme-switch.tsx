@@ -1,9 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Switch } from "@heroui/switch";
 import { useTheme } from "next-themes";
-import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 
 import { SunIcon, MoonIcon } from "@/components/icons";
@@ -14,11 +13,15 @@ export interface ThemeSwitchProps {
 
 export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
   const { theme, setTheme } = useTheme();
-  const isSSR = useIsSSR();
+  const [mounted, setMounted] = useState(false);
 
-  const onChange = () => {
-    theme === "light" ? setTheme("dark") : setTheme("light");
-  };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const isLight = theme === "light";
 
   return (
     <div className="border-2 border-transparent dark:border-knight rounded-full">
@@ -34,7 +37,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
           base: "w-[4.5rem] h-10",
           thumbIcon: "w-5 h-5",
         }}
-        defaultSelected={theme === "light" || isSSR}
+        isSelected={isLight}
         thumbIcon={({ isSelected, className: iconClassName }) =>
           isSelected ? (
             <SunIcon className={iconClassName} />
@@ -42,7 +45,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
             <MoonIcon className={iconClassName} />
           )
         }
-        onChange={onChange}
+        onValueChange={(selected) => setTheme(selected ? "light" : "dark")}
       />
     </div>
   );
