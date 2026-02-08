@@ -36,7 +36,7 @@
 }
 
 .react-grid-item {
-  transition-duration: 400ms;
+  transition: transform 400ms ease, width 400ms ease, height 400ms ease;
 }
 
 /* Disable grid item transitions during initial layout to prevent visible repositioning */

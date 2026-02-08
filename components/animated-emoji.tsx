@@ -24,7 +24,11 @@ const AnimatedEmoji = () => {
       ) : (
         <Image alt="Animated Emoji" height={150} src={emoji.url} width={150} />
       )}
-      <div className="w-full space-y-3 flex flex-col items-center justify-center">
+      <div
+        className="w-full space-y-3 flex flex-col items-center justify-center"
+        onMouseDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+      >
         <Input
           className="w-[95%]"
           classNames={{
@@ -34,12 +38,6 @@ const AnimatedEmoji = () => {
           label="Enter text, get emoji!"
           radius="lg"
           variant="underlined"
-          onMouseDown={(e) => {
-            e.stopPropagation();
-          }}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-          }}
           onValueChange={(value) => {
             setPrompt(value);
           }}
@@ -48,12 +46,6 @@ const AnimatedEmoji = () => {
           className="w-full border-midnight dark:border-knight"
           radius="full"
           variant="bordered"
-          onMouseDown={(e) => {
-            e.stopPropagation();
-          }}
-          onTouchStart={(e) => {
-            e.stopPropagation();
-          }}
           onPress={async () => {
             setLoading(true);
             const response = await fetch("/api/emoji", {
