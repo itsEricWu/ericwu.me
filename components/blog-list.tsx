@@ -18,6 +18,7 @@ export function BlogList({ blogPosts }: BlogListProps) {
         <Link href="/" prefetch={true}>
           <Button
             isIconOnly
+            aria-label="Back to home"
             className="dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0"
             radius="full"
             variant="bordered"
@@ -42,8 +43,10 @@ export function BlogList({ blogPosts }: BlogListProps) {
                 />
               </CardBody>
               <CardFooter className="flex justify-between">
-                <h3 className="font-[500] text-lg">{title}</h3>
-                <h3 className="text-sm">{createdAt.toDateString()}</h3>
+                <h2 className="font-[500] text-lg">{title}</h2>
+                <time className="text-sm" dateTime={createdAt.toISOString()}>
+                  {createdAt.toDateString()}
+                </time>
               </CardFooter>
             </Card>
           </Link>

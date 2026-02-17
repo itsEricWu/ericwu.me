@@ -25,7 +25,16 @@ const MiniPic = ({ onClick, showOverlay = false }: MiniPicProps) => {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="View Mini Cooper in 3D"
       className="relative w-full h-full cursor-pointer"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
       onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
       onMouseUp={(e) => handleEnd(e.clientX, e.clientY)}
       onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)}

@@ -29,6 +29,7 @@ export const AnimationSwitch: FC<AnimationSwitchProps> = ({
         <Tooltip content="Animate it!" placement="bottom">
           <Button
             isIconOnly
+            aria-label="Enable animation"
             className="dark:border-knight dark:bg-transparent dark:border-2 bg-midnight border-0"
             radius="full"
             variant="bordered"
@@ -40,6 +41,7 @@ export const AnimationSwitch: FC<AnimationSwitchProps> = ({
       ) : (
         <Button
           isIconOnly
+          aria-label="Show static image"
           className="dark:border-knight dark:bg-transparent dark:border-2 bg-midnight border-0"
           radius="full"
           variant="bordered"

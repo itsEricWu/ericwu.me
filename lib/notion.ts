@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { NotionAPI } from "notion-client";
-import { Block } from "notion-types";
+import { Block, ExtendedRecordMap } from "notion-types";
 import { getPageTitle } from "notion-utils";
 
 import { Blog } from "@/types/blog";
@@ -31,6 +31,8 @@ export async function getAllBlogPosts(pageId: string) {
         pageCover: value.value.format?.page_cover,
         title: value.value.properties?.title[0][0],
         createdAt: new Date(value.value.created_time),
+        lastEditedAt: new Date(value.value.last_edited_time),
+        description: value.value.properties?.["\\u2O5F"]?.[0]?.[0] ?? "",
       });
     }
   });
@@ -39,6 +41,29 @@ export async function getAllBlogPosts(pageId: string) {
   blogPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return blogPosts;
+}
+
+/** Extract a plain-text excerpt from a Notion recordMap (first ~160 chars). */
+export function extractDescription(recordMap: ExtendedRecordMap): string {
+  const blocks = Object.values(recordMap.block);
+
+  for (const block of blocks) {
+    const value = block?.value;
+
+    if (!value) continue;
+    if (value.type !== "text" && value.type !== "quote") continue;
+
+    const text = value.properties?.title
+      ?.map((chunk: unknown[]) => chunk[0])
+      .join("")
+      .trim();
+
+    if (text && text.length > 0) {
+      return text.length > 160 ? text.slice(0, 157) + "..." : text;
+    }
+  }
+
+  return "";
 }
 
 export const customMapImageUrl = (url: string, block: Block): string => {

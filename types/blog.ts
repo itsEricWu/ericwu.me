@@ -6,4 +6,6 @@ export type Blog = {
   block: Block;
   pageCover: string;
   createdAt: Date;
+  lastEditedAt: Date;
+  description: string;
 };
