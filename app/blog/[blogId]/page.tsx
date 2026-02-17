@@ -1,7 +1,11 @@
 import { Metadata } from "next";
 
 import { NotionPage } from "@/components/notion-page";
-import { getPageContent } from "@/lib/notion";
+import {
+  getPageContent,
+  extractDescription,
+  customMapImageUrl,
+} from "@/lib/notion";
 import { siteConfig } from "@/config/site";
 
 export const revalidate = 3600;
@@ -12,27 +16,40 @@ export async function generateMetadata({
   params: Promise<{ blogId: string }>;
 }): Promise<Metadata> {
   const { blogId } = await params;
-  const { title } = await getPageContent(blogId);
+  const { title, recordMap } = await getPageContent(blogId);
 
   const postTitle = title || "Blog Post";
+  const description =
+    extractDescription(recordMap) ||
+    `${postTitle} - by ${siteConfig.author}`;
+
+  const block = recordMap.block[blogId]?.value;
+  const coverUrl = block?.format?.page_cover;
+  const ogImages = coverUrl
+    ? [{ url: customMapImageUrl(coverUrl, block), alt: postTitle }]
+    : [{ url: "/og-image.png", alt: postTitle }];
 
   return {
     title: postTitle,
-    description: `${postTitle} - by ${siteConfig.author}`,
+    description,
     alternates: {
       canonical: `/blog/${blogId}`,
     },
     openGraph: {
       title: postTitle,
-      description: `${postTitle} - by ${siteConfig.author}`,
+      description,
       type: "article",
       url: `/blog/${blogId}`,
       authors: [siteConfig.author],
+      publishedTime: new Date(block?.created_time).toISOString(),
+      modifiedTime: new Date(block?.last_edited_time).toISOString(),
+      images: ogImages,
     },
     twitter: {
       card: "summary_large_image",
       title: postTitle,
-      description: `${postTitle} - by ${siteConfig.author}`,
+      description,
+      images: ogImages.map((img) => img.url),
     },
   };
 }
@@ -45,10 +62,22 @@ export default async function Page({
   const { blogId } = await params;
   const { recordMap, title } = await getPageContent(blogId);
 
+  const block = recordMap.block[blogId]?.value;
+  const coverUrl = block?.format?.page_cover;
+  const description =
+    extractDescription(recordMap) ||
+    `${title} - by ${siteConfig.author}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: title,
+    description,
+    datePublished: new Date(block?.created_time).toISOString(),
+    dateModified: new Date(block?.last_edited_time).toISOString(),
+    ...(coverUrl && {
+      image: customMapImageUrl(coverUrl, block),
+    }),
     author: {
       "@type": "Person",
       name: siteConfig.author,
@@ -58,6 +87,10 @@ export default async function Page({
       "@type": "Person",
       name: siteConfig.author,
       url: siteConfig.url,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${siteConfig.url}/blog/${blogId}`,
     },
     url: `${siteConfig.url}/blog/${blogId}`,
   };

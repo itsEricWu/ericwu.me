@@ -111,6 +111,7 @@ export const NotionPage = ({
       <Link className="self-center" href="/blog" prefetch={true}>
         <Button
           isIconOnly
+          aria-label="Back to blog"
           className="dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0"
           radius="full"
           variant="bordered"
@@ -127,11 +128,16 @@ export const NotionPage = ({
           {title}
         </h1>
         <div className="ml-[15px] md:mx-[296px] mb-4">
-          <h3 className="w-fit dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0 py-1 px-4 rounded-full">
+          <time
+            className="w-fit dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0 py-1 px-4 rounded-full inline-block"
+            dateTime={new Date(
+              recordMap.block[rootPageId].value?.created_time,
+            ).toISOString()}
+          >
             {new Date(
               recordMap.block[rootPageId].value?.created_time,
             ).toDateString()}
-          </h3>
+          </time>
         </div>
 
         <NotionRenderer
