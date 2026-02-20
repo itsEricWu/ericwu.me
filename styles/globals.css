@@ -66,11 +66,20 @@
 
 /* Notion styles */
 .medium-zoom-image {
-  border-radius: 2rem;
+  border-radius: 2rem !important;
 }
 
 .notion-code {
   border-radius: 1rem;
+  overflow: hidden !important;
+}
+
+.notion-code code {
+  scrollbar-width: none;
+}
+
+.notion-code code::-webkit-scrollbar {
+  display: none;
 }
 
 .notion-code-copy-button {
