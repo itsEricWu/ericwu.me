@@ -35,7 +35,7 @@ export function BlogList({ blogPosts }: BlogListProps) {
               <CardBody className="p-0">
                 <Image
                   alt={title}
-                  className="rounded-b-none object-cover h-[200px]"
+                  className="w-full rounded-b-none object-cover h-[200px]"
                   height={200}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   src={imageUrl}
