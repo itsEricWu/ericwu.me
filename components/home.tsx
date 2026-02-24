@@ -30,7 +30,6 @@ interface HomeProps {
   avatarUrl: string;
   dogUrl: string;
   actionImageUrl: string;
-  resumeUrl: string;
   webagentUrl: string;
   chatbotUrl: string;
   paperUrl: string;
@@ -41,7 +40,6 @@ const Home = ({
   avatarUrl,
   dogUrl,
   actionImageUrl,
-  resumeUrl,
   webagentUrl,
   chatbotUrl,
   paperUrl,
@@ -109,7 +107,7 @@ const Home = ({
             development, deep learning, and data science. And yes, I have an
             adorable dog named Bert!
           </p>
-          <DockDemo resumeUrl={resumeUrl} />
+          <DockDemo />
         </div>
         <div
           key="themeSwitch"

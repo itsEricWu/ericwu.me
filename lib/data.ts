@@ -12,7 +12,6 @@ export const getHomeData = cache(async () => {
     action: "projects/secondself.jpg",
     webagent: "projects/webagent.jpg",
     chatbot: "projects/chatbot.jpg",
-    resume: "Chengxiang-Wu-Resume-2024.pdf",
     paper: "projects/paper.jpg",
   };
 
@@ -22,7 +21,6 @@ export const getHomeData = cache(async () => {
     paths.action,
     paths.webagent,
     paths.chatbot,
-    paths.resume,
     paths.paper,
   ];
 
@@ -41,7 +39,6 @@ export const getHomeData = cache(async () => {
     actionImageUrl: urlResults[2],
     webagentUrl: urlResults[3],
     chatbotUrl: urlResults[4],
-    resumeUrl: urlResults[5],
-    paperUrl: urlResults[6],
+    paperUrl: urlResults[5],
   };
 });

@@ -68,7 +68,6 @@ interface HomeClientProps {
   avatarUrl: string;
   dogUrl: string;
   actionImageUrl: string;
-  resumeUrl: string;
   webagentUrl: string;
   chatbotUrl: string;
   paperUrl: string;
@@ -79,7 +78,6 @@ export default function HomeClient({
   avatarUrl,
   dogUrl,
   actionImageUrl,
-  resumeUrl,
   webagentUrl,
   chatbotUrl,
   paperUrl,
@@ -152,7 +150,7 @@ export default function HomeClient({
             life easier. Outside work, I&apos;m hiking with my dog Bert and
             planning to summit Mount Rainier in 2027!
           </p>
-          <DockDemo resumeUrl={resumeUrl} />
+          <DockDemo />
         </div>
         <div
           key="themeSwitch"
