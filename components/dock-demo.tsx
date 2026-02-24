@@ -1,27 +1,15 @@
 import React from "react";
-import {
-  IoDocumentText,
-  IoLogoGithub,
-  IoLogoLinkedin,
-  IoMail,
-} from "react-icons/io5";
+import { IoLogoGithub, IoLogoLinkedin, IoMail } from "react-icons/io5";
 
 import { Dock, DockIcon } from "@/components/dock";
 import { siteConfig } from "@/config/site";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
-interface DockDemoProps {
-  resumeUrl: string;
-}
-
-export function DockDemo({ resumeUrl }: DockDemoProps) {
+export function DockDemo() {
   return (
     <button className="self-end" onMouseDown={(e) => e.stopPropagation()}>
       <Dock>
-        <DockIcon tooltip="Resume" url={resumeUrl}>
-          <IoDocumentText className="h-5 w-5" />
-        </DockIcon>
         <DockIcon tooltip="GitHub" url={siteConfig.links.github}>
           <IoLogoGithub className="h-5 w-5" />
         </DockIcon>
