@@ -127,18 +127,20 @@ export const NotionPage = ({
         <h1 className="my-4 text-center text-xl font-bold md:text-2xl">
           {title}
         </h1>
-        <div className="ml-[15px] md:mx-[296px] mb-4">
-          <time
-            className="w-fit dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0 py-1 px-4 rounded-full inline-block"
-            dateTime={new Date(
-              recordMap.block[rootPageId].value?.created_time,
-            ).toISOString()}
-          >
-            {new Date(
-              recordMap.block[rootPageId].value?.created_time,
-            ).toDateString()}
-          </time>
-        </div>
+        {recordMap.block[rootPageId]?.value?.created_time && (
+          <div className="ml-[15px] md:mx-[296px] mb-4">
+            <time
+              className="w-fit dark:border-knight dark:bg-transparent dark:border-2 bg-[#ece7e7] border-0 py-1 px-4 rounded-full inline-block"
+              dateTime={new Date(
+                recordMap.block[rootPageId].value.created_time,
+              ).toISOString()}
+            >
+              {new Date(
+                recordMap.block[rootPageId].value.created_time,
+              ).toDateString()}
+            </time>
+          </div>
+        )}
 
         <NotionRenderer
           components={components}

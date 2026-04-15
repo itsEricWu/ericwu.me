@@ -9,8 +9,30 @@ import { notionBlogConfig } from "@/config/site";
 
 const notion = new NotionAPI();
 
+// The Notion API now wraps block entries in an extra layer:
+//   block[id] = { spaceId, value: { value: Block, role } }
+// react-notion-x expects the older shape:
+//   block[id] = { value: Block, role }
+// This type covers both shapes so we can unwrap safely.
+type NestedBlockEntry = {
+  spaceId?: string;
+  value: { value: Block; role: string };
+};
+
+function normalizeRecordMap(recordMap: ExtendedRecordMap): ExtendedRecordMap {
+  const block = { ...recordMap.block };
+  for (const [id, entry] of Object.entries(block)) {
+    const nested = entry as unknown as NestedBlockEntry;
+    if (nested?.value?.value !== undefined && nested?.value?.role !== undefined) {
+      block[id] = nested.value;
+    }
+  }
+  return { ...recordMap, block };
+}
+
 export const getPageContent = cache(async (pageId: string) => {
-  const recordMap = await notion.getPage(pageId);
+  const raw = await notion.getPage(pageId);
+  const recordMap = normalizeRecordMap(raw);
   const title = getPageTitle(recordMap);
   const blocks = recordMap.block;
 
@@ -18,27 +40,36 @@ export const getPageContent = cache(async (pageId: string) => {
 });
 
 export async function getAllBlogPosts(pageId: string) {
-  const recordMap = await notion.getPage(pageId);
+  const recordMap = normalizeRecordMap(await notion.getPage(pageId));
   const blocks = recordMap.block;
 
   let blogPosts: Blog[] = [];
 
-  Object.entries(blocks).map(([key, value]) => {
-    if (key !== notionBlogConfig.blogParentId) {
-      blogPosts.push({
-        id: key,
-        block: value.value,
-        pageCover: value.value.format?.page_cover,
-        title: value.value.properties?.title[0][0],
-        createdAt: new Date(value.value.created_time),
-        lastEditedAt: new Date(value.value.last_edited_time),
-        description: value.value.properties?.["\\u2O5F"]?.[0]?.[0] ?? "",
-      });
+  Object.entries(blocks).forEach(([key, value]) => {
+    const block = value.value;
+    if (
+      key === notionBlogConfig.blogParentId ||
+      block?.type !== "page" ||
+      !block?.properties?.title
+    ) {
+      return;
     }
+    blogPosts.push({
+      id: key,
+      block,
+      pageCover: block.format?.page_cover,
+      title: block.properties.title[0][0],
+      createdAt: block.created_time ? new Date(block.created_time) : null,
+      lastEditedAt: block.last_edited_time
+        ? new Date(block.last_edited_time)
+        : null,
+      description: block.properties?.["\\u2O5F"]?.[0]?.[0] ?? "",
+    });
   });
 
-  // Sort by newest first
-  blogPosts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  blogPosts.sort(
+    (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0),
+  );
 
   return blogPosts;
 }

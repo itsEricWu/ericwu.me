@@ -32,21 +32,25 @@ export function BlogList({ blogPosts }: BlogListProps) {
         {blogPosts.map(({ id, title, imageUrl, createdAt }) => (
           <Link key={id} href={`/blog/${id}`}>
             <Card className="dark:bg-darkBg dark:border-2 dark:border-knight rounded-[2rem]">
-              <CardBody className="p-0">
-                <Image
-                  alt={title}
-                  className="w-full rounded-b-none object-cover h-[200px]"
-                  height={200}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  src={imageUrl}
-                  width={400}
-                />
-              </CardBody>
+              {imageUrl && (
+                <CardBody className="p-0">
+                  <Image
+                    alt={title}
+                    className="w-full rounded-b-none object-cover h-[200px]"
+                    height={200}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    src={imageUrl}
+                    width={400}
+                  />
+                </CardBody>
+              )}
               <CardFooter className="flex justify-between">
                 <h2 className="font-[500] text-lg">{title}</h2>
-                <time className="text-sm" dateTime={createdAt.toISOString()}>
-                  {createdAt.toDateString()}
-                </time>
+                {createdAt && (
+                  <time className="text-sm" dateTime={createdAt.toISOString()}>
+                    {createdAt.toDateString()}
+                  </time>
+                )}
               </CardFooter>
             </Card>
           </Link>

@@ -41,8 +41,12 @@ export async function generateMetadata({
       type: "article",
       url: `/blog/${blogId}`,
       authors: [siteConfig.author],
-      publishedTime: new Date(block?.created_time).toISOString(),
-      modifiedTime: new Date(block?.last_edited_time).toISOString(),
+      ...(block?.created_time && {
+        publishedTime: new Date(block.created_time).toISOString(),
+      }),
+      ...(block?.last_edited_time && {
+        modifiedTime: new Date(block.last_edited_time).toISOString(),
+      }),
       images: ogImages,
     },
     twitter: {
@@ -73,8 +77,12 @@ export default async function Page({
     "@type": "Article",
     headline: title,
     description,
-    datePublished: new Date(block?.created_time).toISOString(),
-    dateModified: new Date(block?.last_edited_time).toISOString(),
+    ...(block?.created_time && {
+      datePublished: new Date(block.created_time).toISOString(),
+    }),
+    ...(block?.last_edited_time && {
+      dateModified: new Date(block.last_edited_time).toISOString(),
+    }),
     ...(coverUrl && {
       image: customMapImageUrl(coverUrl, block),
     }),

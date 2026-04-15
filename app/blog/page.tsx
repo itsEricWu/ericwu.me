@@ -27,7 +27,9 @@ export default async function Page() {
 
   const postsWithImages = blogPosts.map((post) => ({
     ...post,
-    imageUrl: customMapImageUrl(post.pageCover, post.block),
+    imageUrl: post.pageCover
+      ? customMapImageUrl(post.pageCover, post.block)
+      : undefined,
   }));
 
   return <BlogList blogPosts={postsWithImages} />;

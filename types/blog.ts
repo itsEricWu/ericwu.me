@@ -5,7 +5,7 @@ export type Blog = {
   title: string;
   block: Block;
   pageCover: string;
-  createdAt: Date;
-  lastEditedAt: Date;
+  createdAt: Date | null;
+  lastEditedAt: Date | null;
   description: string;
 };
