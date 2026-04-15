@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Blog } from "@/types/blog";
 
 interface BlogListProps {
-  blogPosts: (Blog & { imageUrl: string })[];
+  blogPosts: (Blog & { imageUrl: string | undefined })[];
 }
 
 export function BlogList({ blogPosts }: BlogListProps) {
