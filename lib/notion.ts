@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { NotionAPI } from "notion-client";
-import { Block, ExtendedRecordMap } from "notion-types";
+import { Block, ExtendedRecordMap, Role } from "notion-types";
 import { getPageTitle } from "notion-utils";
 
 import { Blog } from "@/types/blog";
@@ -16,7 +16,7 @@ const notion = new NotionAPI();
 // This type covers both shapes so we can unwrap safely.
 type NestedBlockEntry = {
   spaceId?: string;
-  value: { value: Block; role: string };
+  value: { value: Block; role: Role };
 };
 
 function normalizeRecordMap(recordMap: ExtendedRecordMap): ExtendedRecordMap {
@@ -57,13 +57,14 @@ export async function getAllBlogPosts(pageId: string) {
     blogPosts.push({
       id: key,
       block,
-      pageCover: block.format?.page_cover,
+      pageCover: block.format?.page_cover ?? "",
       title: block.properties.title[0][0],
       createdAt: block.created_time ? new Date(block.created_time) : null,
       lastEditedAt: block.last_edited_time
         ? new Date(block.last_edited_time)
         : null,
-      description: block.properties?.["\\u2O5F"]?.[0]?.[0] ?? "",
+      description:
+        (block.properties as Record<string, unknown[][]>)?.["\\u2O5F"]?.[0]?.[0]?.toString() ?? "",
     });
   });
 

@@ -18,19 +18,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const blogs = blogPosts.map(({ id, lastEditedAt }) => ({
     url: `${siteConfig.url}/blog/${id}`,
-    lastModified: lastEditedAt.toISOString(),
+    lastModified: lastEditedAt?.toISOString() ?? new Date().toISOString(),
     changeFrequency,
     priority: 0.7,
   }));
 
-  // Use the most recent blog post's edit time for the blog list page
   const latestBlogEdit =
     blogPosts.length > 0
       ? blogPosts
           .reduce((latest, post) =>
-            post.lastEditedAt > latest.lastEditedAt ? post : latest,
+            (post.lastEditedAt?.getTime() ?? 0) >
+            (latest.lastEditedAt?.getTime() ?? 0)
+              ? post
+              : latest,
           )
-          .lastEditedAt.toISOString()
+          .lastEditedAt?.toISOString() ?? new Date().toISOString()
       : new Date().toISOString();
 
   const routes: MetadataRoute.Sitemap = [
