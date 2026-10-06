@@ -1,38 +1,47 @@
 import { cache } from "react";
 
 import { NotionAPI } from "notion-client";
-import { Block, ExtendedRecordMap, Role } from "notion-types";
+import { Block, BlockMap, ExtendedRecordMap, Role } from "notion-types";
 import { getPageTitle } from "notion-utils";
 
 import { Blog } from "@/types/blog";
 import { notionBlogConfig } from "@/config/site";
 
-const notion = new NotionAPI();
-
-// The Notion API now wraps block entries in an extra layer:
-//   block[id] = { spaceId, value: { value: Block, role } }
-// react-notion-x expects the older shape:
-//   block[id] = { value: Block, role }
-// This type covers both shapes so we can unwrap safely.
+// Notion now returns { spaceId, value: { value, role } }; notion-client 7.x expects { value, role }.
 type NestedBlockEntry = {
   spaceId?: string;
   value: { value: Block; role: Role };
 };
 
-function normalizeRecordMap(recordMap: ExtendedRecordMap): ExtendedRecordMap {
-  const block = { ...recordMap.block };
+function unwrapBlocks(block: BlockMap) {
   for (const [id, entry] of Object.entries(block)) {
     const nested = entry as unknown as NestedBlockEntry;
-    if (nested?.value?.value !== undefined && nested?.value?.role !== undefined) {
+    if (
+      nested?.value?.value !== undefined &&
+      nested?.value?.role !== undefined
+    ) {
       block[id] = nested.value;
     }
   }
-  return { ...recordMap, block };
 }
 
+const notion = new NotionAPI({
+  ofetchOptions: {
+    // Notion's Cloudflare rejects Node's default "node" User-Agent with a 403.
+    headers: {
+      "User-Agent":
+        "notion-client (+https://github.com/NotionX/react-notion-x)",
+    },
+    // Must run before notion-client walks the page, or it never fetches blocks past the first chunk.
+    onResponse({ response }) {
+      const block = response._data?.recordMap?.block;
+      if (block) unwrapBlocks(block);
+    },
+  },
+});
+
 export const getPageContent = cache(async (pageId: string) => {
-  const raw = await notion.getPage(pageId);
-  const recordMap = normalizeRecordMap(raw);
+  const recordMap = await notion.getPage(pageId);
   const title = getPageTitle(recordMap);
   const blocks = recordMap.block;
 
@@ -40,7 +49,7 @@ export const getPageContent = cache(async (pageId: string) => {
 });
 
 export async function getAllBlogPosts(pageId: string) {
-  const recordMap = normalizeRecordMap(await notion.getPage(pageId));
+  const recordMap = await notion.getPage(pageId);
   const blocks = recordMap.block;
 
   let blogPosts: Blog[] = [];
