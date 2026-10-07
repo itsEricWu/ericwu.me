@@ -4,14 +4,14 @@ export const zh: Messages = {
   meta: {
     siteName: "Eric Wu | Chengxiang Wu · AWS 软件工程师",
     description:
-      "Eric Wu（Chengxiang Wu）的个人网站。AWS 的 SDE II，在做 agent 系统和生成式 UI。这里有项目、文章和一些小实验。",
+      "Eric Wu（Chengxiang Wu）的个人网站。目前是 AWS 的 SDE II，做 agent 系统和生成式 UI。这里有项目、文章和一些小实验。",
     skip: "跳到正文",
   },
   common: {
     period: "。",
     open: "打开 ↗",
     openLink: (label) => `打开 ${label} ↗`,
-    sample: "示意图，数据为示例",
+    sample: "示意图，数据仅作演示",
     email: "邮箱",
     location: "西雅图",
   },
@@ -28,8 +28,8 @@ export const zh: Messages = {
   palette: {
     dialog: "命令面板",
     input: "搜索命令",
-    placeholder: "跳到某个项目、复制邮箱、见见 Bert…",
-    empty: (query) => `没有和“${query}”匹配的结果。`,
+    placeholder: "跳到项目、复制邮箱，或者去看看 Bert…",
+    empty: (query) => `没找到和“${query}”相关的内容。`,
     help: "↑↓ 选择 · ↵ 打开",
     groups: {
       navigate: "导航",
@@ -67,7 +67,7 @@ export const zh: Messages = {
   },
   hero: {
     lead: "嗨，我是 ",
-    bio: "AWS 的 SDE II，在做 agent 系统和生成式 UI。UCLA 和普渡校友。喜欢做让生活更轻松的 AI 体验。工作之外，我常带狗狗 Bert 去徒步，计划 2027 年登顶雷尼尔山！",
+    bio: "目前是 AWS 的 SDE II，做 agent 系统和生成式 UI。毕业于普渡和 UCLA。喜欢用 AI 做些让生活更轻松的东西。工作之余，我常带狗狗 Bert 去徒步，目标是 2027 年登顶雷尼尔山！",
     socials: "社交链接",
     blog: "读我的博客",
     blogCursor: "文章",
@@ -83,43 +83,43 @@ export const zh: Messages = {
   },
   projects: {
     finops: {
-      kicker: "在 AWS 上线 · 公开预览",
+      kicker: "AWS 已上线 · 公开预览",
       blurb:
-        "给每个工程师配一个全天候的成本专家：排查异常，回答成本问题，还会直接提交修复。",
+        "帮每个工程师盯着云成本：出了异常会自己去查，成本问题随时能问，还能直接提修复。",
     },
     artifacts: {
-      kicker: "在 AWS 上线 · 生成式 UI",
+      kicker: "AWS 已上线 · 生成式 UI",
       blurb:
-        "Amazon Q 用实时的表格、图表和仪表盘来回答，可以排序、筛选和翻页。",
+        "Amazon Q 直接用实时的表格、图表和仪表盘来回答，能排序、筛选，也能翻页。",
     },
     packbook: {
-      kicker: "业余项目 · iOS",
-      blurb: "给装备拍照，为每次出行打包，再分享成一个页面。",
+      kicker: "个人项目 · iOS",
+      blurb: "给装备拍张照，出门前按行程打包，清单还能分享成一个网页。",
     },
     secondself: {
-      kicker: "业余项目",
-      blurb: "一个由 AI agent 运营的社交网络。",
+      kicker: "个人项目",
+      blurb: "AI agent 自己运营的社交网络。",
     },
     webagent: {
       kicker: "项目 · SimpleGen",
-      blurb: "一个 AI agent，帮你调研网红并起草合作邀约。",
+      blurb: "帮你调研网红、起草合作邀约的 AI agent。",
     },
     chatbot: {
       kicker: "项目 · SimpleGen",
-      blurb: "一组不同人设的聊天机器人。",
+      blurb: "一组各有人设的聊天机器人。",
     },
     paper: {
-      kicker: "研究 · AAAI 2024",
-      blurb: "累积差分学习 VAE，用于流入和流出在时间上相关的时间序列。",
+      kicker: "论文 · AAAI 2024",
+      blurb: "累积差分学习 VAE，用来建模流入和流出在时间上相互关联的时间序列。",
     },
   },
   finops: {
     eyebrow: "AWS · 公开预览",
     cta: "去 AWS 看看",
     ctaLabel: "去 AWS 看看：FinOps Agent",
-    pitch: "全天候的成本专家，就在工程师干活的地方。",
+    pitch: "工程师身边的云成本顾问，随时在线。",
     replay: "重播",
-    chart: "30 天的每日成本，第 23 天有一个尖峰",
+    chart: "近 30 天的每日成本，第 23 天突然冲高",
     notes: [
       {
         title: "发现异常",
@@ -127,25 +127,25 @@ export const zh: Messages = {
       },
       {
         title: "找到根因",
-        body: "CI 机群卡在上限：新开了 24 台 g5.2xlarge。",
+        body: "CI 集群一直顶在上限，新开了 24 台 g5.2xlarge。",
       },
       {
         title: "已提工单",
-        body: "COST-142 已创建，并同步到 #team-cost。",
+        body: "COST-142 已建好，也发到了 #team-cost。",
       },
     ],
     now: "刚刚",
     ago: (minutes) => `${minutes} 分钟前`,
   },
   artifacts: {
-    pitch: "回答直接变成实时的图表和表格，可以排序，也可以接着探索。",
+    pitch: "回答直接变成实时的图表和表格，能排序，还能接着往下挖。",
     docs: "文档",
     docsLabel: "Amazon Q chat artifacts 文档",
     readDocs: "查看文档",
     readDocsLabel: "查看 Amazon Q chat artifacts 文档",
     ask: "问 Q",
     tabs: {
-      chart: { label: "图表", prompt: "按区域画出我上个月的成本" },
+      chart: { label: "图表", prompt: "把我上个月的成本按区域画成图" },
       table: { label: "表格", prompt: "列出我正在运行的 EC2 实例" },
       forecast: { label: "预测", prompt: "预测我未来 6 个月的支出" },
     },
@@ -160,7 +160,7 @@ export const zh: Messages = {
     city: "西雅图",
     labels: {
       "New moon": "新月",
-      "Waxing crescent": "娥眉月",
+      "Waxing crescent": "蛾眉月",
       "First quarter": "上弦月",
       "Waxing gibbous": "盈凸月",
       "Full moon": "满月",
@@ -183,11 +183,11 @@ export const zh: Messages = {
     drag: "拖动旋转",
     aria: "地球仪，标出了普渡、UCLA 和西雅图",
     cursor: "转转地球",
-    labels: { seattle: "西雅图 · 现在", ucla: "UCLA", purdue: "普渡" },
+    labels: { seattle: "西雅图 · 现居", ucla: "UCLA", purdue: "普渡" },
   },
   packbook: {
-    eyebrow: "业余项目 · iOS",
-    pitch: "拍下装备，打包，分享。",
+    eyebrow: "个人项目 · iOS",
+    pitch: "拍下装备，打好包，再分享出去。",
     next: "下一张 PackBook 截图",
     nextCursor: "下一张",
     show: (label) => `查看「${label}」`,
@@ -196,7 +196,7 @@ export const zh: Messages = {
       { label: "识别", alt: "PackBook 正在识别一个 Petzl GRIGRI" },
       { label: "打包", alt: "PackBook 打包清单，按类别显示基础重量" },
       { label: "分享", alt: "PackBook 的行程分享卡片" },
-      { label: "购买", alt: "PackBook 装备详情，附各家的购买价格" },
+      { label: "比价", alt: "PackBook 装备详情页，列出各家的售价" },
     ],
   },
   photos: {
@@ -218,7 +218,7 @@ export const zh: Messages = {
   emoji: {
     title: "文字变 emoji",
     aria: "描述一种心情",
-    placeholder: "登顶日！",
+    placeholder: "今天登顶啦！",
     retry: "再试一次？",
     cursor: "生成",
     go: "生成",
@@ -233,15 +233,15 @@ export const zh: Messages = {
   blog: {
     title: "博客",
     description:
-      "Eric Wu 的博客：软件工程、AI、agent 系统、全栈开发，还有其他。",
+      "Eric Wu 的博客，写软件工程、AI、agent 系统和全栈开发，也写点别的。",
     eyebrow: (count) => `博客 · ${count} 篇`,
     heading: "文章",
-    intro: "写 AI agent 和软件工程，也写和我的狗 Bert 一起去徒步。",
+    intro: "写 AI agent 和软件工程，也写带狗狗 Bert 去徒步的事。",
     read: "阅读",
     back: "← 全部文章",
     backCursor: "全部文章",
     fallbackTitle: "博客文章",
-    byline: (title, author) => `${title}，作者 ${author}`,
+    byline: (title, author) => `${author} 的文章：${title}`,
     untranslated: "这篇还没有中文版，下面是英文原文。",
     loading: "加载中",
   },
