@@ -91,10 +91,12 @@ export function AvatarFlip({
     >
       <span
         className="relative block size-full transition-transform duration-[900ms] [transform-style:preserve-3d] [transition-timing-function:cubic-bezier(.3,1.35,.45,1)] group-active:scale-95"
+        data-flipper
         style={{ transform: flipped ? "rotateY(180deg)" : undefined }}
       >
         <span
           className="absolute inset-0 overflow-hidden rounded-full shadow-[0_8px_24px_-10px_rgb(0_0_0/0.45)] ring-1 ring-line [backface-visibility:hidden]"
+          data-face
           style={face(!flipped)}
         >
           <Image
@@ -108,6 +110,7 @@ export function AvatarFlip({
         </span>
         <span
           className="absolute inset-0 overflow-hidden rounded-full bg-card-2 ring-1 ring-line [backface-visibility:hidden] [transform:rotateY(180deg)]"
+          data-face
           style={face(flipped)}
         >
           {dogIn && (

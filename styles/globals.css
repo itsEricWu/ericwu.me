@@ -680,6 +680,23 @@ html.ff {
     backdrop-filter: var(--lg-filter);
   }
 
+  /* The hero lens's copy of the card sits on a plain fill and only has to
+     look right: no backdrop blur, and the avatar flattened to the face that
+     shows, so nothing in the lens needs a layer of its own. */
+  [data-clone] .lg {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  [data-clone] [data-face][style*="hidden"] {
+    display: none;
+  }
+
+  [data-clone] :is([data-face], [data-flipper]) {
+    transform: none !important;
+    transform-style: flat !important;
+  }
+
   :is(a, button).lg {
     transition: scale var(--dur-wobble) var(--ease-wobble);
   }

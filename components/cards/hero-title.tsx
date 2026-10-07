@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { buildLensMap, type LensMap } from "@/components/glass/displacement";
+import {
+  buildLensMap,
+  supportsBackdropRefraction,
+  type LensMap,
+} from "@/components/glass/displacement";
 import { GlassFilter, registerLight } from "@/components/glass/liquid-glass";
 import { cn, prefersReducedMotion } from "@/lib/utils";
 
@@ -13,8 +17,11 @@ const BASE_WEIGHT = 640;
 /** At rest the letters are fully soft; the wave sharpens what it passes and melts what it touches. */
 const REST = { fontWeight: BASE_WEIGHT, fontVariationSettings: "'SOFT' 100" };
 const FILTER_ID = "hero-droplet-lens";
-/** Matches the wrapper's px-1/py-1, so the clone inside the lens lines up with the title. */
-const PAD = 4;
+/** How much the full-size lens magnifies. */
+const MAGNIFY = 1.18;
+
+const clamp = (v: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, v));
 
 const letter = (ch: string, i: number) => (
   <span
@@ -28,11 +35,10 @@ const letter = (ch: string, i: number) => (
 );
 
 // Sized in CSS (.hero-title): one line, or two when the card has the height.
-function Title({ clone }: { clone?: boolean }) {
+function Title() {
   return (
     <h1
-      aria-hidden={clone || undefined}
-      aria-label={clone ? undefined : TEXT}
+      aria-label={TEXT}
       className="hero-title font-display tracking-[-0.022em] whitespace-nowrap"
     >
       <span aria-hidden>
@@ -46,17 +52,15 @@ function Title({ clone }: { clone?: boolean }) {
           </span>
           <span
             className="inline-block"
-            data-period={clone ? undefined : ""}
+            data-period=""
             data-wave={TEXT.length - 1}
             style={REST}
           >
             .
-            {!clone && (
-              <span
-                className="inline-block size-0 align-baseline"
-                data-baseline
-              />
-            )}
+            <span
+              className="inline-block size-0 align-baseline"
+              data-baseline
+            />
           </span>
         </span>
       </span>
@@ -67,9 +71,9 @@ function Title({ clone }: { clone?: boolean }) {
 /**
  * The headline. Letters melt under the cursor (Fraunces' weight and SOFT axes), and the
  * period is a bead of liquid glass: pull it and it swells into a lens that
- * magnifies whatever it passes over, stretching with speed; let go and it
- * springs home and shrinks back into a period. The lens refracts a
- * pixel-aligned copy of the title, so it works in every browser.
+ * magnifies whatever on the card it passes over, stretching with speed; let
+ * go and it springs home and shrinks back into a period. The lens shows a
+ * pixel-aligned copy of the card, so it works in every browser.
  */
 export function HeroTitle() {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -84,21 +88,15 @@ export function HeroTitle() {
     const wrap = wrapRef.current;
 
     if (!wrap) return;
-    const groups = new Map<string, HTMLElement[]>();
-
-    wrap.querySelectorAll<HTMLElement>("[data-wave]").forEach((el) => {
-      const key = el.dataset.wave!;
-
-      groups.set(key, [...(groups.get(key) ?? []), el]);
-    });
-    const originals = [
-      ...wrap.querySelectorAll<HTMLElement>("[data-wave]"),
-    ].filter((el) => !el.closest("[data-clone]"));
     let frame = 0;
 
     /** `fx` gives each letter's closeness to the wave (0 to 1) from its box, or null for rest. */
     const setWeights = (fx: (box: DOMRect) => number | null) => {
+      // The lens's copy of the card has the same letters: weigh them alike.
+      const nodes = [...wrap.querySelectorAll<HTMLElement>("[data-wave]")];
+      const originals = nodes.filter((el) => !el.closest("[data-clone]"));
       const boxes = originals.map((el) => el.getBoundingClientRect());
+      const styles = new Map<string, [string, string]>();
 
       originals.forEach((el, i) => {
         const g = fx(boxes[i]);
@@ -108,10 +106,14 @@ export function HeroTitle() {
             ? REST.fontVariationSettings
             : `'SOFT' ${Math.round(20 + 80 * g)}`;
 
-        groups.get(el.dataset.wave!)?.forEach((node) => {
-          node.style.fontWeight = String(weight);
-          node.style.fontVariationSettings = soft;
-        });
+        styles.set(el.dataset.wave!, [String(weight), soft]);
+      });
+      nodes.forEach((node) => {
+        const style = styles.get(node.dataset.wave!);
+
+        if (!style) return;
+        node.style.fontWeight = style[0];
+        node.style.fontVariationSettings = style[1];
       });
       // Heavier letters are wider: keep the bead on the period as it moves.
       relayout.current();
@@ -179,24 +181,63 @@ export function HeroTitle() {
     const orb = orbRef.current;
     const clone = cloneRef.current;
     const handle = handleRef.current;
+    const card = wrap?.closest<HTMLElement>("[data-hero]");
 
-    if (!wrap || !orb || !clone || !handle) return;
+    if (!wrap || !orb || !clone || !handle || !card) return;
     const unlight = registerLight(orb);
     const size = orb.offsetWidth;
     const half = size / 2;
     const still = prefersReducedMotion();
+    // Only Chromium draws the refraction filter in place: WebKit misplaces it,
+    // leaving a dark disc with a stray fragment. Elsewhere the copy is simply
+    // scaled up under the lens.
+    const refract = supportsBackdropRefraction();
 
     // Real glass is subtle: a gentle loupe in the middle, light bending hard only at the rim.
-    setMap(
-      buildLensMap({
-        width: size,
-        height: size,
-        radius: half,
-        bezel: size * 0.3,
-        thickness: size * 0.22,
-        magnify: 1.18,
-      }),
-    );
+    if (refract) {
+      setMap(
+        buildLensMap({
+          width: size,
+          height: size,
+          radius: half,
+          bezel: size * 0.3,
+          thickness: size * 0.22,
+          magnify: MAGNIFY,
+        }),
+      );
+    }
+
+    // What the lens shows: a copy of the whole card, held in place under it,
+    // so it magnifies whatever it passes over. Recopied when the card changes
+    // size and each time the bead is picked up (the avatar may have flipped).
+    const area = { x: 0, y: 0, w: 0, h: 0 };
+    const copyCard = () => {
+      clone.replaceChildren();
+      const copy = card.cloneNode(true) as HTMLElement;
+
+      copy
+        .querySelectorAll("[data-droplet], [data-grab]")
+        .forEach((el) => el.remove());
+      copy.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+      copy.querySelectorAll("[data-period], [data-baseline]").forEach((el) => {
+        el.removeAttribute("data-period");
+        el.removeAttribute("data-baseline");
+      });
+      copy.removeAttribute("data-hero");
+      copy.setAttribute("aria-hidden", "true");
+      copy.inert = true;
+      copy.style.width = `${card.offsetWidth}px`;
+      copy.style.height = `${card.offsetHeight}px`;
+      clone.append(copy);
+      // The card's box, in the same frame as the bead's position.
+      const c = card.getBoundingClientRect();
+      const w = wrap.getBoundingClientRect();
+
+      area.x = c.left - w.left;
+      area.y = c.top - w.top;
+      area.w = c.width;
+      area.h = c.height;
+    };
 
     // Where the period's dot is, from the font's real ink bounds.
     const home = { x: 0, y: 0, s: 0.16 };
@@ -255,11 +296,16 @@ export function HeroTitle() {
       orb.style.transform = `translate(${p.x - half}px, ${p.y - half}px) rotate(${a}deg) scale(${s * (1 + p.def)}, ${
         s * (1 - p.def * 0.7)
       }) rotate(${-a}deg)`;
-      // Counter-scale the copy inside so the lens always shows the title at true size and place.
-      const tx = (PAD - p.x) / s - PAD + half;
-      const ty = (PAD - p.y) / s - PAD + half;
+      // Counter-scale the copy so the lens shows the card at true size and
+      // place; without the refraction map, the copy grows as the bead does.
+      const grow = refract
+        ? 1
+        : 1 + (MAGNIFY - 1) * clamp((s - home.s) / (1 - home.s), 0, 1);
+      const k = grow / s;
 
-      clone.style.transform = `translate(${tx}px, ${ty}px) scale(${1 / s})`;
+      clone.style.transform = `translate(${half + (area.x - p.x) * k}px, ${
+        half + (area.y - p.y) * k
+      }px) scale(${k})`;
     };
 
     const settle = () => {
@@ -270,6 +316,7 @@ export function HeroTitle() {
       render();
     };
 
+    copyCard();
     findHome();
     settle();
     orb.style.opacity = "1";
@@ -365,12 +412,21 @@ export function HeroTitle() {
     const aim = (e: PointerEvent) => {
       const w = wrap.getBoundingClientRect();
 
-      // On touch, float the lens above the finger like iOS's loupe.
-      target = { x: e.clientX - w.left, y: e.clientY - w.top - lift };
+      // On touch, float the lens above the finger like iOS's loupe. It stays
+      // on the card, where its copy has something to show.
+      target = {
+        x: clamp(e.clientX - w.left, area.x + half, area.x + area.w - half),
+        y: clamp(
+          e.clientY - w.top - lift,
+          area.y + half,
+          area.y + area.h - half,
+        ),
+      };
     };
     const onDown = (e: PointerEvent) => {
       e.preventDefault();
       handle.setPointerCapture(e.pointerId);
+      copyCard();
       held = true;
       lift = e.pointerType === "touch" ? size * 0.85 : 0;
       aim(e);
@@ -406,6 +462,10 @@ export function HeroTitle() {
       render();
     };
     const onResize = () => relayout.current();
+    const ro = new ResizeObserver(() => {
+      copyCard();
+      relayout.current();
+    });
 
     handle.addEventListener("pointerdown", onDown);
     handle.addEventListener("pointermove", onMove);
@@ -414,7 +474,11 @@ export function HeroTitle() {
     handle.addEventListener("pointerenter", onEnter);
     handle.addEventListener("pointerleave", onLeave);
     window.addEventListener("resize", onResize);
-    document.fonts.ready.then(() => relayout.current());
+    ro.observe(card);
+    document.fonts.ready.then(() => {
+      copyCard();
+      relayout.current();
+    });
 
     return () => {
       cancelAnimationFrame(frame);
@@ -429,6 +493,7 @@ export function HeroTitle() {
       handle.removeEventListener("pointerenter", onEnter);
       handle.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("resize", onResize);
+      ro.disconnect();
     };
   }, []);
 
@@ -451,16 +516,15 @@ export function HeroTitle() {
           />
         )}
         <div
-          className="absolute inset-0 overflow-hidden rounded-full bg-[#fbf9f9] dark:bg-[#161b22]"
+          className="absolute inset-0 overflow-hidden rounded-full bg-[#eff4fa] dark:bg-[#18212b]"
           style={{ filter: map ? `url(#${FILTER_ID})` : undefined }}
         >
+          {/* Filled with a copy of the card from the effect; React keeps it empty. */}
           <div
             ref={cloneRef}
-            className="absolute top-1 left-1 w-max origin-top-left"
+            className="absolute top-0 left-0 origin-top-left"
             data-clone
-          >
-            <Title clone />
-          </div>
+          />
         </div>
         {/* Bubble shading: rim thickness, a glossy specular highlight, and a soft caustic. */}
         <span className="pointer-events-none absolute inset-0 rounded-full shadow-[inset_0_0_0_1px_rgb(255_255_255/0.35),inset_0_12px_18px_-12px_rgb(255_255_255/0.75),inset_0_-14px_22px_-14px_rgb(255_255_255/0.5),inset_0_0_10px_rgb(0_0_0/0.05)]" />
@@ -473,6 +537,7 @@ export function HeroTitle() {
         aria-hidden
         className="absolute top-0 left-0 z-20 -mt-6 -ml-6 size-12 cursor-grab touch-none rounded-full active:cursor-grabbing"
         data-cursor="Pull the period"
+        data-grab
         data-nodrag
       />
     </div>
