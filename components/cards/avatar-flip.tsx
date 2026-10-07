@@ -1,9 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { cn, onIdle } from "@/lib/utils";
+
+/**
+ * Each face is hidden outright while it's turned away, switching as the flip
+ * passes edge-on (114 ms into the spring below). backface-visibility alone isn't
+ * enough: the theme switch's snapshot ignores it, which showed Bert.
+ */
+const face = (shown: boolean): CSSProperties => ({
+  visibility: shown ? "visible" : "hidden",
+  transition: "visibility 0s linear 114ms",
+});
 
 /** Tap the avatar to flip it over and meet Bert. */
 export function AvatarFlip({
@@ -48,7 +58,10 @@ export function AvatarFlip({
         className="relative block size-full transition-transform duration-[900ms] [transform-style:preserve-3d] [transition-timing-function:cubic-bezier(.3,1.35,.45,1)] group-active:scale-95"
         style={{ transform: flipped ? "rotateY(180deg)" : undefined }}
       >
-        <span className="absolute inset-0 overflow-hidden rounded-full shadow-[0_8px_24px_-10px_rgb(0_0_0/0.45)] ring-1 ring-line [backface-visibility:hidden]">
+        <span
+          className="absolute inset-0 overflow-hidden rounded-full shadow-[0_8px_24px_-10px_rgb(0_0_0/0.45)] ring-1 ring-line [backface-visibility:hidden]"
+          style={face(!flipped)}
+        >
           <Image
             fill
             preload
@@ -58,7 +71,10 @@ export function AvatarFlip({
             src={avatarUrl}
           />
         </span>
-        <span className="absolute inset-0 overflow-hidden rounded-full bg-card-2 ring-1 ring-line [backface-visibility:hidden] [transform:rotateY(180deg)]">
+        <span
+          className="absolute inset-0 overflow-hidden rounded-full bg-card-2 ring-1 ring-line [backface-visibility:hidden] [transform:rotateY(180deg)]"
+          style={face(flipped)}
+        >
           {showDog && (
             <Image
               fill

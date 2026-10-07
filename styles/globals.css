@@ -58,7 +58,7 @@ html.ff {
 }
 
 /* A gentle settle when the display face swaps in. */
-.ff-in :is(.font-display, .title, .hero-name) {
+.ff-in :is(.font-display, .title) {
   animation: ff-settle 0.5s ease both;
 }
 

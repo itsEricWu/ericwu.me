@@ -16,10 +16,10 @@ const FILTER_ID = "hero-droplet-lens";
 /** Matches the wrapper's px-1/py-1, so the clone inside the lens lines up with the title. */
 const PAD = 4;
 
-const letter = (ch: string, i: number, block = true) => (
+const letter = (ch: string, i: number) => (
   <span
     key={i}
-    className={cn(block && "inline-block", ch === " " && "w-[0.24em]")}
+    className={cn("inline-block", ch === " " && "w-[0.24em]")}
     data-wave={i}
     style={REST}
   >
@@ -38,10 +38,11 @@ function Title({ clone }: { clone?: boolean }) {
       <span aria-hidden>
         {LEAD.split("").map((ch, i) => letter(ch, i))}
         <span className="hero-tail inline-block">
-          {/* Plain inline letters: WebKit clips the gradient only to the
-              name's own inline text, so inline-block letters would vanish. */}
-          <span className="hero-name">
-            {NAME.split("").map((ch, j) => letter(ch, LEAD.length + j, false))}
+          {/* One plain text node, the one form of background-clip: text every
+              Safari paints: split into letters, the gradient name vanished on
+              iPhone. The wave weighs the name as a whole. */}
+          <span className="hero-name" data-wave={LEAD.length} style={REST}>
+            {NAME}
           </span>
           <span
             className="inline-block"
