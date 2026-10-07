@@ -138,7 +138,7 @@ export default function RootLayout({
           <Backdrop />
           <SiteNav />
           <main
-            className="relative z-10 mx-auto w-full max-w-[1240px] px-3 pt-6 pb-28 sm:px-6 sm:pt-24 sm:pb-16"
+            className="relative z-10 mx-auto w-full max-w-[1240px] grow px-3 pt-6 pb-6 sm:px-6 sm:pt-24 sm:pb-9"
             id="main"
           >
             {children}

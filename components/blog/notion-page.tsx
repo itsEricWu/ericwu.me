@@ -135,7 +135,7 @@ export const NotionPage = ({
   const created = getBlockValue(recordMap.block[rootPageId])?.created_time;
 
   return (
-    <article ref={articleRef} className="mx-auto max-w-[760px]">
+    <article ref={articleRef} className="mx-auto max-w-[760px]" data-col="post">
       {/* Header and back link line up with the Notion body (its page padding plus the text's 2px). */}
       <Link
         className="lg ml-[calc(min(16px,8vw)_+_2px)] inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium"

@@ -7,7 +7,7 @@ export default function NotFound() {
       <h1 className="font-display text-[clamp(4rem,14vw,8rem)] leading-none font-semibold tracking-[-0.03em]">
         Lost<span className="text-glacier">.</span>
       </h1>
-      <p className="max-w-[40ch] text-[15px] text-ink-2">
+      <p className="max-w-[40ch] text-[15px] text-pretty text-ink-2">
         This trail doesn&apos;t exist. Even Bert couldn&apos;t sniff it out.
       </p>
       <Link

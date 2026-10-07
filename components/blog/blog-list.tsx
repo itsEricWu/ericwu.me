@@ -18,7 +18,7 @@ const fmt = (d: Date | null) =>
 
 export function BlogList({ blogPosts }: { blogPosts: Post[] }) {
   return (
-    <div className="pb-6">
+    <div>
       <header className="mb-8 flex flex-col items-start gap-3 pt-2 sm:mb-10">
         <Eyebrow>Writing · {blogPosts.length} posts</Eyebrow>
         <h1 className="font-display text-[clamp(2.3rem,5.2vw,3.6rem)] leading-[1.02] font-semibold tracking-[-0.02em]">

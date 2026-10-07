@@ -306,7 +306,10 @@ html.ff {
     color-scheme: dark;
   }
 
+  /* A column, so on short pages the footer still sits at the bottom. */
   body {
+    display: flex;
+    flex-direction: column;
     min-height: 100dvh;
     background: var(--bg);
     color: var(--ink);
@@ -771,6 +774,30 @@ html.ff {
       inset 0 -8px 16px -10px rgb(255 255 255 / 0.12),
       inset 0 0 0 0.5px rgb(255 255 255 / 0.1);
   }
+
+  /* The footer spans the page's column, its text on the column's text edge:
+     the cards' padding on the home grid, the header on the blog, the prose in
+     a post. */
+  .site-footer {
+    --footer-col: 100%;
+    --footer-inset: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .site-footer {
+      --footer-inset: 24px;
+    }
+  }
+
+  html:has([data-col="blog"]) .site-footer {
+    --footer-col: 1040px;
+    --footer-inset: 0px;
+  }
+
+  html:has([data-col="post"]) .site-footer {
+    --footer-col: 760px;
+    --footer-inset: calc(min(16px, 8vw) + 2px);
+  }
 }
 
 /* ---------- Motion ---------- */
@@ -926,7 +953,7 @@ html .notion-title {
 }
 
 html .notion-page {
-  padding-bottom: 6rem;
+  padding-bottom: 1.5rem;
 }
 
 html .notion-text,
