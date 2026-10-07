@@ -23,6 +23,7 @@ There's no UI kit: the cards, the glass material and the motion are all hand-mad
   - A 3D MINI that loads only when asked for.
   - An emoji card that picks an emoji for how you feel.
 - **A blog on Notion.** Posts are written in Notion, rendered with react-notion-x, prerendered and refreshed hourly.
+- **English and Chinese.** Every page has a Chinese twin under `/zh`, and the nav, the footer and ⌘K switch between them. Chinese headings are set in Noto Serif SC beside Fraunces, and a post carries its Chinese version as a sub-page in Notion.
 - **⌘K everywhere.** A command palette with fuzzy search over views, projects, links and a few tricks.
 - **Light and dark.** The theme switches with a circular reveal. Safari switches instantly, because it paints view-transition snapshots without glass.
 - **Built to be fast.**
