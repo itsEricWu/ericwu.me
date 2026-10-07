@@ -61,7 +61,7 @@ export function EmojiCard() {
   return (
     <form
       ref={rootRef}
-      className="flex h-full flex-col gap-2 p-3 sm:gap-3 sm:p-5"
+      className="flex h-full flex-col gap-2 p-3 sm:gap-3 sm:p-6"
       onSubmit={submit}
     >
       <div className="relative grid min-h-0 flex-1 place-items-center">

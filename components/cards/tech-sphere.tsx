@@ -210,7 +210,7 @@ export function TechSphere() {
   }, []);
 
   return (
-    <div className="relative flex h-full flex-col p-4 sm:p-5">
+    <div className="relative flex h-full flex-col p-5 sm:p-6">
       <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
         Toolbox
       </p>

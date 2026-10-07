@@ -32,7 +32,7 @@ export function MiniCard() {
 
   return (
     <div className="relative h-full">
-      <p className="absolute top-4 left-5 z-10 font-display text-[17px] font-semibold tracking-[-0.005em] sm:top-5">
+      <p className="absolute top-5 left-5 z-10 font-display text-[17px] font-semibold tracking-[-0.005em] sm:top-6 sm:left-6">
         My Mini
       </p>
       {show3D ? (
@@ -55,7 +55,7 @@ export function MiniCard() {
             sizes="(max-width: 640px) 40vw, 240px"
             src={mini}
           />
-          <span className="lg absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[12px] font-medium whitespace-nowrap">
+          <span className="lg absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[12px] font-medium whitespace-nowrap sm:bottom-6">
             <span className="lg-caustic" />
             <span>Tap for 3D</span>
           </span>

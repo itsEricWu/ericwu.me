@@ -22,7 +22,8 @@ export default async function Page() {
   const [home, posts] = await Promise.all([getHomeData(), getLatestPosts()]);
 
   // Order matters: cards pack first-fit in this order. Sizes are columns × rows
-  // on phones (2 columns), small tablets (2), tablets (3), and desktops (4).
+  // on phones (2 columns), wide phones (2), small tablets (2), tablets (3), and
+  // desktops (4).
   // On tablets:
   //   [hero      ][sky  ]
   //   [hero      ][globe]
@@ -52,6 +53,7 @@ export default async function Page() {
         [2, 2],
         [2, 2],
         [2, 2],
+        [2, 2],
       ],
       still: true,
       content: <HeroCard avatarUrl={home.avatarUrl} dogUrl={home.dogUrl} />,
@@ -61,6 +63,7 @@ export default async function Page() {
       tags: ["work"],
       label: "AWS FinOps Agent",
       size: [
+        [2, 2],
         [2, 2],
         [2, 1],
         [3, 1],
@@ -73,6 +76,7 @@ export default async function Page() {
       tags: ["work"],
       label: "Amazon Q artifacts",
       size: [
+        [2, 2],
         [2, 2],
         [2, 1],
         [3, 1],
@@ -89,6 +93,7 @@ export default async function Page() {
         [1, 1],
         [1, 1],
         [1, 1],
+        [1, 1],
       ],
       content: <SkyCard />,
     },
@@ -101,6 +106,7 @@ export default async function Page() {
         [1, 1],
         [1, 1],
         [1, 1],
+        [1, 1],
       ],
       content: <GlobeCard />,
     },
@@ -109,6 +115,7 @@ export default async function Page() {
       tags: ["projects"],
       label: projects.secondself.name,
       size: [
+        [2, 1],
         [2, 1],
         [2, 1],
         [2, 1],
@@ -128,6 +135,7 @@ export default async function Page() {
       label: "PackBook",
       size: [
         [2, 2],
+        [2, 2],
         [1, 2],
         [1, 2],
         [1, 2],
@@ -143,6 +151,7 @@ export default async function Page() {
         [2, 2],
         [2, 2],
         [2, 2],
+        [2, 2],
       ],
       content: <PhotoDeck photos={home.photos} />,
     },
@@ -151,6 +160,7 @@ export default async function Page() {
       tags: ["projects"],
       label: projects.webagent.name,
       size: [
+        [1, 2],
         [1, 2],
         [1, 2],
         [1, 2],
@@ -175,6 +185,7 @@ export default async function Page() {
         [2, 1],
         [2, 1],
         [2, 1],
+        [2, 1],
       ],
       content: (
         <ProjectCard
@@ -195,6 +206,7 @@ export default async function Page() {
         [1, 1],
         [1, 1],
         [1, 1],
+        [1, 1],
       ],
       content: <TechSphere />,
     },
@@ -203,6 +215,7 @@ export default async function Page() {
       tags: ["about"],
       label: "Mini Cooper",
       size: [
+        [1, 1],
         [1, 1],
         [1, 1],
         [1, 1],
@@ -219,6 +232,7 @@ export default async function Page() {
         [1, 1],
         [1, 1],
         [1, 1],
+        [1, 1],
       ],
       content: <EmojiCard />,
     },
@@ -227,6 +241,7 @@ export default async function Page() {
       tags: ["projects", "work"],
       label: projects.paper.name,
       size: [
+        [1, 1],
         [1, 1],
         [1, 1],
         [1, 1],
@@ -247,6 +262,7 @@ export default async function Page() {
       tags: ["about"],
       label: "Latest writing",
       size: [
+        [2, 2],
         [2, 2],
         [2, 1],
         [2, 1],

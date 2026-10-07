@@ -192,7 +192,7 @@ export function GlobeCard() {
 
   return (
     <div className="@container relative h-full overflow-hidden">
-      <div className="absolute top-4 left-5 z-10 leading-tight @min-[220px]:top-5">
+      <div className="absolute top-5 left-5 z-10 leading-tight sm:top-6 sm:left-6">
         <p className="font-display text-[15px] leading-snug font-semibold tracking-[-0.005em] @min-[250px]:text-[17px]">
           Purdue → UCLA → Seattle
         </p>

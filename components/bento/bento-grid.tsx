@@ -35,8 +35,8 @@ import {
 export type BentoItem = {
   id: string;
   tags: View[];
-  /** Columns × rows in each layout tier (TIERS): phones, small tablets, tablets, desktops. */
-  size: readonly [Size, Size, Size, Size];
+  /** Columns × rows in each layout tier (TIERS): phones, wide phones, small tablets, tablets, desktops. */
+  size: readonly [Size, Size, Size, Size, Size];
   label: string;
   content: ReactNode;
   /** Skip the entrance animation (keep it off the LCP card). */

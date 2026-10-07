@@ -71,7 +71,7 @@ export function FinOpsCard() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col gap-4 p-5 sm:flex-row sm:gap-5 sm:p-6 lg:p-7">
+    <div className="flex h-full flex-col gap-4 p-5 sm:flex-row sm:gap-5 sm:p-6">
       <div className="flex flex-col sm:w-[43%] sm:shrink-0">
         <Eyebrow accent>AWS · Public preview</Eyebrow>
         <div className="mt-1 flex items-baseline justify-between gap-3">

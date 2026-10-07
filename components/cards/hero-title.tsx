@@ -27,32 +27,34 @@ const letter = (ch: string, i: number) => (
   </span>
 );
 
-// From small tablets up the line scales with its card (it runs ~6.4em wide).
+// Sized in CSS (.hero-title): one line, or two when the card has the height.
 function Title({ clone }: { clone?: boolean }) {
   return (
     <h1
       aria-hidden={clone || undefined}
       aria-label={clone ? undefined : TEXT}
-      className="font-display text-[2.8rem] leading-[1.02] tracking-[-0.022em] whitespace-nowrap sm:text-[length:clamp(2.4rem,15.5cqi_+_2px,5.2rem)]"
+      className="hero-title font-display tracking-[-0.022em] whitespace-nowrap"
     >
       <span aria-hidden>
         {LEAD.split("").map(letter)}
-        <span className="hero-name">
-          {NAME.split("").map((ch, j) => letter(ch, LEAD.length + j))}
-        </span>
-        <span
-          className="inline-block"
-          data-period={clone ? undefined : ""}
-          data-wave={TEXT.length - 1}
-          style={REST}
-        >
-          .
-          {!clone && (
-            <span
-              className="inline-block size-0 align-baseline"
-              data-baseline
-            />
-          )}
+        <span className="hero-tail inline-block">
+          <span className="hero-name">
+            {NAME.split("").map((ch, j) => letter(ch, LEAD.length + j))}
+          </span>
+          <span
+            className="inline-block"
+            data-period={clone ? undefined : ""}
+            data-wave={TEXT.length - 1}
+            style={REST}
+          >
+            .
+            {!clone && (
+              <span
+                className="inline-block size-0 align-baseline"
+                data-baseline
+              />
+            )}
+          </span>
         </span>
       </span>
     </h1>
@@ -73,7 +75,6 @@ export function HeroTitle() {
   const handleRef = useRef<HTMLSpanElement>(null);
   const relayout = useRef<() => void>(() => {});
   const [map, setMap] = useState<LensMap | null>(null);
-  const [pulled, setPulled] = useState(false);
 
   /* ---------- Variable-weight wave ---------- */
   useEffect(() => {
@@ -92,16 +93,12 @@ export function HeroTitle() {
     ].filter((el) => !el.closest("[data-clone]"));
     let frame = 0;
 
-    /** `fx` gives each letter's closeness to the wave (0 to 1), or null for rest. */
-    const setWeights = (fx: (center: number) => number | null) => {
-      const centers = originals.map((el) => {
-        const r = el.getBoundingClientRect();
-
-        return r.left + r.width / 2;
-      });
+    /** `fx` gives each letter's closeness to the wave (0 to 1) from its box, or null for rest. */
+    const setWeights = (fx: (box: DOMRect) => number | null) => {
+      const boxes = originals.map((el) => el.getBoundingClientRect());
 
       originals.forEach((el, i) => {
-        const g = fx(centers[i]);
+        const g = fx(boxes[i]);
         const weight = g === null ? REST.fontWeight : Math.round(500 + 400 * g);
         const soft =
           g === null
@@ -116,15 +113,22 @@ export function HeroTitle() {
       // Heavier letters are wider: keep the bead on the period as it moves.
       relayout.current();
     };
-    const near = (x: number) => (c: number) =>
-      Math.exp(-((c - x) ** 2) / (2 * 64 ** 2));
+    // Closeness to a point; with no y, to a vertical line (the sweep crosses both lines at once).
+    const near = (x: number, y?: number) => (b: DOMRect) =>
+      Math.exp(
+        -(
+          (b.left + b.width / 2 - x) ** 2 +
+          (y === undefined ? 0 : (b.top + b.height / 2 - y) ** 2)
+        ) /
+          (2 * 64 ** 2),
+      );
 
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
-      const x = e.clientX;
+      const { clientX: x, clientY: y } = e;
 
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setWeights(near(x)));
+      frame = requestAnimationFrame(() => setWeights(near(x, y)));
     };
     const onLeave = () => {
       cancelAnimationFrame(frame);
@@ -265,6 +269,21 @@ export function HeroTitle() {
     settle();
     orb.style.opacity = "1";
 
+    // A moment after load the bead swells and settles once: a wink that it can be pulled.
+    let wink = false;
+    let winkTimer = 0;
+    const winkStart = still
+      ? 0
+      : window.setTimeout(() => {
+          if (held) return;
+          wink = true;
+          kick();
+          winkTimer = window.setTimeout(() => {
+            wink = false;
+            kick();
+          }, 700);
+        }, 2600);
+
     let frame = 0;
     let last = performance.now();
     let lift = 0;
@@ -273,7 +292,7 @@ export function HeroTitle() {
       const dt = Math.min(32, now - last) / 16.67;
       const goal = held ? target : home;
       // Hovering swells the bead a little: an invitation to pull it.
-      const goalS = held ? 1 : hover ? home.s * 1.55 : home.s;
+      const goalS = held ? 1 : hover || wink ? home.s * 1.55 : home.s;
 
       last = now;
       if (held) {
@@ -318,7 +337,7 @@ export function HeroTitle() {
         frame = requestAnimationFrame(step);
       } else {
         frame = 0;
-        if (!hover) settle();
+        if (!hover && !wink) settle();
       }
     };
     const kick = () => {
@@ -349,7 +368,6 @@ export function HeroTitle() {
       handle.setPointerCapture(e.pointerId);
       held = true;
       lift = e.pointerType === "touch" ? size * 0.85 : 0;
-      setPulled(true);
       aim(e);
       kick();
     };
@@ -395,6 +413,8 @@ export function HeroTitle() {
 
     return () => {
       cancelAnimationFrame(frame);
+      window.clearTimeout(winkStart);
+      window.clearTimeout(winkTimer);
       unlight();
       relayout.current = () => {};
       handle.removeEventListener("pointerdown", onDown);
@@ -450,15 +470,6 @@ export function HeroTitle() {
         data-cursor="Pull the period"
         data-nodrag
       />
-      <p
-        aria-hidden
-        className={cn(
-          "pointer-events-none mt-3 text-[13px] text-muted transition-opacity duration-500 max-sm:hidden",
-          pulled && "opacity-0",
-        )}
-      >
-        Psst, the period is liquid glass. Pull it.
-      </p>
     </div>
   );
 }

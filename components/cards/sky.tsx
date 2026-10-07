@@ -544,7 +544,7 @@ export function SkyCard() {
         style={{ backgroundImage: GRAIN }}
       />
 
-      <div className="relative flex h-full flex-col justify-between p-4 [text-shadow:0_1px_10px_rgb(0_0_0/0.18)] sm:p-5">
+      <div className="relative flex h-full flex-col justify-between p-5 [text-shadow:0_1px_10px_rgb(0_0_0/0.18)] sm:p-6">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1 leading-none">
             <p className="flex items-center gap-1 text-[15px] font-semibold">

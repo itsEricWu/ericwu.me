@@ -381,24 +381,31 @@ html.ff {
     grid-row: var(--r0) / span var(--h0);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 480px) {
     .bento > .card {
       grid-column: var(--c1) / span var(--w1);
       grid-row: var(--r1) / span var(--h1);
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     .bento > .card {
       grid-column: var(--c2) / span var(--w2);
       grid-row: var(--r2) / span var(--h2);
     }
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     .bento > .card {
       grid-column: var(--c3) / span var(--w3);
       grid-row: var(--r3) / span var(--h3);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento > .card {
+      grid-column: var(--c4) / span var(--w4);
+      grid-row: var(--r4) / span var(--h4);
     }
   }
 
@@ -922,6 +929,69 @@ html iframe.notion-asset-object-fit,
 html .notion-yt-lite {
   border-radius: 1rem;
   background-color: transparent;
+}
+
+/*
+ * The hero headline: one line that grows with its card (it runs ~6.4em wide),
+ * or "Hey, I'm / Eric." on two lines when the card has the height for it.
+ * How much height that takes depends on how the bio wraps, so each type size
+ * (phones 16px, tablets 17px, desktops 18px) gets its own threshold.
+ */
+.hero-title {
+  font-size: clamp(2rem, 15.5cqi, 5.2rem);
+  line-height: 1.02;
+}
+
+/* Tall phone cards. */
+@container hero (min-height: 470px) and (max-aspect-ratio: 9 / 10) {
+  .hero-title {
+    font-size: 23cqi;
+    line-height: 0.98;
+  }
+
+  .hero-tail {
+    display: block;
+  }
+}
+
+/* Square cards, from wide phones up. */
+@media (max-width: 639px) {
+  @container hero (min-height: 480px) and (min-aspect-ratio: 9 / 10) {
+    .hero-title {
+      font-size: min(18.5cqi, 7.5rem);
+      line-height: 0.98;
+    }
+
+    .hero-tail {
+      display: block;
+    }
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  @container hero (min-height: 470px) and (min-aspect-ratio: 9 / 10) {
+    .hero-title {
+      font-size: min(18.5cqi, 7.5rem);
+      line-height: 0.98;
+    }
+
+    .hero-tail {
+      display: block;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  @container hero (min-height: 500px) and (min-aspect-ratio: 9 / 10) {
+    .hero-title {
+      font-size: min(18.5cqi, 7.5rem);
+      line-height: 0.98;
+    }
+
+    .hero-tail {
+      display: block;
+    }
+  }
 }
 
 /* The name in the hero: a sky-to-blush gradient, Apple Intelligence style. */

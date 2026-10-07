@@ -179,7 +179,7 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
       onPointerEnter={(e) => e.pointerType !== "touch" && setFanned(true)}
       onPointerLeave={() => setFanned(false)}
     >
-      <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-5">
+      <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-5 sm:p-6">
         <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
           Field notes
         </p>
@@ -237,7 +237,7 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
           })}
       </div>
 
-      <div className="absolute right-4 bottom-4 z-20 flex gap-2">
+      <div className="absolute right-5 bottom-5 z-20 flex gap-2 sm:right-6 sm:bottom-6">
         {([-1, 1] as const).map((dir) => (
           <button
             key={dir}
