@@ -22,9 +22,9 @@ const LABELS: { id: string; text: string; place: CSSProperties }[] = [
     id: "ucla",
     text: "UCLA",
     place: {
-      top: "anchor(bottom)",
-      left: "anchor(center)",
-      translate: "-50% 7px",
+      top: "anchor(center)",
+      right: "anchor(left)",
+      translate: "-7px -50%",
     },
   },
   {
@@ -200,9 +200,11 @@ export function GlobeCard() {
           Drag to spin
         </p>
       </div>
+      {/* The globe's rim sits just under the title. On small tiles it leans
+          right, so the UCLA label has room on its left. */}
       <div
         ref={wrapRef}
-        className="absolute inset-x-[-14%] top-[30%] aspect-square @min-[220px]:top-[12%]"
+        className="absolute top-[30%] right-[-20%] left-[-8%] aspect-square @min-[220px]:top-[22%] @min-[220px]:right-[-14%] @min-[220px]:left-[-14%]"
       >
         <canvas
           ref={canvasRef}

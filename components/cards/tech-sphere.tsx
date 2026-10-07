@@ -22,7 +22,7 @@ import {
   siVitest,
 } from "simple-icons";
 
-// Most-used first: phones show the first 12.
+// Most-used first: small tiles show only the first few.
 const ICONS = [
   siTypescript,
   siReact,
@@ -43,7 +43,6 @@ const ICONS = [
   siThreedotjs,
   siVitest,
 ];
-const PHONE_COUNT = 12;
 
 function luminance(hex: string) {
   const c = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
@@ -97,11 +96,24 @@ export function TechSphere() {
     let lastY = 0;
     let count = ICONS.length;
     let points = lattice(count);
+    let radius = 24;
 
-    // Thin the sphere out on small tiles so the marks never crowd.
+    // Size it all to the stage: the chips scale with it, the sphere fills it,
+    // and it carries only as many marks as fit a chip's width apart.
     const fit = () => {
-      const next = stage.clientWidth < 200 ? PHONE_COUNT : ICONS.length;
+      const side = Math.min(stage.clientWidth, stage.clientHeight);
+      const chip = Math.round(Math.min(34, Math.max(22, side * 0.19)));
 
+      // Chips at the rim render at under 0.9x, so half a chip keeps them inside.
+      radius = Math.max(24, side / 2 - chip / 2);
+      // Neighbours sit about 3.5 * radius / sqrt(count) apart on the sphere;
+      // keeping that near two chips leaves the front row a chip apart.
+      const next = Math.min(
+        ICONS.length,
+        Math.max(8, Math.floor(3.6 * (radius / chip) ** 2)),
+      );
+
+      stage.style.setProperty("--chip", `${chip}px`);
       if (next !== count) {
         count = next;
         points = lattice(count);
@@ -112,12 +124,6 @@ export function TechSphere() {
     };
 
     const render = () => {
-      const chip = stage.clientWidth < 200 ? 26 : 34;
-      // Size the sphere to the space it has, leaving room for the nearest chips.
-      const radius = Math.max(
-        24,
-        Math.min(stage.clientWidth, stage.clientHeight) / 2 - chip * 0.62,
-      );
       const cx = Math.cos(rx);
       const sx = Math.sin(rx);
       const cy = Math.cos(ry);
@@ -214,9 +220,11 @@ export function TechSphere() {
       <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
         Toolbox
       </p>
+      {/* The sphere may run into the card's padding: only the text keeps the inset.
+          Vertical swipes still scroll the page on touch. */}
       <div
         ref={stageRef}
-        className="relative my-1 min-h-0 flex-1 cursor-grab touch-none select-none active:cursor-grabbing"
+        className="relative -mx-5 mt-1 -mb-2.5 min-h-0 flex-1 cursor-grab touch-pan-y select-none [--chip:26px] active:cursor-grabbing sm:-mx-6 sm:mb-1"
         data-nodrag
       >
         {STYLED.map((icon, i) => (
@@ -225,7 +233,7 @@ export function TechSphere() {
             ref={(el) => {
               items.current[i] = el;
             }}
-            className="absolute top-1/2 left-1/2 -mt-[13px] -ml-[13px] grid size-[26px] place-items-center rounded-[8px] bg-card text-[var(--c)] shadow-[0_2px_8px_-2px_rgb(0_0_0/0.18)] ring-1 ring-line will-change-transform sm:-mt-[17px] sm:-ml-[17px] sm:size-[34px] sm:rounded-[10px] dark:bg-card-2 dark:text-[var(--cd)]"
+            className="absolute top-1/2 left-1/2 -mt-[calc(var(--chip)/2)] -ml-[calc(var(--chip)/2)] grid size-(--chip) place-items-center rounded-[calc(var(--chip)*0.3)] bg-card text-[var(--c)] shadow-[0_2px_8px_-2px_rgb(0_0_0/0.18)] ring-1 ring-line will-change-transform dark:bg-card-2 dark:text-[var(--cd)]"
             data-cursor={icon.title}
             style={{ "--c": icon.light, "--cd": icon.dark } as CSSProperties}
             onPointerEnter={() => setActive(icon.title)}
@@ -233,7 +241,7 @@ export function TechSphere() {
           >
             <svg
               aria-label={icon.title}
-              className="size-[14px] sm:size-[17px]"
+              className="size-[calc(var(--chip)/2)]"
               fill="currentColor"
               role="img"
               viewBox="0 0 24 24"
