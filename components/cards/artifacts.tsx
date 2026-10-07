@@ -64,7 +64,7 @@ function RegionChart() {
           <button
             key={r.name}
             aria-label={`${r.name}: $${r.value.toLocaleString()}`}
-            className="flex h-full flex-1 flex-col items-center justify-end gap-1"
+            className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1"
             type="button"
             onFocus={() => setHover(i)}
             onPointerEnter={() => setHover(i)}
@@ -111,11 +111,12 @@ function InstanceTable() {
           CPU {dir === -1 ? "↓" : "↑"}
         </button>
       </div>
-      <ul className="min-h-0 flex-1 overflow-hidden">
+      {/* Rows that don't fit wrap into a hidden second column: only whole rows show. */}
+      <ul className="flex min-h-0 flex-1 flex-col flex-wrap overflow-hidden">
         {rows.map((r, i) => (
           <li
             key={r.id}
-            className="grid grid-cols-[1fr_1.2fr_1fr] items-center border-b border-line/70 py-[5px] [animation:rise_.4s_ease_both]"
+            className="grid w-full grid-cols-[1fr_1.2fr_1fr] items-center border-b border-line/70 py-[5px] [animation:rise_.4s_ease_both]"
             style={{ animationDelay: `${i * 40}ms` }}
           >
             <span className="font-mono text-[10.5px] text-glacier-ink">
@@ -253,7 +254,7 @@ export function ArtifactsCard() {
       </div>
 
       <div
-        className="flex min-h-0 flex-1 flex-col gap-2 rounded-[20px] bg-inset p-2.5 ring-1 ring-line ring-inset"
+        className="flex min-h-0 flex-1 flex-col gap-2 rounded-[20px] bg-inset p-2.5 ring-1 ring-line ring-inset [container-type:size]"
         data-nodrag
       >
         <div
@@ -286,7 +287,7 @@ export function ArtifactsCard() {
             </button>
           ))}
         </div>
-        <p className="ml-auto max-w-[90%] truncate rounded-[14px] rounded-br-[5px] bg-glacier-ink px-2.5 py-1 text-[11.5px] text-white dark:text-[#06223a]">
+        <p className="ml-auto max-w-[90%] truncate rounded-[14px] rounded-br-[5px] bg-glacier-ink px-2.5 py-1 text-[11.5px] text-white [@container(height<185px)]:hidden dark:text-[#06223a]">
           {TABS[index].prompt}
         </p>
         <div className="relative min-h-0 flex-1 rounded-[14px] bg-card/75 p-2.5 dark:bg-black/25">

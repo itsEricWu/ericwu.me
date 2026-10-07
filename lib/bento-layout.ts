@@ -13,15 +13,27 @@
 export type Size = readonly [w: number, h: number];
 export type Cell = { id: string; x: number; y: number; w: number; h: number };
 
-/** Layout tiers: columns, and the viewport width where each starts. */
+/**
+ * Layout tiers: columns, and the viewport width where each starts. Cells stay
+ * between ~230px and ~350px from small tablets up, the range the cards' larger
+ * type is drawn for; phones get their own sizes.
+ */
 export const TIERS = [
   { cols: 2, min: 0 },
-  { cols: 4, min: 640 },
+  { cols: 2, min: 640 },
+  { cols: 3, min: 768 },
   { cols: 4, min: 1024 },
 ] as const;
 
-export const tierFor = (width: number) =>
-  width >= TIERS[2].min ? 2 : width >= TIERS[1].min ? 1 : 0;
+export const tierFor = (width: number) => {
+  let tier = 0;
+
+  TIERS.forEach((t, i) => {
+    if (width >= t.min) tier = i;
+  });
+
+  return tier;
+};
 
 /** First fit from the top-left, in order (what CSS `row dense` does). */
 export function pack(

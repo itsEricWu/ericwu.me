@@ -99,7 +99,7 @@ export function FinOpsCard() {
 
       <div
         ref={rootRef}
-        className="relative min-h-0 flex-1 cursor-pointer overflow-hidden rounded-[20px] bg-gradient-to-b from-inset to-[color-mix(in_oklab,var(--blush)_34%,var(--card-inset))] ring-1 ring-line ring-inset dark:to-[color-mix(in_oklab,var(--ember)_12%,var(--card-inset))]"
+        className="relative min-h-0 flex-1 cursor-pointer overflow-hidden rounded-[20px] [container-type:size] bg-gradient-to-b from-inset to-[color-mix(in_oklab,var(--blush)_34%,var(--card-inset))] ring-1 ring-line ring-inset dark:to-[color-mix(in_oklab,var(--ember)_12%,var(--card-inset))]"
         data-cursor="Replay"
         data-nodrag
         role="button"
@@ -107,40 +107,48 @@ export function FinOpsCard() {
         onClick={play}
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && play()}
       >
-        <svg
-          aria-label="Daily cost over 30 days with a spike on day 23"
-          className="absolute inset-x-0 bottom-0 h-[52%] w-full"
-          preserveAspectRatio="none"
-          role="img"
-          viewBox={`0 0 ${W} ${H}`}
-        >
-          <defs>
-            <linearGradient id="finops-area" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="var(--glacier)" stopOpacity="0.28" />
-              <stop offset="1" stopColor="var(--glacier)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d={`${PATH} L${W} ${H} L0 ${H} Z`} fill="url(#finops-area)" />
-          <path
-            d={PATH}
-            fill="none"
-            stroke="var(--glacier)"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-        <span
-          aria-hidden
-          className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2"
-          style={{
-            left: `${(x(SPIKE) / W) * 100}%`,
-            top: `${48 + (y(DAYS[SPIKE]) / H) * 52}%`,
-          }}
-        >
-          <span className="absolute inset-0 animate-ping-soft rounded-full bg-ember" />
-          <span className="absolute inset-0 rounded-full bg-ember ring-2 ring-card" />
-        </span>
+        {/* The chart sits below the notifications: three when the panel is
+            tall enough, else two (46px each, 6px apart, from 10px down). */}
+        <div className="absolute inset-x-0 top-[168px] bottom-0 [@container(height<220px)]:top-[116px]">
+          <svg
+            aria-label="Daily cost over 30 days with a spike on day 23"
+            className="absolute inset-0 size-full"
+            preserveAspectRatio="none"
+            role="img"
+            viewBox={`0 0 ${W} ${H}`}
+          >
+            <defs>
+              <linearGradient id="finops-area" x1="0" x2="0" y1="0" y2="1">
+                <stop
+                  offset="0"
+                  stopColor="var(--glacier)"
+                  stopOpacity="0.28"
+                />
+                <stop offset="1" stopColor="var(--glacier)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d={`${PATH} L${W} ${H} L0 ${H} Z`} fill="url(#finops-area)" />
+            <path
+              d={PATH}
+              fill="none"
+              stroke="var(--glacier)"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          <span
+            aria-hidden
+            className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2"
+            style={{
+              left: `${(x(SPIKE) / W) * 100}%`,
+              top: `${(y(DAYS[SPIKE]) / H) * 100}%`,
+            }}
+          >
+            <span className="absolute inset-0 animate-ping-soft rounded-full bg-ember" />
+            <span className="absolute inset-0 rounded-full bg-ember ring-2 ring-card" />
+          </span>
+        </div>
 
         <ol
           className="absolute inset-x-2.5 top-2.5 flex flex-col gap-1.5"
@@ -153,8 +161,8 @@ export function FinOpsCard() {
               <li
                 key={n.title}
                 className={cn(
-                  "lg flex items-start gap-2.5 rounded-[16px] bg-card/60 px-3 py-2 [--lg-blur:14px] [animation:notify_.55s_cubic-bezier(.2,.9,.25,1.15)_both] dark:bg-card/45",
-                  k > 1 && "max-sm:hidden",
+                  "lg flex h-[46px] items-start gap-2.5 rounded-[16px] bg-card/60 px-3 py-2 [--lg-blur:14px] [animation:notify_.55s_cubic-bezier(.2,.9,.25,1.15)_both] dark:bg-card/45",
+                  k > 1 && "[@container(height<220px)]:hidden",
                 )}
               >
                 <span className="lg-caustic" />

@@ -27,12 +27,13 @@ const letter = (ch: string, i: number) => (
   </span>
 );
 
+// From small tablets up the line scales with its card (it runs ~6.4em wide).
 function Title({ clone }: { clone?: boolean }) {
   return (
     <h1
       aria-hidden={clone || undefined}
       aria-label={clone ? undefined : TEXT}
-      className="font-display text-[clamp(2.8rem,6.8vw,5.2rem)] leading-[1.02] tracking-[-0.022em] whitespace-nowrap"
+      className="font-display text-[2.8rem] leading-[1.02] tracking-[-0.022em] whitespace-nowrap sm:text-[length:clamp(2.4rem,15.5cqi_+_2px,5.2rem)]"
     >
       <span aria-hidden>
         {LEAD.split("").map(letter)}

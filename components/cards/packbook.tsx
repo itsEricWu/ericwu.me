@@ -69,7 +69,7 @@ export function PackBookCard() {
   return (
     <div
       ref={rootRef}
-      className="flex h-full gap-4 p-5 max-sm:flex-row sm:flex-col sm:p-6"
+      className="@container flex h-full gap-4 p-5 max-sm:flex-row sm:flex-col sm:p-6"
       onPointerEnter={(e) => {
         if (e.pointerType !== "touch") {
           setLoaded((n) => Math.max(n, 3));
@@ -135,12 +135,13 @@ export function PackBookCard() {
       </button>
 
       <div className="hidden items-center justify-between sm:flex">
-        <div className="-ml-[9px] flex">
+        {/* On a narrow card the dots tighten up to leave room for the link. */}
+        <div className="-ml-[9px] flex @max-[215px]:-ml-[5px]">
           {SCREENS.map((s, i) => (
             <button
               key={s.label}
               aria-label={`Show ${s.label}`}
-              className="group/dot grid size-6 place-items-center"
+              className="group/dot grid size-6 place-items-center @max-[215px]:w-4"
               type="button"
               onClick={() => go(i)}
             >

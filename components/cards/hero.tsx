@@ -31,7 +31,7 @@ export function HeroCard({
   dogUrl: string;
 }) {
   return (
-    <div className="relative flex h-full flex-col p-6 sm:p-7 lg:p-9">
+    <div className="@container relative flex h-full flex-col p-6 sm:p-7 lg:p-9">
       <div className="flex items-center gap-3.5">
         <AvatarFlip avatarUrl={avatarUrl} dogUrl={dogUrl} />
         <div className="leading-tight">

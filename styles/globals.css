@@ -388,10 +388,17 @@ html.ff {
     }
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     .bento > .card {
       grid-column: var(--c2) / span var(--w2);
       grid-row: var(--r2) / span var(--h2);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento > .card {
+      grid-column: var(--c3) / span var(--w3);
+      grid-row: var(--r3) / span var(--h3);
     }
   }
 
@@ -414,13 +421,19 @@ html.ff {
 
   @media (min-width: 640px) {
     .bento {
-      --cols: 4;
       --gap: 14px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .bento {
+      --cols: 3;
     }
   }
 
   @media (min-width: 1024px) {
     .bento {
+      --cols: 4;
       --gap: 18px;
     }
   }

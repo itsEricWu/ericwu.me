@@ -3,15 +3,10 @@
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LiquidGlass, useGlassLight } from "@/components/glass/liquid-glass";
+import { useShortcut } from "@/components/nav/shortcut";
 import { springs } from "@/lib/motion";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
@@ -31,12 +26,6 @@ const TABS: Tab[] = [
   { id: "blog", label: "Blog" },
 ];
 
-const noSubscribe = () => () => {};
-const platformShortcut = () =>
-  /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
-    ? "⌘K"
-    : "Ctrl K";
-
 export function SiteNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -45,11 +34,7 @@ export function SiteNav() {
   const activeId = pathname.startsWith("/blog") ? "blog" : onHome ? view : null;
   const activeIndex = TABS.findIndex((t) => t.id === activeId);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const shortcut = useSyncExternalStore(
-    noSubscribe,
-    platformShortcut,
-    () => "⌘K",
-  );
+  const shortcut = useShortcut();
 
   const select = useCallback(
     (id: Tab["id"]) => {

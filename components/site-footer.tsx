@@ -1,3 +1,4 @@
+import { Shortcut } from "@/components/nav/shortcut";
 import { siteConfig } from "@/config/site";
 
 export function SiteFooter() {
@@ -9,7 +10,7 @@ export function SiteFooter() {
           {" "}
           ·{" "}
           <kbd className="rounded-md border border-line px-1.5 py-0.5 font-sans text-[11px]">
-            ⌘K
+            <Shortcut />
           </kbd>{" "}
           to explore
         </span>
