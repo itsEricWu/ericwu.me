@@ -31,8 +31,9 @@ export async function POST(req: NextRequest) {
   try {
     const openai = new OpenAI();
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      max_tokens: 8,
+      model: "gpt-6-luna",
+      reasoning_effort: "none",
+      max_completion_tokens: 8,
       messages: [
         {
           role: "system",
