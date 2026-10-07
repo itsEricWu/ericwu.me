@@ -109,7 +109,7 @@ const STARS = Array.from({ length: 30 }, () => {
 });
 
 const GRAIN =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E\")";
 
 const clock = (h: number) => {
   const minutes = Math.round(h * 60) % (24 * 60);
@@ -416,10 +416,14 @@ export function SkyCard() {
 
   return (
     <div
-      className="relative h-full overflow-hidden text-white transition-[background] duration-1000"
+      className="relative h-full overflow-hidden rounded-[inherit] text-white transition-[background] duration-1000"
+      // The film grain is a background layer, not a blended overlay: Safari can
+      // lift a mix-blend-mode layer out of the card's rounded clip, which showed
+      // as a square corner. The full-bleed layers also carry the corners.
       style={
         {
-          background: colors.sky,
+          background: `${GRAIN}, ${colors.sky}`,
+          backgroundBlendMode: "soft-light, normal",
           "--far": colors.far,
           "--snow": colors.snow,
           "--snow-shade": colors.snowShade,
@@ -430,7 +434,7 @@ export function SkyCard() {
     >
       <div
         aria-hidden
-        className="absolute inset-0 transition-[background] duration-1000"
+        className="absolute inset-0 rounded-[inherit] transition-[background] duration-1000"
         style={{
           background: `radial-gradient(85% 42% at 58% 84%, ${colors.glow}, transparent 72%)`,
         }}
@@ -439,7 +443,7 @@ export function SkyCard() {
       <div
         aria-hidden
         className={cn(
-          "absolute inset-0 transition-opacity duration-1000",
+          "absolute inset-0 rounded-[inherit] transition-opacity duration-1000",
           phase === "night"
             ? "opacity-100"
             : phase === "day"
@@ -537,12 +541,6 @@ export function SkyCard() {
           fill="var(--near)"
         />
       </svg>
-
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-25 mix-blend-soft-light"
-        style={{ backgroundImage: GRAIN }}
-      />
 
       <div className="relative flex h-full flex-col justify-between p-5 [text-shadow:0_1px_10px_rgb(0_0_0/0.18)] sm:p-6">
         <div className="flex items-start justify-between gap-2">
