@@ -97,9 +97,11 @@ export function FinOpsCard() {
         </div>
       </div>
 
+      {/* The panel sits closer to the card's edge than the text (10px, 12px from
+          640px) with its corners concentric with the card's (24 - 10, 28 - 12). */}
       <div
         ref={rootRef}
-        className="relative min-h-0 flex-1 cursor-pointer overflow-hidden rounded-[20px] [container-type:size] bg-gradient-to-b from-inset to-[color-mix(in_oklab,var(--blush)_34%,var(--card-inset))] ring-1 ring-line ring-inset dark:to-[color-mix(in_oklab,var(--ember)_12%,var(--card-inset))]"
+        className="relative -mx-2.5 -mb-2.5 min-h-0 flex-1 cursor-pointer overflow-hidden rounded-[14px] [container-type:size] bg-gradient-to-b from-inset to-[color-mix(in_oklab,var(--blush)_34%,var(--card-inset))] ring-1 ring-line ring-inset sm:mx-0 sm:-my-3 sm:-mr-3 sm:rounded-[16px] dark:to-[color-mix(in_oklab,var(--ember)_12%,var(--card-inset))]"
         data-cursor="Replay"
         data-nodrag
         role="button"

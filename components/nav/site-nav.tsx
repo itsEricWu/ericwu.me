@@ -85,15 +85,10 @@ export function SiteNav() {
           glass={{ chroma: 0.1, blur: 3, saturate: 1.8 }}
         >
           <Tabs activeIndex={activeIndex} onSelect={select} />
-          <button
-            aria-label={`${shortcut} command palette`}
-            className="hidden h-10 items-center gap-1 rounded-full px-3 text-[13px] font-medium text-muted transition-colors hover:text-ink md:flex"
-            data-cursor="Command palette"
-            type="button"
-            onClick={() => setPaletteOpen(true)}
-          >
-            {shortcut}
-          </button>
+          <SearchButton
+            shortcut={shortcut}
+            onOpen={() => setPaletteOpen(true)}
+          />
           <ThemeButton />
         </LiquidGlass>
       </header>
@@ -276,6 +271,45 @@ function Tabs({
         <span className="lg-caustic" />
       </span>
     </div>
+  );
+}
+
+/** Opens the command palette; its shortcut lives in the hover label and the footer. */
+function SearchButton({
+  shortcut,
+  onOpen,
+}: {
+  shortcut: string;
+  onOpen: () => void;
+}) {
+  const ref = useRef<HTMLButtonElement>(null);
+
+  useGlassLight(ref);
+
+  return (
+    <button
+      ref={ref}
+      aria-keyshortcuts="Meta+K Control+K"
+      aria-label="Search"
+      className="lg hidden size-10 place-items-center rounded-full md:grid"
+      data-cursor={`Search ${shortcut}`}
+      type="button"
+      onClick={onOpen}
+    >
+      <span className="lg-caustic" />
+      <svg
+        aria-hidden
+        className="size-[17px]"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m15.5 15.5 4.5 4.5" />
+      </svg>
+    </button>
   );
 }
 

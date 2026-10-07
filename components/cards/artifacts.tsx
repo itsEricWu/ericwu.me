@@ -253,8 +253,9 @@ export function ArtifactsCard() {
         </div>
       </div>
 
+      {/* Like FinOps: closer to the edge than the text, concentric corners. */}
       <div
-        className="flex min-h-0 flex-1 flex-col gap-2 rounded-[20px] bg-inset p-2.5 ring-1 ring-line ring-inset [container-type:size]"
+        className="-mx-2.5 -mb-2.5 flex min-h-0 flex-1 flex-col gap-2 rounded-[14px] bg-inset p-2.5 ring-1 ring-line ring-inset [container-type:size] sm:mx-0 sm:-my-3 sm:-mr-3 sm:rounded-[16px]"
         data-nodrag
       >
         <div

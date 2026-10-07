@@ -136,15 +136,16 @@ export const NotionPage = ({
 
   return (
     <article ref={articleRef} className="mx-auto max-w-[760px]">
+      {/* Header and back link line up with the Notion body (its page padding plus the text's 2px). */}
       <Link
-        className="lg inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium"
+        className="lg ml-[calc(min(16px,8vw)_+_2px)] inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium"
         data-cursor="All posts"
         href="/blog"
       >
         <span aria-hidden className="lg-caustic" />
         <span>← All posts</span>
       </Link>
-      <header className="mt-8 mb-6 px-[var(--notion-gutter,0px)]">
+      <header className="mt-8 mb-6 px-[calc(min(16px,8vw)_+_2px)]">
         {created && (
           <time className="eyebrow" dateTime={new Date(created).toISOString()}>
             {new Date(created).toLocaleDateString("en-US", {

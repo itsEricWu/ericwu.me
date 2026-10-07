@@ -15,19 +15,21 @@ export const fontText = Figtree({
 
 /**
  * Display: Fraunces, a soft variable serif. Its SOFT axis rounds the letters,
- * so the headline can melt like liquid under the cursor. The optical-size
- * axis is left out to keep the file small (about 60 KB).
+ * so the headline can melt like liquid under the cursor, and its optical-size
+ * axis draws each size as designed: crisp, high-contrast cuts for the big
+ * headline, sturdier ones for card titles. (Without it every size is drawn
+ * from the 9 pt master.) About 120 KB, fetched after the first paint.
  */
 export const fontDisplay = Fraunces({
   subsets: ["latin"],
-  axes: ["SOFT"],
+  axes: ["SOFT", "opsz"],
   variable: "--ff-display",
   display: "swap",
   // Loaded after the first paint by <FontLoader />.
   preload: false,
 });
 
-/** The italic "Eric" in the headline: Fraunces Italic subset to four glyphs (4 KB). */
+/** The italic "Eric" in the headline: Fraunces Italic subset to four glyphs, all axes (6 KB). */
 export const fontName = localFont({
   src: "../assets/fonts/fraunces-italic-eric.woff2",
   style: "italic",

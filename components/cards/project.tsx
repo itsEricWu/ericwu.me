@@ -6,35 +6,36 @@ import type { Project } from "@/config/site";
 import { cn } from "@/lib/utils";
 
 /*
- * Each composition keeps the original, hand-tuned placement: a pastel card,
- * a soft pink blob, and the screenshot tilted -30°. On top of that the
+ * Each composition keeps the original, hand-tuned placement: a pastel card
+ * (a deep tint of it in dark mode), a soft pink blob, and the screenshot
+ * tilted -30°. On top of that the
  * screenshot leans toward the cursor (the grid feeds --tx/--ty), lifts on
  * hover, and gets a liquid-glass loupe.
  */
 const LOOKS = {
   secondself: {
-    bg: "bg-sky",
+    bg: "bg-stage-sky",
     blob: "-bottom-32 left-1/2 h-56 w-64 -translate-x-1/2 md:-bottom-52 md:h-96 md:w-96",
     shot: "top-16 left-20 w-[80%] -translate-y-1/2 md:top-36 md:left-44",
     img: "h-full w-full object-contain",
     sizes: "(max-width: 768px) 300px, 500px",
   },
   webagent: {
-    bg: "bg-mint",
+    bg: "bg-stage-mint",
     blob: "-bottom-96 left-16 h-full w-[145%]",
     shot: "top-1/2 left-24 w-[80%] -translate-y-1/2 md:left-32",
     img: "h-full w-full object-contain",
     sizes: "(max-width: 768px) 300px, 500px",
   },
   chatbot: {
-    bg: "bg-butter",
+    bg: "bg-stage-butter",
     blob: "-top-40 left-40 h-full w-[135%]",
     shot: "top-1/2 left-20 w-[400px] -translate-y-1/2 md:left-44 md:w-[800px]",
     img: "h-48 object-cover md:h-96",
     sizes: "(max-width: 768px) 400px, 800px",
   },
   paper: {
-    bg: "bg-butter",
+    bg: "bg-stage-lilac",
     blob: "-top-40 left-40 h-full w-[135%]",
     shot: "top-16 left-12 w-full -translate-y-1/2 md:top-1/2 md:left-16",
     img: "h-full w-full object-contain",
@@ -60,9 +61,7 @@ export function ProjectCard({
 
   return (
     <div className={cn("group relative h-full w-full overflow-hidden", l.bg)}>
-      <div
-        className={cn("absolute rounded-full bg-blush dark:hidden", l.blob)}
-      />
+      <div className={cn("absolute rounded-full bg-stage-blob", l.blob)} />
       <div
         className={cn(
           "absolute rounded-2xl -rotate-[30deg] transition-[rotate,scale,translate] duration-700 ease-[cubic-bezier(.2,.9,.25,1)] [transform:perspective(1100px)_rotateX(calc(var(--ty,0)*-6deg))_rotateY(calc(var(--tx,0)*8deg))] group-hover:scale-[1.03] group-hover:-rotate-[27deg]",

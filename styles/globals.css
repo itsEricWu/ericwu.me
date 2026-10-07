@@ -27,6 +27,11 @@
   --color-mint: var(--mint);
   --color-blush: var(--blush);
   --color-butter: var(--butter);
+  --color-stage-sky: var(--stage-sky);
+  --color-stage-mint: var(--stage-mint);
+  --color-stage-butter: var(--stage-butter);
+  --color-stage-lilac: var(--stage-lilac);
+  --color-stage-blob: var(--stage-blob);
 
   /* backwards, not both: a held end state would override drag/FLIP transforms */
   --animate-rise: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
@@ -75,6 +80,12 @@ html.ff {
   --mint: #63ccae;
   --blush: #ffbfd1;
   --butter: #ffdf9a;
+  /* Project cards: a pastel stage by day, a deep tint of the same hue by night. */
+  --stage-sky: var(--sky);
+  --stage-mint: var(--mint);
+  --stage-butter: var(--butter);
+  --stage-lilac: #cbbffd;
+  --stage-blob: var(--blush);
   --glacier: #2a86dd;
   --ember: #d9487a;
   /* Deeper shades of the same hues for small text (WCAG AA on white). */
@@ -229,6 +240,12 @@ html.ff {
 }
 
 .dark {
+  --stage-sky: #142f49;
+  --stage-mint: #103830;
+  --stage-butter: #362a12;
+  --stage-lilac: #231d42;
+  --stage-blob: rgb(255 159 189 / 0.12);
+
   /* Neutrals: the original night palette. */
   --bg: #0b0f11;
   --card: #0f1217;
