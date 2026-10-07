@@ -263,7 +263,7 @@ function Moon({
 }
 
 const DIGITS =
-  "text-[44px] font-bold tracking-[-0.045em] tabular-nums sm:text-[56px]";
+  "font-display text-[46px] font-semibold tracking-[-0.025em] tabular-nums sm:text-[58px]";
 
 /**
  * Clock digits made of glass, like the iOS 26 Lock Screen: a clear body that

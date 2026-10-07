@@ -2,71 +2,113 @@
 
 import Image from "next/image";
 import {
+  useLayoutEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-import { spring } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { springs } from "@/lib/motion";
+import { cn, prefersReducedMotion } from "@/lib/utils";
 
 const DEPTH = 4;
 
 const tilt = (n: number) => (((n * 9301 + 49297) % 233280) / 233280 - 0.5) * 9;
 
-/** A deck of photos: hover to fan, fling the top one away, or step through. */
+type Gesture = {
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  t: number;
+  v: number;
+};
+
+/**
+ * A deck of photos: hover to fan it, fling the top photo away (or tap it),
+ * or step through with the buttons. Gestures move the whole card.
+ */
 export function PhotoDeck({ photos }: { photos: string[] }) {
   const [order, setOrder] = useState(() => photos.map((_, i) => i));
   const [seen, setSeen] = useState(0);
   const [fanned, setFanned] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
-  const drag = useRef<{
-    x: number;
-    y: number;
-    dx: number;
-    dy: number;
-    t: number;
-    v: number;
-  } | null>(null);
+  const gesture = useRef<Gesture | null>(null);
   const busy = useRef(false);
+  /** Set when the next render should slide a photo back onto the top. */
+  const returning = useRef(false);
 
-  const cycle = (dir: 1 | -1) =>
-    setOrder((o) =>
-      dir === 1 ? [...o.slice(1), o[0]] : [o[o.length - 1], ...o.slice(0, -1)],
+  // A photo stepped back onto the deck glides in from the left.
+  useLayoutEffect(() => {
+    const el = topRef.current;
+
+    if (!returning.current || !el) return;
+    returning.current = false;
+    if (prefersReducedMotion()) return;
+    const s = springs.glide();
+
+    el.animate(
+      [
+        { transform: "translate(-70%, -6%) rotate(-14deg)", opacity: 0 },
+        { transform: "none", opacity: 1 },
+      ],
+      { duration: s.duration, easing: s.easing },
     );
+  }, [order]);
 
+  const next = () => {
+    setOrder((o) => [...o.slice(1), o[0]]);
+    setSeen((s) => s + 1);
+  };
+
+  const previous = () => {
+    if (busy.current) return;
+    returning.current = true;
+    setOrder((o) => [o[o.length - 1], ...o.slice(0, -1)]);
+    setSeen((s) => (s - 1 + photos.length) % photos.length);
+  };
+
+  /** Throw the top photo off the deck, then bring the next one up. */
   const flyOut = (dx: number, dy: number) => {
     const el = topRef.current;
 
     if (!el || busy.current) return;
+    if (prefersReducedMotion()) {
+      el.style.transform = "";
+      next();
+
+      return;
+    }
     busy.current = true;
     const len = Math.hypot(dx, dy) || 1;
-    const tx = (dx / len) * 520;
-    const ty = (dy / len) * 520;
     const anim = el.animate(
       [
         { transform: el.style.transform || "none", opacity: 1 },
         {
-          transform: `translate(${tx}px, ${ty}px) rotate(${dx > 0 ? 24 : -24}deg)`,
+          transform: `translate(${(dx / len) * 560}px, ${(dy / len) * 560}px) rotate(${dx > 0 ? 26 : -26}deg)`,
           opacity: 0,
         },
       ],
-      { duration: 380, easing: "cubic-bezier(.4,0,.8,.4)", fill: "forwards" },
+      {
+        duration: 360,
+        easing: "cubic-bezier(.45,0,.85,.4)",
+        fill: "forwards",
+      },
     );
 
     anim.onfinish = () => {
+      // The thrown card leaves the visible deck with the reorder and unmounts,
+      // so its end state holds until then: no flash back on top.
       el.style.transform = "";
-      anim.cancel();
-      cycle(1);
-      setSeen((s) => s + 1);
+      next();
       busy.current = false;
     };
   };
 
   const onDown = (e: ReactPointerEvent<HTMLDivElement>) => {
-    if (busy.current) return;
+    if (busy.current || (e.pointerType === "mouse" && e.button !== 0)) return;
     e.currentTarget.setPointerCapture(e.pointerId);
-    drag.current = {
+    gesture.current = {
       x: e.clientX,
       y: e.clientY,
       dx: 0,
@@ -75,44 +117,57 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
       v: 0,
     };
   };
+
   const onMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    const d = drag.current;
-
-    if (!d || !topRef.current) return;
-    const now = e.timeStamp;
-    const ndx = e.clientX - d.x;
-    const ndy = e.clientY - d.y;
-
-    d.v = Math.hypot(ndx - d.dx, ndy - d.dy) / Math.max(1, now - d.t);
-    d.dx = ndx;
-    d.dy = ndy;
-    d.t = now;
-    topRef.current.style.transform = `translate(${ndx}px, ${ndy}px) rotate(${ndx * 0.06}deg)`;
-  };
-  const onUp = () => {
-    const d = drag.current;
+    const g = gesture.current;
     const el = topRef.current;
 
-    drag.current = null;
-    if (!d || !el) return;
-    if (Math.hypot(d.dx, d.dy) > 90 || d.v > 0.8) {
-      flyOut(d.dx || 1, d.dy);
+    if (!g || !el) return;
+    const dx = e.clientX - g.x;
+    const dy = e.clientY - g.y;
+
+    g.v = Math.hypot(dx - g.dx, dy - g.dy) / Math.max(1, e.timeStamp - g.t);
+    g.dx = dx;
+    g.dy = dy;
+    g.t = e.timeStamp;
+    el.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
+  };
+
+  const onUp = () => {
+    const g = gesture.current;
+    const el = topRef.current;
+
+    gesture.current = null;
+    if (!g || !el) return;
+    const dist = Math.hypot(g.dx, g.dy);
+
+    if (dist > 90 || g.v > 0.8) {
+      flyOut(g.dx || 1, g.dy);
 
       return;
     }
-    if (Math.hypot(d.dx, d.dy) < 4) {
+    if (dist < 4) {
       flyOut(-1, -0.35);
 
       return;
     }
+    // Not far enough: settle back onto the deck.
     const from = el.style.transform;
-    const s = spring(260, 18);
 
     el.style.transform = "";
+    if (prefersReducedMotion()) return;
+    const s = springs.wobble();
+
     el.animate([{ transform: from }, { transform: "none" }], {
       duration: s.duration,
       easing: s.easing,
     });
+  };
+
+  // The browser took the gesture (e.g. a vertical scroll): put the photo back.
+  const onCancel = () => {
+    gesture.current = null;
+    if (topRef.current) topRef.current.style.transform = "";
   };
 
   if (!photos.length) return null;
@@ -125,7 +180,9 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
       onPointerLeave={() => setFanned(false)}
     >
       <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-5">
-        <p className="text-[15px] font-semibold">Field notes</p>
+        <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
+          Field notes
+        </p>
         <span className="text-[13px] text-muted tabular-nums">
           {current} of {photos.length}
         </span>
@@ -146,12 +203,14 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
             return (
               <div
                 key={photo}
+                ref={top ? topRef : undefined}
                 className={cn(
-                  "col-start-1 row-start-1 w-[80%] max-w-[500px] overflow-hidden rounded-2xl bg-card-2 shadow-[0_18px_40px_-18px_rgb(0_0_0/0.55)] ring-1 ring-black/5 transition-[translate,rotate,scale] duration-500 ease-[cubic-bezier(.3,1.3,.5,1)] select-none",
+                  "relative col-start-1 row-start-1 aspect-video w-[80%] max-w-[500px] overflow-hidden rounded-2xl bg-card-2 shadow-[0_18px_40px_-18px_rgb(0_0_0/0.55)] ring-1 ring-black/5 select-none [transition:translate_var(--dur-glide)_var(--ease-glide),rotate_var(--dur-glide)_var(--ease-glide),scale_var(--dur-glide)_var(--ease-glide),opacity_.5s_ease] starting:opacity-0",
                   top
-                    ? "cursor-grab touch-none active:cursor-grabbing"
+                    ? "cursor-grab touch-pan-y active:cursor-grabbing"
                     : "pointer-events-none",
                 )}
+                data-cursor={top ? "Fling or tap" : undefined}
                 style={{
                   zIndex: 10 - i,
                   translate: fanned
@@ -160,25 +219,19 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
                   rotate: `${spread}deg`,
                   scale: String(1 - i * 0.035),
                 }}
+                onPointerCancel={top ? onCancel : undefined}
+                onPointerDown={top ? onDown : undefined}
+                onPointerMove={top ? onMove : undefined}
+                onPointerUp={top ? onUp : undefined}
               >
-                <div
-                  ref={top ? topRef : undefined}
-                  className="relative aspect-video w-full"
-                  data-cursor={top ? "Fling or tap" : undefined}
-                  onPointerCancel={top ? onUp : undefined}
-                  onPointerDown={top ? onDown : undefined}
-                  onPointerMove={top ? onMove : undefined}
-                  onPointerUp={top ? onUp : undefined}
-                >
-                  <Image
-                    fill
-                    alt="A photo from Eric's camera roll"
-                    className="pointer-events-none object-cover"
-                    draggable={false}
-                    sizes="(max-width: 640px) 80vw, 480px"
-                    src={photos[photo]}
-                  />
-                </div>
+                <Image
+                  fill
+                  alt="A photo from Eric's camera roll"
+                  className="pointer-events-none object-cover"
+                  draggable={false}
+                  sizes="(max-width: 640px) 80vw, 480px"
+                  src={photos[photo]}
+                />
               </div>
             );
           })}
@@ -189,15 +242,9 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
           <button
             key={dir}
             aria-label={dir === 1 ? "Next photo" : "Previous photo"}
-            className="lg grid size-9 place-items-center rounded-full transition-[scale] hover:scale-105 active:scale-95"
+            className="lg grid size-9 place-items-center rounded-full"
             type="button"
-            onClick={() => {
-              if (dir === 1) flyOut(-1, -0.35);
-              else {
-                cycle(-1);
-                setSeen((s) => (s - 1 + photos.length) % photos.length);
-              }
-            }}
+            onClick={() => (dir === 1 ? flyOut(-1, -0.35) : previous())}
           >
             <span className="lg-caustic" />
             <svg

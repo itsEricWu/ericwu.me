@@ -21,7 +21,7 @@ export function BlogList({ blogPosts }: { blogPosts: Post[] }) {
     <div className="pb-6">
       <header className="mb-8 flex flex-col items-start gap-3 pt-2 sm:mb-10">
         <Eyebrow>Writing · {blogPosts.length} posts</Eyebrow>
-        <h1 className="text-[clamp(2.2rem,5vw,3.4rem)] leading-[1] font-semibold tracking-[-0.04em]">
+        <h1 className="font-display text-[clamp(2.3rem,5.2vw,3.6rem)] leading-[1.02] font-semibold tracking-[-0.02em]">
           Notes from the trail &amp; the terminal.
         </h1>
         <p className="max-w-[56ch] text-[15px] text-ink-2">

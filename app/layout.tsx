@@ -8,7 +8,8 @@ import { Backdrop } from "@/components/backdrop/backdrop";
 import { CursorLens } from "@/components/glass/cursor-lens";
 import { SiteNav } from "@/components/nav/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { fontInter } from "@/config/fonts";
+import { FontLoader } from "@/components/font-loader";
+import { deferredFaces, fontDisplay, fontName, fontText } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -103,8 +104,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning className={fontInter.variable} lang="en">
+    <html
+      suppressHydrationWarning
+      className={`${fontText.variable} ${fontDisplay.variable} ${fontName.variable}`}
+      lang="en"
+    >
       <head>
+        {/* Returning visitors have the display face cached: use it from the first frame. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{localStorage.getItem("ff")&&document.documentElement.classList.add("ff")}catch(e){}',
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           type="application/ld+json"
@@ -134,6 +146,7 @@ export default function RootLayout({
           <SiteFooter />
           <CursorLens />
         </ThemeProvider>
+        <FontLoader faces={deferredFaces} />
         <Analytics />
       </body>
     </html>

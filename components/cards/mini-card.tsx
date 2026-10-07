@@ -32,7 +32,7 @@ export function MiniCard() {
 
   return (
     <div className="relative h-full">
-      <p className="absolute top-4 left-5 z-10 text-[15px] font-semibold sm:top-5">
+      <p className="absolute top-4 left-5 z-10 font-display text-[17px] font-semibold tracking-[-0.005em] sm:top-5">
         My Mini
       </p>
       {show3D ? (

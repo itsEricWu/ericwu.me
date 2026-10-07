@@ -11,7 +11,6 @@ export const getHomeData = cache(async () => {
     photos: "photos",
     avatar: "avatar/eric.jpg",
     dog: "avatar/dog.jpg",
-    secondself: "projects/secondself.jpg",
     webagent: "projects/webagent.jpg",
     chatbot: "projects/chatbot.jpg",
     paper: "projects/paper.jpg",
@@ -20,7 +19,6 @@ export const getHomeData = cache(async () => {
   const allPaths = [
     paths.avatar,
     paths.dog,
-    paths.secondself,
     paths.webagent,
     paths.chatbot,
     paths.paper,
@@ -38,10 +36,9 @@ export const getHomeData = cache(async () => {
     photos: photosResult,
     avatarUrl: urlResults[0],
     dogUrl: urlResults[1],
-    secondselfUrl: urlResults[2],
-    webagentUrl: urlResults[3],
-    chatbotUrl: urlResults[4],
-    paperUrl: urlResults[5],
+    webagentUrl: urlResults[2],
+    chatbotUrl: urlResults[3],
+    paperUrl: urlResults[4],
   };
 });
 

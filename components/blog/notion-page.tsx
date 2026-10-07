@@ -127,7 +127,7 @@ export const NotionPage = ({
             })}
           </time>
         )}
-        <h1 className="mt-3 text-[clamp(2rem,4.6vw,3rem)] leading-[1.05] font-semibold tracking-[-0.035em] text-balance">
+        <h1 className="mt-3 font-display text-[clamp(2.1rem,4.8vw,3.2rem)] leading-[1.06] font-semibold tracking-[-0.018em] text-balance">
           {title}
         </h1>
       </header>

@@ -9,7 +9,9 @@ import { cn, prefersReducedMotion } from "@/lib/utils";
 const LEAD = "Hey, I'm ";
 const NAME = "Eric";
 const TEXT = `${LEAD}${NAME}.`;
-const BASE_WEIGHT = 700;
+const BASE_WEIGHT = 640;
+/** At rest the letters are fully soft; the wave sharpens what it passes and melts what it touches. */
+const REST = { fontWeight: BASE_WEIGHT, fontVariationSettings: "'SOFT' 100" };
 const FILTER_ID = "hero-droplet-lens";
 /** Matches the wrapper's px-1/py-1, so the clone inside the lens lines up with the title. */
 const PAD = 4;
@@ -19,7 +21,7 @@ const letter = (ch: string, i: number) => (
     key={i}
     className={cn("inline-block", ch === " " && "w-[0.24em]")}
     data-wave={i}
-    style={{ fontWeight: BASE_WEIGHT }}
+    style={REST}
   >
     {ch === " " ? " " : ch}
   </span>
@@ -30,7 +32,7 @@ function Title({ clone }: { clone?: boolean }) {
     <h1
       aria-hidden={clone || undefined}
       aria-label={clone ? undefined : TEXT}
-      className="text-[clamp(2.7rem,6.6vw,5rem)] leading-[1.03] tracking-[-0.04em] whitespace-nowrap"
+      className="font-display text-[clamp(2.8rem,6.8vw,5.2rem)] leading-[1.02] tracking-[-0.022em] whitespace-nowrap"
     >
       <span aria-hidden>
         {LEAD.split("").map(letter)}
@@ -41,7 +43,7 @@ function Title({ clone }: { clone?: boolean }) {
           className="inline-block"
           data-period={clone ? undefined : ""}
           data-wave={TEXT.length - 1}
-          style={{ fontWeight: BASE_WEIGHT }}
+          style={REST}
         >
           .
           {!clone && (
@@ -57,7 +59,7 @@ function Title({ clone }: { clone?: boolean }) {
 }
 
 /**
- * The headline. Letters swell under the cursor (variable font weight), and the
+ * The headline. Letters melt under the cursor (Fraunces' weight and SOFT axes), and the
  * period is a bead of liquid glass: pull it and it swells into a lens that
  * magnifies whatever it passes over, stretching with speed; let go and it
  * springs home and shrinks back into a period. The lens refracts a
@@ -89,7 +91,8 @@ export function HeroTitle() {
     ].filter((el) => !el.closest("[data-clone]"));
     let frame = 0;
 
-    const setWeights = (fx: (center: number) => number) => {
+    /** `fx` gives each letter's closeness to the wave (0 to 1), or null for rest. */
+    const setWeights = (fx: (center: number) => number | null) => {
       const centers = originals.map((el) => {
         const r = el.getBoundingClientRect();
 
@@ -97,17 +100,23 @@ export function HeroTitle() {
       });
 
       originals.forEach((el, i) => {
-        const w = String(Math.round(fx(centers[i])));
+        const g = fx(centers[i]);
+        const weight = g === null ? REST.fontWeight : Math.round(500 + 400 * g);
+        const soft =
+          g === null
+            ? REST.fontVariationSettings
+            : `'SOFT' ${Math.round(20 + 80 * g)}`;
 
-        groups
-          .get(el.dataset.wave!)
-          ?.forEach((node) => (node.style.fontWeight = w));
+        groups.get(el.dataset.wave!)?.forEach((node) => {
+          node.style.fontWeight = String(weight);
+          node.style.fontVariationSettings = soft;
+        });
       });
       // Heavier letters are wider: keep the bead on the period as it moves.
       relayout.current();
     };
     const near = (x: number) => (c: number) =>
-      560 + 320 * Math.exp(-((c - x) ** 2) / (2 * 60 ** 2));
+      Math.exp(-((c - x) ** 2) / (2 * 64 ** 2));
 
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
@@ -118,7 +127,7 @@ export function HeroTitle() {
     };
     const onLeave = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setWeights(() => BASE_WEIGHT));
+      frame = requestAnimationFrame(() => setWeights(() => null));
     };
 
     // One sweep on load so touch visitors see it too.
@@ -131,7 +140,7 @@ export function HeroTitle() {
         const r = wrap.getBoundingClientRect();
 
         if (t >= 1) {
-          setWeights(() => BASE_WEIGHT);
+          setWeights(() => null);
 
           return;
         }

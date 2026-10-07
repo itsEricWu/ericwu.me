@@ -102,43 +102,27 @@ function drawContours(
 
 /**
  * Real contour lines of Mount Rainier (Tahoma), the mountain I'm training to
- * climb, drawn once after the page is idle. A second, brighter copy is masked
- * to a soft circle around the cursor, like a headlamp on a map.
+ * climb, drawn once after the page is idle and again only on resize or theme
+ * change, so the glass above it never has to re-blur a moving background.
  */
 export function TopoCanvas() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const baseRef = useRef<HTMLCanvasElement>(null);
-  const litRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     let topo: Topo | null = null;
     let disposed = false;
     let resizeTimer = 0;
-    let frame = 0;
-    const fine = window.matchMedia(
-      "(hover: hover) and (pointer: fine)",
-    ).matches;
+    let lastWidth = 0;
 
     const paint = () => {
-      if (!topo || disposed) return;
+      const canvas = canvasRef.current;
+
+      if (!topo || disposed || !canvas) return;
       const css = getComputedStyle(document.documentElement);
 
-      if (baseRef.current) {
-        drawContours(
-          baseRef.current,
-          topo,
-          css.getPropertyValue("--topo").trim(),
-          1,
-        );
-      }
-      if (fine && litRef.current) {
-        drawContours(
-          litRef.current,
-          topo,
-          css.getPropertyValue("--topo-lit").trim(),
-          1.25,
-        );
-      }
+      lastWidth = canvas.clientWidth;
+      drawContours(canvas, topo, css.getPropertyValue("--topo").trim(), 1);
       wrapRef.current?.setAttribute("data-ready", "true");
     };
 
@@ -155,17 +139,11 @@ export function TopoCanvas() {
 
     const onResize = () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(paint, 160);
-    };
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType === "touch" || frame) return;
-      const { clientX, clientY } = e;
-
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        wrapRef.current?.style.setProperty("--cx", `${clientX}px`);
-        wrapRef.current?.style.setProperty("--cy", `${clientY}px`);
-      });
+      resizeTimer = window.setTimeout(() => {
+        // Mobile toolbars change only the height; the backdrop is sized to the
+        // large viewport, so only a width change needs a redraw.
+        if (canvasRef.current?.clientWidth !== lastWidth) paint();
+      }, 160);
     };
     const themeObserver = new MutationObserver(paint);
 
@@ -174,16 +152,13 @@ export function TopoCanvas() {
       attributeFilter: ["class"],
     });
     window.addEventListener("resize", onResize);
-    if (fine) window.addEventListener("pointermove", onMove, { passive: true });
 
     return () => {
       disposed = true;
       cancelIdle();
       window.clearTimeout(resizeTimer);
-      cancelAnimationFrame(frame);
       themeObserver.disconnect();
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("pointermove", onMove);
     };
   }, []);
 
@@ -192,11 +167,7 @@ export function TopoCanvas() {
       ref={wrapRef}
       className="absolute inset-0 opacity-0 transition-opacity duration-1000 data-[ready=true]:opacity-100"
     >
-      <canvas ref={baseRef} className="absolute inset-0 size-full" />
-      <canvas
-        ref={litRef}
-        className="absolute inset-0 size-full [mask-image:radial-gradient(circle_220px_at_var(--cx,-999px)_var(--cy,-999px),#000,transparent_75%)]"
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
     </div>
   );
 }

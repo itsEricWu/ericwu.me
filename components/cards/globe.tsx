@@ -193,12 +193,14 @@ export function GlobeCard() {
   return (
     <div className="relative h-full overflow-hidden">
       <div className="absolute top-4 left-5 z-10 leading-tight sm:top-5">
-        <p className="text-[15px] font-semibold">Purdue → UCLA → Seattle</p>
+        <p className="font-display text-[15px] leading-snug font-semibold tracking-[-0.005em] sm:text-[17px]">
+          Purdue → UCLA → Seattle
+        </p>
         <p className="text-[12px] text-muted max-sm:hidden">Drag to spin</p>
       </div>
       <div
         ref={wrapRef}
-        className="absolute inset-x-[-14%] top-[24%] aspect-square sm:top-[12%]"
+        className="absolute inset-x-[-14%] top-[30%] aspect-square sm:top-[12%]"
       >
         <canvas
           ref={canvasRef}

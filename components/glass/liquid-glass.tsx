@@ -35,6 +35,7 @@ function paintLight() {
   const vh = window.innerHeight;
 
   litElements.forEach((el) => {
+    if (el.hasAttribute("data-steady-light")) return;
     const r = el.getBoundingClientRect();
 
     if (r.bottom < -80 || r.top > vh + 80 || !r.width) return;

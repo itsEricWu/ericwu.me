@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 
 import { ArrowUpRight } from "./ui";
 
@@ -51,19 +51,15 @@ export function ProjectCard({
 }: {
   project: Project;
   look: keyof typeof LOOKS;
-  image: string;
-  width: number;
-  height: number;
+  /** A local import (sized automatically) or a remote URL with its size. */
+  image: string | StaticImageData;
+  width?: number;
+  height?: number;
 }) {
   const l = LOOKS[look];
 
   return (
-    <div
-      className={cn(
-        "group relative h-full w-full overflow-hidden dark:bg-card",
-        l.bg,
-      )}
-    >
+    <div className={cn("group relative h-full w-full overflow-hidden", l.bg)}>
       <div
         className={cn("absolute rounded-full bg-blush dark:hidden", l.blob)}
       />
@@ -81,6 +77,7 @@ export function ProjectCard({
             l.img,
           )}
           height={height}
+          placeholder={typeof image === "string" ? "empty" : "blur"}
           quality={65}
           sizes={l.sizes}
           src={image}

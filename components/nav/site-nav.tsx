@@ -12,7 +12,7 @@ import {
 } from "react";
 
 import { LiquidGlass, useGlassLight } from "@/components/glass/liquid-glass";
-import { spring } from "@/lib/motion";
+import { springs } from "@/lib/motion";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
 import { setView, useView, type View } from "@/lib/view-store";
@@ -95,6 +95,7 @@ export function SiteNav() {
     <>
       <header className="pointer-events-none fixed inset-x-0 bottom-[max(14px,env(safe-area-inset-bottom))] z-50 flex justify-center px-3 sm:top-4 sm:bottom-auto">
         <LiquidGlass
+          data-steady-light
           className="pointer-events-auto flex items-center gap-1 rounded-full p-1.5 [--glass-tint:rgb(255_255_255/0.5)] dark:[--glass-tint:rgb(16_20_26/0.55)]"
           glass={{ chroma: 0.1, blur: 3, saturate: 1.8 }}
         >
@@ -156,7 +157,7 @@ function Tabs({
 
     const dist = Math.abs(activeIndex - from);
     const stretch = 1 + Math.min(0.55, dist * 0.22);
-    const s = spring(210, 19);
+    const s = springs.wobble();
 
     el.animate(
       [
@@ -235,7 +236,7 @@ function Tabs({
 
     if (el) {
       const current = el.style.transform;
-      const s = spring(260, 20);
+      const s = springs.wobble();
 
       el.style.transform = `translateX(${index * 100}%)`;
       el.animate([{ transform: current }, { transform: el.style.transform }], {

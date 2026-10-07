@@ -4,8 +4,10 @@
 
 @theme inline {
   --font-sans:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter),
-    system-ui, "Segoe UI", Roboto, sans-serif;
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--ff-text),
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--display-face);
+  --font-name: var(--name-face);
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 
   --color-bg: var(--bg);
@@ -34,6 +36,29 @@
 
 /* ---------- Tokens ---------- */
 
+/* Display type: a metric-matched fallback until Fraunces arrives after the
+   first paint (components/font-loader.tsx), then Fraunces. */
+:root {
+  --display-face: "Fraunces Fallback", ui-serif, Georgia, serif;
+  --name-face: "Fraunces Fallback", ui-serif, Georgia, serif;
+}
+
+html.ff {
+  --display-face: var(--ff-display), ui-serif, Georgia, serif;
+  --name-face: var(--ff-name), var(--ff-display), ui-serif, Georgia, serif;
+}
+
+/* A gentle settle when the display face swaps in. */
+.ff-in :is(.font-display, .title, .hero-name) {
+  animation: ff-settle 0.5s ease both;
+}
+
+@keyframes ff-settle {
+  from {
+    opacity: 0.82;
+  }
+}
+
 :root {
   /* Neutrals: the original warm off-white with white cards. */
   --bg: #f6f2f2;
@@ -57,7 +82,6 @@
   --ember-ink: #c23668;
 
   --topo: rgb(110 92 104 / 0.1);
-  --topo-lit: rgb(42 134 221 / 0.42);
   --aurora-a: rgb(140 201 254 / 0.42);
   --aurora-b: rgb(255 191 209 / 0.5);
   --aurora-c: rgb(99 204 174 / 0.2);
@@ -76,6 +100,121 @@
   --rim-hi: rgb(255 255 255 / 1);
   --rim-lo: rgb(255 255 255 / 0.45);
   --rim-end: rgb(255 255 255 / 0.8);
+  --glint: rgb(255 255 255 / 1);
+  --card-lifted: rgb(255 255 255 / 0.94);
+
+  /* Motion: three springs (see lib/motion.ts). Everything that moves uses one. */
+  --ease-snap: linear(
+    0,
+    0.021,
+    0.075,
+    0.148,
+    0.23,
+    0.316,
+    0.401,
+    0.481,
+    0.555,
+    0.623,
+    0.682,
+    0.735,
+    0.781,
+    0.82,
+    0.853,
+    0.881,
+    0.904,
+    0.924,
+    0.94,
+    0.953,
+    0.963,
+    0.972,
+    0.979,
+    0.984,
+    0.988,
+    0.991,
+    0.994,
+    0.996,
+    0.997,
+    0.998,
+    0.999,
+    1
+  );
+  --dur-snap: 350ms;
+  --ease-glide: linear(
+    0,
+    0.025,
+    0.087,
+    0.173,
+    0.269,
+    0.369,
+    0.467,
+    0.559,
+    0.642,
+    0.715,
+    0.778,
+    0.831,
+    0.876,
+    0.912,
+    0.94,
+    0.963,
+    0.98,
+    0.992,
+    1.001,
+    1.007,
+    1.011,
+    1.013,
+    1.014,
+    1.014,
+    1.013,
+    1.012,
+    1.01,
+    1.009,
+    1.008,
+    1.006,
+    1.005,
+    1.004,
+    1.003,
+    1.002,
+    1.001,
+    1
+  );
+  --dur-glide: 560ms;
+  --ease-wobble: linear(
+    0,
+    0.067,
+    0.229,
+    0.436,
+    0.648,
+    0.837,
+    0.986,
+    1.089,
+    1.148,
+    1.17,
+    1.163,
+    1.138,
+    1.104,
+    1.068,
+    1.034,
+    1.007,
+    0.988,
+    0.976,
+    0.971,
+    0.972,
+    0.975,
+    0.981,
+    0.987,
+    0.993,
+    0.998,
+    1.001,
+    1.004,
+    1.005,
+    1.005,
+    1.004,
+    1.003,
+    1.002,
+    1.001,
+    1
+  );
+  --dur-wobble: 820ms;
   /* visionOS-style hover light */
   --spot-fill: rgb(140 201 254 / 0.1);
   --spot-rim: rgb(42 134 221 / 0.28);
@@ -106,7 +245,6 @@
   --ember-ink: #ff9fbd;
 
   --topo: rgb(140 201 254 / 0.07);
-  --topo-lit: rgb(140 201 254 / 0.5);
   --aurora-a: rgb(70 140 210 / 0.24);
   --aurora-b: rgb(255 150 190 / 0.12);
   --aurora-c: rgb(99 204 174 / 0.08);
@@ -120,6 +258,8 @@
   --rim-hi: rgb(255 255 255 / 0.3);
   --rim-lo: rgb(255 255 255 / 0.07);
   --rim-end: rgb(255 255 255 / 0.14);
+  --glint: rgb(255 255 255 / 0.6);
+  --card-lifted: rgb(30 36 45 / 0.95);
   --spot-fill: rgb(255 255 255 / 0.05);
   --spot-rim: rgb(255 255 255 / 0.3);
 
@@ -150,7 +290,7 @@
     background: var(--bg);
     color: var(--ink);
     font-family: var(--font-sans);
-    letter-spacing: -0.011em;
+    letter-spacing: -0.004em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -161,8 +301,13 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--glacier);
-    outline-offset: 3px;
+    outline: 2px solid color-mix(in oklab, var(--glacier) 85%, transparent);
+    outline-offset: 2px;
+  }
+
+  /* Inside glass, the ring sits within the control so it reads as part of it. */
+  .lg :focus-visible {
+    outline-offset: -2px;
   }
 }
 
@@ -178,10 +323,17 @@
     color: var(--muted);
   }
 
+  /* Display type: Fraunces with its softest corners. */
+  .font-display,
+  .title {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 100;
+  }
+
   .title {
     font-weight: 600;
-    letter-spacing: -0.022em;
-    line-height: 1.12;
+    letter-spacing: -0.012em;
+    line-height: 1.1;
     color: var(--ink);
   }
 
@@ -214,13 +366,50 @@
   .bento {
     --cols: 2;
     --gap: 10px;
+    position: relative;
     display: grid;
     grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
     grid-auto-rows: calc(
       (100cqi - (var(--cols) - 1) * var(--gap)) / var(--cols)
     );
-    grid-auto-flow: row dense;
     gap: var(--gap);
+  }
+
+  /* Every card sits in an explicit cell, computed per tier (lib/bento-layout.ts). */
+  .bento > .card {
+    grid-column: var(--c0) / span var(--w0);
+    grid-row: var(--r0) / span var(--h0);
+  }
+
+  @media (min-width: 640px) {
+    .bento > .card {
+      grid-column: var(--c1) / span var(--w1);
+      grid-row: var(--r1) / span var(--h1);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento > .card {
+      grid-column: var(--c2) / span var(--w2);
+      grid-row: var(--r2) / span var(--h2);
+    }
+  }
+
+  /* Where the held card will land: a soft, empty well of glass. */
+  .bento-ghost {
+    border-radius: 28px;
+    background: color-mix(in oklab, var(--glacier) 7%, transparent);
+    box-shadow:
+      inset 0 0 0 1.5px color-mix(in oklab, var(--glacier) 38%, transparent),
+      inset 0 10px 30px -12px rgb(0 0 0 / 0.12);
+    pointer-events: none;
+    animation: fade-in 0.25s ease both;
+  }
+
+  @media (max-width: 639px) {
+    .bento-ghost {
+      border-radius: 24px;
+    }
   }
 
   @media (min-width: 640px) {
@@ -238,15 +427,16 @@
 
   @media (max-width: 639px) {
     .card {
-      border-radius: 24px;
+      --card-radius: 24px;
     }
   }
 
   .card {
+    --card-radius: 28px;
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    border-radius: 28px;
+    border-radius: var(--card-radius);
     background:
       linear-gradient(180deg, var(--card-sheen), transparent 36%),
       var(--card-glass);
@@ -256,9 +446,26 @@
     transition:
       opacity 0.45s ease,
       filter 0.45s ease,
-      box-shadow 0.4s ease,
-      scale 0.3s ease;
+      box-shadow var(--dur-glide) var(--ease-glide),
+      scale var(--dur-glide) var(--ease-glide);
     touch-action: pan-y;
+    -webkit-touch-callout: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card {
+      cursor: grab;
+    }
+  }
+
+  /* Card content is clipped to the rounded shape even while layers animate
+     (overflow alone lets composited children show square corners). */
+  .card-body {
+    position: relative;
+    height: 100%;
+    border-radius: inherit;
+    overflow: hidden;
+    clip-path: inset(0 round var(--card-radius));
   }
 
   @media (hover: hover) {
@@ -308,18 +515,51 @@
     filter: saturate(0.35);
   }
 
+  /* Pressed: the glass gives a little, like a held drop. */
+  .card[data-pressed] {
+    scale: 0.985;
+    transition-duration: 0.45s, 0.45s, var(--dur-snap), var(--dur-snap);
+    transition-timing-function: ease, ease, var(--ease-snap), var(--ease-snap);
+  }
+
+  /* Lifted: drops its blur (cheap to move) and floats above the grid. */
   .card[data-dragging="true"] {
     z-index: 50;
-    scale: 1.025;
+    scale: 1.03;
+    background: var(--card-lifted);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     box-shadow:
-      0 30px 60px -20px rgb(0 0 0 / 0.45),
-      0 0 0 1px var(--line-strong);
+      0 36px 70px -28px rgb(0 0 0 / 0.5),
+      0 14px 28px -14px rgb(0 0 0 / 0.28);
     cursor: grabbing;
   }
 
+  .bento-wrap[data-dragging] .card:not([data-dragging]) {
+    cursor: grabbing;
+  }
+
+  /* Entrance: each card condenses into place in reading order, and a glint of
+     light runs along its glass edge as it settles. */
   .card[data-enter] {
-    animation: var(--animate-rise);
+    animation: condense 0.8s var(--ease-glide) backwards;
     animation-delay: calc(var(--i, 0) * 45ms);
+  }
+
+  /* The glint: a band of light swept across the rim once, on the compositor. */
+  .card[data-enter] .card-rim::after {
+    content: "";
+    position: absolute;
+    inset: 0 -60%;
+    background: linear-gradient(
+      108deg,
+      transparent 42%,
+      var(--glint) 50%,
+      transparent 58%
+    );
+    translate: -100% 0;
+    animation: glint 1.4s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 45ms + 0.25s);
   }
 
   /* The glass edge: brightest where the light comes from, catching again at the bottom. */
@@ -338,6 +578,7 @@
       var(--rim-lo) 84%,
       var(--rim-end)
     );
+    overflow: hidden;
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
@@ -378,6 +619,23 @@
     backdrop-filter: var(--lg-filter);
   }
 
+  :is(a, button).lg {
+    transition: scale var(--dur-wobble) var(--ease-wobble);
+  }
+
+  :is(a, button).lg:active {
+    scale: 0.94;
+    transition-duration: var(--dur-snap);
+    transition-timing-function: var(--ease-snap);
+  }
+
+  /* Long, thin glass (the nav bar) keeps a steady top light instead of a
+     cursor-chasing highlight. */
+  .lg[data-steady-light] {
+    --sheen: 0;
+    --la: 180deg;
+  }
+
   /* Specular sheen: follows the light (the cursor). */
   .lg::before {
     content: "";
@@ -388,8 +646,8 @@
     background:
       radial-gradient(
         120% 90% at var(--lx, 30%) var(--ly, -10%),
-        rgb(255 255 255 / 0.42),
-        rgb(255 255 255 / 0.06) 38%,
+        rgb(255 255 255 / var(--sheen, 0.42)),
+        rgb(255 255 255 / calc(var(--sheen, 0.42) * 0.15)) 38%,
         transparent 60%
       ),
       linear-gradient(
@@ -458,6 +716,23 @@
 }
 
 /* ---------- Motion ---------- */
+
+@keyframes condense {
+  from {
+    opacity: 0;
+    scale: 0.965;
+    translate: 0 14px;
+  }
+}
+
+@keyframes glint {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 100% 0;
+  }
+}
 
 @keyframes rise {
   from {
@@ -584,6 +859,14 @@ html .notion {
   color: var(--ink);
 }
 
+html .notion-h,
+html .notion-title {
+  font-family: var(--font-display) !important;
+  font-variation-settings: "SOFT" 100;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
 html .notion-page {
   padding-bottom: 6rem;
 }
@@ -630,6 +913,9 @@ html .notion-yt-lite {
 
 /* The name in the hero: a sky-to-blush gradient, Apple Intelligence style. */
 .hero-name {
+  font-family: var(--font-name);
+  font-style: italic;
+  padding-right: 0.06em;
   background-image: linear-gradient(
     100deg,
     var(--glacier) 5%,

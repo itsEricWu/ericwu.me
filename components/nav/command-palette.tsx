@@ -225,6 +225,9 @@ export default function CommandPalette({
 
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
+    // Hand focus back only to someone navigating by keyboard; otherwise a
+    // mouse-clicked control would light up with a focus ring on close.
+    const restore = previous?.matches?.(":focus-visible") ?? false;
 
     inputRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
@@ -235,7 +238,7 @@ export default function CommandPalette({
 
     return () => {
       window.removeEventListener("keydown", onKey);
-      previous?.focus?.();
+      if (restore) previous?.focus?.();
     };
   }, [onClose]);
 

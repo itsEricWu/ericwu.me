@@ -16,7 +16,7 @@ export default function Error({
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
       <p className="eyebrow">Something went wrong</p>
-      <h1 className="text-4xl font-semibold tracking-tight">
+      <h1 className="font-display text-4xl font-semibold tracking-[-0.015em]">
         We hit a crevasse.
       </h1>
       <button

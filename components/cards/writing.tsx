@@ -21,7 +21,9 @@ export function WritingCard({ posts }: { posts: PostSummary[] }) {
   return (
     <div className="flex h-full flex-col p-5 sm:p-6">
       <div className="flex items-center justify-between">
-        <p className="text-[15px] font-semibold">Writing</p>
+        <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
+          Writing
+        </p>
         <Link
           className="inline-flex items-center gap-1 text-[13px] font-medium text-glacier-ink hover:underline hover:underline-offset-4"
           data-cursor="All posts"

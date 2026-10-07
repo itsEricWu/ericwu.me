@@ -14,18 +14,6 @@ export function SiteFooter() {
           to explore
         </span>
       </p>
-      <p>
-        Background: Mount Rainier contours from{" "}
-        <a
-          className="underline decoration-line-strong underline-offset-2 hover:text-ink"
-          href="https://registry.opendata.aws/terrain-tiles/"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          AWS Terrain Tiles
-        </a>{" "}
-        (USGS 3DEP)
-      </p>
     </footer>
   );
 }

@@ -1,3 +1,4 @@
+import secondselfShot from "@/assets/projects/secondself.webp";
 import { BentoGrid, type BentoItem } from "@/components/bento/bento-grid";
 import { ArtifactsCard } from "@/components/cards/artifacts";
 import { EmojiCard } from "@/components/cards/emoji";
@@ -20,7 +21,8 @@ export const revalidate = 3600;
 export default async function Page() {
   const [home, posts] = await Promise.all([getHomeData(), getLatestPosts()]);
 
-  // Order matters: the grid packs densely in this order. On desktop (4 columns):
+  // Order matters: cards pack first-fit in this order. Sizes are columns × rows
+  // on phones (2 columns), tablets, and desktops (4 columns). On desktop:
   //   [hero      ][finops    ]
   //   [hero      ][artifacts ]
   //   [sky][globe][secondself]
@@ -33,7 +35,11 @@ export default async function Page() {
       id: "hero",
       tags: ["about"],
       label: "About Eric",
-      className: "col-span-2 row-span-3 sm:row-span-3 lg:row-span-2",
+      size: [
+        [2, 3],
+        [2, 3],
+        [2, 2],
+      ],
       still: true,
       content: <HeroCard avatarUrl={home.avatarUrl} dogUrl={home.dogUrl} />,
     },
@@ -41,42 +47,60 @@ export default async function Page() {
       id: "finops",
       tags: ["work"],
       label: "AWS FinOps Agent",
-      className: "col-span-2 row-span-2 sm:row-span-1",
+      size: [
+        [2, 2],
+        [2, 1],
+        [2, 1],
+      ],
       content: <FinOpsCard />,
     },
     {
       id: "artifacts",
       tags: ["work"],
       label: "Amazon Q artifacts",
-      className: "col-span-2 row-span-2 sm:row-span-1",
+      size: [
+        [2, 2],
+        [2, 1],
+        [2, 1],
+      ],
       content: <ArtifactsCard />,
     },
     {
       id: "sky",
       tags: ["about"],
       label: "Seattle sky and theme switch",
-      className: "col-span-1 row-span-1",
+      size: [
+        [1, 1],
+        [1, 1],
+        [1, 1],
+      ],
       content: <SkyCard />,
     },
     {
       id: "globe",
       tags: ["about"],
       label: "Purdue, UCLA, Seattle",
-      className: "col-span-1 row-span-1",
+      size: [
+        [1, 1],
+        [1, 1],
+        [1, 1],
+      ],
       content: <GlobeCard />,
     },
     {
       id: "secondself",
       tags: ["projects"],
       label: projects.secondself.name,
-      className: "col-span-2 row-span-1",
+      size: [
+        [2, 1],
+        [2, 1],
+        [2, 1],
+      ],
       content: (
         <ProjectCard
-          height={1280}
-          image={home.secondselfUrl}
+          image={secondselfShot}
           look="secondself"
           project={projects.secondself}
-          width={2259}
         />
       ),
     },
@@ -84,21 +108,33 @@ export default async function Page() {
       id: "packbook",
       tags: ["projects"],
       label: "PackBook",
-      className: "col-span-2 row-span-2 sm:col-span-1",
+      size: [
+        [2, 2],
+        [1, 2],
+        [1, 2],
+      ],
       content: <PackBookCard />,
     },
     {
       id: "photos",
       tags: ["about"],
       label: "Photos",
-      className: "col-span-2 row-span-2",
+      size: [
+        [2, 2],
+        [2, 2],
+        [2, 2],
+      ],
       content: <PhotoDeck photos={home.photos} />,
     },
     {
       id: "webagent",
       tags: ["projects"],
       label: projects.webagent.name,
-      className: "col-span-1 row-span-2",
+      size: [
+        [1, 2],
+        [1, 2],
+        [1, 2],
+      ],
       content: (
         <ProjectCard
           height={800}
@@ -113,7 +149,11 @@ export default async function Page() {
       id: "chatbot",
       tags: ["projects"],
       label: projects.chatbot.name,
-      className: "col-span-2 row-span-1",
+      size: [
+        [2, 1],
+        [2, 1],
+        [2, 1],
+      ],
       content: (
         <ProjectCard
           height={1280}
@@ -128,28 +168,44 @@ export default async function Page() {
       id: "tech",
       tags: ["about", "work"],
       label: "Toolbox",
-      className: "col-span-1 row-span-1",
+      size: [
+        [1, 1],
+        [1, 1],
+        [1, 1],
+      ],
       content: <TechSphere />,
     },
     {
       id: "mini",
       tags: ["about"],
       label: "Mini Cooper",
-      className: "col-span-1 row-span-1",
+      size: [
+        [1, 1],
+        [1, 1],
+        [1, 1],
+      ],
       content: <MiniCard />,
     },
     {
       id: "emoji",
       tags: ["projects"],
       label: "Text to emoji",
-      className: "col-span-1 row-span-1",
+      size: [
+        [1, 1],
+        [1, 1],
+        [1, 1],
+      ],
       content: <EmojiCard />,
     },
     {
       id: "paper",
       tags: ["projects", "work"],
       label: projects.paper.name,
-      className: "col-span-1 row-span-1",
+      size: [
+        [1, 1],
+        [1, 1],
+        [1, 1],
+      ],
       content: (
         <ProjectCard
           height={1280}
@@ -164,7 +220,11 @@ export default async function Page() {
       id: "writing",
       tags: ["about"],
       label: "Latest writing",
-      className: "col-span-2 row-span-2 sm:row-span-1",
+      size: [
+        [2, 2],
+        [2, 1],
+        [2, 1],
+      ],
       content: <WritingCard posts={posts} />,
     },
   ];
