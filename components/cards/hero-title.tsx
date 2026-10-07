@@ -499,6 +499,17 @@ export function HeroTitle() {
       copyCard();
       relayout.current();
     });
+    // On a first visit the web fonts land late (html.ff) and move the period.
+    const html = document.documentElement;
+    let fonts = html.classList.contains("ff");
+    const mo = new MutationObserver(() => {
+      if (html.classList.contains("ff") === fonts) return;
+      fonts = !fonts;
+      copyCard();
+      relayout.current();
+    });
+
+    mo.observe(html, { attributes: true, attributeFilter: ["class"] });
 
     return () => {
       cancelAnimationFrame(frame);
@@ -514,6 +525,7 @@ export function HeroTitle() {
       handle.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("resize", onResize);
       ro.disconnect();
+      mo.disconnect();
     };
   }, []);
 
