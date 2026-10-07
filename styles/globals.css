@@ -4,10 +4,10 @@
 
 @theme inline {
   --font-sans:
-    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--ff-text),
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--ff-text, Figtree),
     ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--display-face);
-  --font-name: var(--name-face);
+  --font-display: var(--display-face, ui-serif, Georgia, serif);
+  --font-name: var(--name-face, ui-serif, Georgia, serif);
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 
   --color-bg: var(--bg);
@@ -42,15 +42,19 @@
 /* ---------- Tokens ---------- */
 
 /* Display type: a metric-matched fallback until Fraunces arrives after the
-   first paint (components/font-loader.tsx), then Fraunces. */
+   first paint (components/font-loader.tsx), then Fraunces. Every var() has a
+   fallback, so a missing variable (say, a page from an older deploy) can never
+   void the whole stack and drop the headline to the body sans. */
 :root {
   --display-face: "Fraunces Fallback", ui-serif, Georgia, serif;
   --name-face: "Fraunces Fallback", ui-serif, Georgia, serif;
 }
 
 html.ff {
-  --display-face: var(--ff-display), ui-serif, Georgia, serif;
-  --name-face: var(--ff-name), var(--ff-display), ui-serif, Georgia, serif;
+  --display-face: var(--ff-display, Fraunces), ui-serif, Georgia, serif;
+  --name-face:
+    var(--ff-name, Fraunces), var(--ff-display, Fraunces), ui-serif, Georgia,
+    serif;
 }
 
 /* A gentle settle when the display face swaps in. */

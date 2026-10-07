@@ -16,10 +16,10 @@ const FILTER_ID = "hero-droplet-lens";
 /** Matches the wrapper's px-1/py-1, so the clone inside the lens lines up with the title. */
 const PAD = 4;
 
-const letter = (ch: string, i: number) => (
+const letter = (ch: string, i: number, block = true) => (
   <span
     key={i}
-    className={cn("inline-block", ch === " " && "w-[0.24em]")}
+    className={cn(block && "inline-block", ch === " " && "w-[0.24em]")}
     data-wave={i}
     style={REST}
   >
@@ -36,10 +36,12 @@ function Title({ clone }: { clone?: boolean }) {
       className="hero-title font-display tracking-[-0.022em] whitespace-nowrap"
     >
       <span aria-hidden>
-        {LEAD.split("").map(letter)}
+        {LEAD.split("").map((ch, i) => letter(ch, i))}
         <span className="hero-tail inline-block">
+          {/* Plain inline letters: WebKit clips the gradient only to the
+              name's own inline text, so inline-block letters would vanish. */}
           <span className="hero-name">
-            {NAME.split("").map((ch, j) => letter(ch, LEAD.length + j))}
+            {NAME.split("").map((ch, j) => letter(ch, LEAD.length + j, false))}
           </span>
           <span
             className="inline-block"
@@ -219,7 +221,9 @@ export function HeroTitle() {
         right = m.actualBoundingBoxRight;
         ascent = m.actualBoundingBoxAscent;
       }
-      const dot = Math.max(right - left, ascent);
+      // The dot is round. Some engines give the advance rather than the ink
+      // for its width, so trust the smaller measure.
+      const dot = Math.min(right - left, ascent);
 
       home.x = r.left - w.left + (left + right) / 2;
       home.y = base.getBoundingClientRect().top - w.top - ascent / 2;
