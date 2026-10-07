@@ -138,3 +138,23 @@ export const customMapImageUrl = (url: string, block: Block): string => {
 
   return url;
 };
+
+const NOTION_HOST =
+  /(^|\.)(notion\.so|notion\.com|notion-static\.com|notionusercontent\.com|amazonaws\.com)$/;
+
+/**
+ * A page cover's URL. Covers linked from other sites (Wikimedia, Unsplash, ...)
+ * load from where they live: Notion's image proxy gets rate-limited by some of
+ * them. Covers uploaded to Notion still go through Notion.
+ */
+export const coverImageUrl = (url: string, block: Block): string => {
+  try {
+    const { protocol, hostname } = new URL(url);
+
+    if (protocol === "https:" && !NOTION_HOST.test(hostname)) return url;
+  } catch {
+    // A Notion path such as /images/page-cover/..., handled below.
+  }
+
+  return customMapImageUrl(url, block);
+};

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import type { ExtendedRecordMap } from "notion-types";
-import { useMemo, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { NotionRenderer } from "react-notion-x";
 import { getBlockValue } from "notion-utils";
 
@@ -99,6 +99,34 @@ export const NotionPage = ({
     () => ({ Code, Collection, Equation, Pdf, Modal }),
     [],
   );
+  const articleRef = useRef<HTMLElement>(null);
+
+  // Link previews show images from other sites, which come and go: drop the dead ones.
+  useEffect(() => {
+    const root = articleRef.current;
+
+    if (!root) return;
+    const onError = (e: Event) => {
+      if (!(e.target instanceof HTMLImageElement)) return;
+      const box = e.target.closest<HTMLElement>(
+        ".notion-bookmark-link-icon, .notion-bookmark-image",
+      );
+
+      if (box) box.style.display = "none";
+    };
+
+    root.addEventListener("error", onError, true);
+    // An image that failed before hydration is loaded again so its error is heard.
+    root
+      .querySelectorAll<HTMLImageElement>(".notion-bookmark img")
+      .forEach((img) => {
+        if (img.complete && img.naturalWidth === 0) {
+          img.setAttribute("src", img.getAttribute("src") ?? "");
+        }
+      });
+
+    return () => root.removeEventListener("error", onError, true);
+  }, [recordMap]);
 
   if (!recordMap) {
     return null;
@@ -107,7 +135,7 @@ export const NotionPage = ({
   const created = getBlockValue(recordMap.block[rootPageId])?.created_time;
 
   return (
-    <article className="mx-auto max-w-[760px]">
+    <article ref={articleRef} className="mx-auto max-w-[760px]">
       <Link
         className="lg inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium"
         data-cursor="All posts"

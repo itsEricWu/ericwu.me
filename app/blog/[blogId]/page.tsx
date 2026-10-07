@@ -6,7 +6,7 @@ import {
   getAllBlogPosts,
   getPageContent,
   extractDescription,
-  customMapImageUrl,
+  coverImageUrl,
 } from "@/lib/notion";
 import { notionBlogConfig, siteConfig } from "@/config/site";
 
@@ -38,7 +38,7 @@ export async function generateMetadata({
   const block = blockOf(recordMap.block[blogId]);
   const coverUrl = block?.format?.page_cover;
   const ogImages = coverUrl
-    ? [{ url: customMapImageUrl(coverUrl, block), alt: postTitle }]
+    ? [{ url: coverImageUrl(coverUrl, block), alt: postTitle }]
     : [{ url: "/og-image.png", alt: postTitle }];
 
   return {
@@ -95,7 +95,7 @@ export default async function Page({
       dateModified: new Date(block.last_edited_time).toISOString(),
     }),
     ...(coverUrl && {
-      image: customMapImageUrl(coverUrl, block),
+      image: coverImageUrl(coverUrl, block),
     }),
     author: {
       "@type": "Person",

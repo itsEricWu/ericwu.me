@@ -17,6 +17,15 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.notion.so",
       },
+      // Blog covers linked straight from their source (see coverImageUrl).
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
   async headers() {

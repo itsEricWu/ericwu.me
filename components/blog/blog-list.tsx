@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { Cover } from "@/components/blog/cover";
 import { Eyebrow } from "@/components/cards/ui";
 import type { Blog } from "@/types/blog";
 
@@ -37,17 +37,7 @@ export function BlogList({ blogPosts }: { blogPosts: Post[] }) {
             href={`/blog/${id}`}
           >
             <div className="relative aspect-[16/9] overflow-hidden bg-card-2">
-              {imageUrl && (
-                <Image
-                  fill
-                  alt=""
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  loading={i < 3 ? "eager" : "lazy"}
-                  preload={i === 0}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
-                  src={imageUrl}
-                />
-              )}
+              <Cover index={i} src={imageUrl} title={title} />
             </div>
             <div className="flex flex-1 flex-col gap-2 p-5">
               <h2 className="text-[1.05rem] leading-snug font-semibold tracking-tight transition-colors group-hover:text-glacier">

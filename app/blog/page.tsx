@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import { customMapImageUrl, getAllBlogPosts } from "@/lib/notion";
+import { coverImageUrl, getAllBlogPosts } from "@/lib/notion";
 import { notionBlogConfig } from "@/config/site";
 import { BlogList } from "@/components/blog/blog-list";
 
@@ -28,7 +28,7 @@ export default async function Page() {
   const postsWithImages = blogPosts.map((post) => ({
     ...post,
     imageUrl: post.pageCover
-      ? customMapImageUrl(post.pageCover, post.block)
+      ? coverImageUrl(post.pageCover, post.block)
       : undefined,
   }));
 
