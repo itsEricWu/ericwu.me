@@ -74,12 +74,10 @@ html.ff {
 /* ---------- Chinese ---------- */
 
 /* Han characters have no italics, so none are faked (Latin keeps its real
-   ones), and no line starts with closing punctuation. In display type the
-   punctuation is set proportionally ("palt"): a full-width comma would leave
-   half an em of air in a headline. */
+   ones). In display type the punctuation is set proportionally ("palt"): a
+   full-width comma would leave half an em of air in a headline. */
 html:lang(zh) {
   font-synthesis: none;
-  line-break: strict;
 }
 
 html:lang(zh) :is(.font-display, .title, .notion-h, .notion-title) {

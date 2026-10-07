@@ -4,7 +4,7 @@ import type { COBEOptions, Globe } from "cobe";
 import { useTheme } from "next-themes";
 import { useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
 
-import { useT } from "@/components/locale-provider";
+import { useLocale, useT } from "@/components/locale-provider";
 
 const PURDUE: [number, number] = [40.4237, -86.9212];
 const UCLA: [number, number] = [34.0689, -118.4452];
@@ -89,6 +89,11 @@ const TAU = Math.PI * 2;
  */
 export function GlobeCard() {
   const { globe: t } = useT();
+  const lang = useLocale();
+  // Chinese may break between any two characters, and Safari wouldn't break
+  // this one at all, so on small tiles it breaks where the English does:
+  // before the last stop.
+  const lastStop = t.title.lastIndexOf(" ") + 1;
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const globeRef = useRef<Globe | null>(null);
@@ -233,7 +238,15 @@ export function GlobeCard() {
     <div className="@container relative h-full overflow-hidden">
       <div className="absolute top-5 left-5 z-10 leading-tight sm:top-6 sm:left-6">
         <p className="font-display text-[15px] leading-snug font-semibold tracking-[-0.005em] @min-[250px]:text-[17px]">
-          {t.title}
+          {lang === "zh" ? (
+            <>
+              {t.title.slice(0, lastStop)}
+              <br className="@min-[250px]:hidden" />
+              {t.title.slice(lastStop)}
+            </>
+          ) : (
+            t.title
+          )}
         </p>
         <p className="text-[12px] text-muted @max-[220px]:hidden">{t.drag}</p>
       </div>
