@@ -64,10 +64,13 @@ const STYLED = ICONS.map((icon) => {
   };
 });
 
-/** An even spread of `n` points over a sphere (Fibonacci lattice). */
+/**
+ * An even spread of `n` points over a sphere (Fibonacci lattice), offset by
+ * half a step so no mark sits on a pole, where others would pass too close.
+ */
 const lattice = (n: number) =>
   Array.from({ length: n }, (_, i) => {
-    const y = 1 - (i / (n - 1)) * 2;
+    const y = 1 - ((i + 0.5) / n) * 2;
     const r = Math.sqrt(1 - y * y);
     const a = i * Math.PI * (3 - Math.sqrt(5));
 
