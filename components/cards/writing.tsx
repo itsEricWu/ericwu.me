@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { FitList } from "./fit-list";
 import { Chevron } from "./ui";
 
 export type PostSummary = {
@@ -33,24 +34,32 @@ export function WritingCard({ posts }: { posts: PostSummary[] }) {
           <Chevron />
         </Link>
       </div>
-      <ul className="mt-2 flex flex-1 flex-col justify-start divide-y divide-line sm:justify-center">
-        {posts.slice(0, 5).map((p, i) => (
-          <li key={p.id} className={i >= 3 ? "sm:hidden" : undefined}>
+      {/* As many posts as the card has room for; the rows that show share out
+          the spare height, so the list always ends at the card's inset. Rows
+          never shrink, so FitList can see which ones overflow. */}
+      <FitList className="mt-2 flex min-h-0 flex-1 flex-col">
+        {posts.slice(0, 10).map((p) => (
+          <li
+            key={p.id}
+            className="flex flex-[1_0_auto] flex-col border-t border-line first:border-t-0"
+          >
             <Link
-              className="group flex items-baseline justify-between gap-4 py-2.5"
+              className="group flex flex-1 items-center py-2.5"
               data-cursor="Read"
               href={`/blog/${p.id}`}
               prefetch={false}
             >
-              <span className="truncate text-[15px] font-medium transition-colors group-hover:text-glacier">
-                {p.title}
+              <span className="flex w-full min-w-0 items-baseline justify-between gap-4">
+                <span className="truncate text-[15px] font-medium transition-colors group-hover:text-glacier">
+                  {p.title}
+                </span>
+                <time
+                  className="shrink-0 text-[13px] text-muted tabular-nums"
+                  dateTime={p.createdAt ?? undefined}
+                >
+                  {fmt(p.createdAt)}
+                </time>
               </span>
-              <time
-                className="shrink-0 text-[13px] text-muted tabular-nums"
-                dateTime={p.createdAt ?? undefined}
-              >
-                {fmt(p.createdAt)}
-              </time>
             </Link>
           </li>
         ))}
@@ -61,7 +70,7 @@ export function WritingCard({ posts }: { posts: PostSummary[] }) {
             </Link>
           </li>
         )}
-      </ul>
+      </FitList>
     </div>
   );
 }
