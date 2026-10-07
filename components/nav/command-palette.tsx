@@ -264,7 +264,7 @@ export default function CommandPalette({
         className="pointer-events-none absolute inset-0 bg-black/20 backdrop-blur-[3px] [animation:fade-in_.3s_ease_both] dark:bg-black/50"
       />
       <LiquidGlass
-        className="w-full max-w-[600px] overflow-hidden rounded-[26px] bg-card/80 [--lg-blur:24px] [animation:rise_.45s_cubic-bezier(.2,.8,.2,1)_both] dark:bg-card/75"
+        className="w-full max-w-[600px] overflow-hidden rounded-[26px] [--glass-tint:color-mix(in_oklab,var(--card)_80%,transparent)] [--lg-blur:24px] [animation:rise_.45s_cubic-bezier(.2,.8,.2,1)_both] dark:[--glass-tint:color-mix(in_oklab,var(--card)_75%,transparent)]"
         glass={{
           bezel: 22,
           thickness: 26,

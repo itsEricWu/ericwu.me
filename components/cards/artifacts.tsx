@@ -264,7 +264,7 @@ export function ArtifactsCard() {
         >
           <span
             aria-hidden
-            className="lg absolute inset-y-0.5 left-0.5 w-[calc((100%-4px)/3)] rounded-full bg-card/80 shadow-[0_2px_8px_-2px_rgb(0_0_0/0.2)] transition-transform duration-500 ease-[cubic-bezier(.3,1.35,.5,1)] [--lg-blur:0px] [backdrop-filter:none] dark:bg-white/15"
+            className="lg absolute inset-y-0.5 left-0.5 w-[calc((100%-4px)/3)] rounded-full shadow-[0_2px_8px_-2px_rgb(0_0_0/0.2)] [--glass-tint:color-mix(in_oklab,var(--card)_80%,transparent)] transition-transform duration-500 ease-[cubic-bezier(.3,1.35,.5,1)] [--lg-blur:0px] [backdrop-filter:none] dark:[--glass-tint:rgb(255_255_255/0.15)]"
             style={{ transform: `translateX(${index * 100}%)` }}
           />
           {TABS.map((t) => (

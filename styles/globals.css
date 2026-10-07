@@ -491,9 +491,12 @@ html.ff {
     isolation: isolate;
     overflow: hidden;
     border-radius: var(--card-radius);
+    /* Tints are image layers, never a background-color: while scrolling fast,
+       Chrome fills tiles it hasn't painted yet with a layer's background-color,
+       as a square the size of the layer (shadow included), which flashed. */
     background:
       linear-gradient(180deg, var(--card-sheen), transparent 36%),
-      var(--card-glass);
+      linear-gradient(var(--card-glass), var(--card-glass));
     -webkit-backdrop-filter: blur(var(--card-blur)) saturate(1.8);
     backdrop-filter: blur(var(--card-blur)) saturate(1.8);
     box-shadow: var(--shadow);
@@ -580,7 +583,7 @@ html.ff {
   .card[data-dragging="true"] {
     z-index: 50;
     scale: 1.03;
-    background: var(--card-lifted);
+    background: linear-gradient(var(--card-lifted), var(--card-lifted));
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     box-shadow:
@@ -644,13 +647,13 @@ html.ff {
     (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
   ) {
     .card {
-      background: var(--card);
+      background: linear-gradient(var(--card), var(--card));
     }
   }
 
   @media (prefers-reduced-transparency: reduce) {
     .card {
-      background: var(--card);
+      background: linear-gradient(var(--card), var(--card));
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
@@ -661,7 +664,7 @@ html.ff {
   .lg {
     position: relative;
     isolation: isolate;
-    background: var(--glass-tint);
+    background: linear-gradient(var(--glass-tint), var(--glass-tint));
     -webkit-backdrop-filter: blur(var(--lg-blur, 12px)) saturate(1.7);
     backdrop-filter: blur(var(--lg-blur, 12px)) saturate(1.7);
     box-shadow: var(--glass-shadow);

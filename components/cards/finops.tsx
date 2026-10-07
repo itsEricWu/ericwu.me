@@ -163,7 +163,7 @@ export function FinOpsCard() {
               <li
                 key={n.title}
                 className={cn(
-                  "lg flex h-[46px] items-start gap-2.5 rounded-[16px] bg-card/60 px-3 py-2 [--lg-blur:14px] [animation:notify_.55s_cubic-bezier(.2,.9,.25,1.15)_both] dark:bg-card/45",
+                  "lg flex h-[46px] items-start gap-2.5 rounded-[16px] px-3 py-2 [--glass-tint:color-mix(in_oklab,var(--card)_60%,transparent)] [--lg-blur:14px] [animation:notify_.55s_cubic-bezier(.2,.9,.25,1.15)_both] dark:[--glass-tint:color-mix(in_oklab,var(--card)_45%,transparent)]",
                   k > 1 && "[@container(height<220px)]:hidden",
                 )}
               >

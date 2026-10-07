@@ -262,7 +262,7 @@ function Tabs({
       <span
         ref={dropletRef}
         aria-hidden
-        className="lg pointer-events-none absolute inset-y-0 left-0 z-0 w-[58px] rounded-full bg-white/75 shadow-[0_6px_16px_-8px_rgb(40_20_30/0.35)] transition-[scale] duration-300 [--lg-blur:0px] [backdrop-filter:none] [scale:calc(1+var(--press,0)*0.12)] sm:w-[76px] dark:bg-white/12"
+        className="lg pointer-events-none absolute inset-y-0 left-0 z-0 w-[58px] rounded-full shadow-[0_6px_16px_-8px_rgb(40_20_30/0.35)] [--glass-tint:rgb(255_255_255/0.75)] transition-[scale] duration-300 [--lg-blur:0px] [backdrop-filter:none] [scale:calc(1+var(--press,0)*0.12)] sm:w-[76px] dark:[--glass-tint:rgb(255_255_255/0.12)]"
         style={{
           transform: `translateX(${Math.max(0, activeIndex) * 100}%)`,
           opacity: activeIndex < 0 ? 0 : 1,

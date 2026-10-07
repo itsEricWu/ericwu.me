@@ -236,7 +236,7 @@ export function TechSphere() {
             ref={(el) => {
               items.current[i] = el;
             }}
-            className="absolute top-1/2 left-1/2 -mt-[calc(var(--chip)/2)] -ml-[calc(var(--chip)/2)] grid size-(--chip) place-items-center rounded-[calc(var(--chip)*0.3)] bg-card text-[var(--c)] shadow-[0_2px_8px_-2px_rgb(0_0_0/0.18)] ring-1 ring-line will-change-transform dark:bg-card-2 dark:text-[var(--cd)]"
+            className="absolute top-1/2 left-1/2 -mt-[calc(var(--chip)/2)] -ml-[calc(var(--chip)/2)] grid size-(--chip) place-items-center rounded-[calc(var(--chip)*0.3)] bg-[linear-gradient(var(--card),var(--card))] text-[var(--c)] shadow-[0_2px_8px_-2px_rgb(0_0_0/0.18)] ring-1 ring-line will-change-transform dark:bg-[linear-gradient(var(--card-2),var(--card-2))] dark:text-[var(--cd)]"
             data-cursor={icon.title}
             style={{ "--c": icon.light, "--cd": icon.dark } as CSSProperties}
             onPointerEnter={() => setActive(icon.title)}
