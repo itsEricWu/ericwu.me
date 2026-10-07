@@ -54,10 +54,11 @@ export function HeroCard({
           </p>
         </div>
       </div>
-      {/* The byline holds the top; the statement and its links hold the bottom
-          as one block, so any spare height is a single field of space under
-          the byline rather than gaps that pull the block apart. Below 768px
-          the card is as tall as its content and nothing is spare. */}
+      {/* The byline holds the top and the links the bottom; any spare height
+          is shared evenly above and below the statement, so it sits centred
+          between them however its lines fall (the bio wraps differently from
+          one platform's text face to another). Below 768px the card is as tall
+          as its content and nothing is spare. */}
       <div className="mt-auto pt-5 min-[480px]:pt-6">
         <HeroTitle />
         <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] md:mt-5 md:text-[clamp(16px,3.5cqi,21px)]">
@@ -69,7 +70,7 @@ export function HeroCard({
       </div>
       <nav
         aria-label="Social links"
-        className="dock mt-6 flex items-center gap-2"
+        className="dock mt-6 flex items-center gap-2 md:mt-auto md:pt-6"
       >
         {socials.map((s) => (
           <a

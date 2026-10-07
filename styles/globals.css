@@ -1012,9 +1012,11 @@ html .notion-yt-lite {
  * The hero headline: one line that grows with its card (it runs ~6.2em wide).
  * Below 768px the hero is a full-width row as tall as its content, so the line
  * stays single. From 768px it is a square beside other cards: the headline
- * breaks to "Hey, I'm / Eric." and grows once the card is tall enough, while
- * the bio scales with the card, so the square fills alike at every size
- * (measured: the spare height under the byline stays within 28-75px).
+ * breaks to "Hey, I'm / Eric." and grows in two steps as the card gets taller,
+ * while the bio scales with the card, so the square fills alike at every size.
+ * Measured at the 587px card: the gaps from byline to headline, headline to
+ * bio and bio to links come out about even (~38/45/36px of white between the
+ * ink), and ~52/51/46 where the bio wraps a line shorter (SF Pro on a Mac).
  */
 .hero-title {
   font-size: clamp(2rem, 15.5cqi, 5.2rem);
@@ -1035,6 +1037,12 @@ html .notion-yt-lite {
   @container hero (min-height: 472px) and (min-aspect-ratio: 9 / 10) {
     .hero-title {
       font-size: min(18.5cqi, 7.5rem);
+    }
+  }
+
+  @container hero (min-height: 530px) and (min-aspect-ratio: 9 / 10) {
+    .hero-title {
+      font-size: min(20.4cqi, 7.5rem);
     }
   }
 }
