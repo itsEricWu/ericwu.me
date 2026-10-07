@@ -1,7 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useState, type CSSProperties } from "react";
+import Image, { getImageProps } from "next/image";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
 import { cn, onIdle } from "@/lib/utils";
 
@@ -24,14 +30,34 @@ export function AvatarFlip({
   dogUrl: string;
 }) {
   const [flipped, setFlipped] = useState(false);
-  const [showDog, setShowDog] = useState(false);
+  // Bert is only in the page while he's showing or turning away, so nothing
+  // (a theme switch, a browser's snapshot of the page) can paint him over Eric.
+  const [dogIn, setDogIn] = useState(false);
+  const warmed = useRef(false);
+
+  // Fetches Bert at the size his face will ask for, so he's there on the flip.
+  const warm = useCallback(() => {
+    if (warmed.current) return;
+    warmed.current = true;
+    const { props } = getImageProps({
+      alt: "",
+      fill: true,
+      sizes: "60px",
+      src: dogUrl,
+    });
+    const img = new window.Image();
+
+    img.sizes = props.sizes ?? "";
+    img.srcset = props.srcSet ?? "";
+    img.src = props.src;
+  }, [dogUrl]);
 
   useEffect(() => {
     const meet = () => {
-      setShowDog(true);
+      setDogIn(true);
       setFlipped(true);
     };
-    const cancelIdle = onIdle(() => setShowDog(true), 5000);
+    const cancelIdle = onIdle(warm, 5000);
 
     window.addEventListener("eric:bert", meet);
 
@@ -39,7 +65,15 @@ export function AvatarFlip({
       window.removeEventListener("eric:bert", meet);
       cancelIdle();
     };
-  }, []);
+  }, [warm]);
+
+  // Once Bert has turned away (his face hides 114 ms in), take him out.
+  useEffect(() => {
+    if (flipped) return;
+    const id = setTimeout(() => setDogIn(false), 250);
+
+    return () => clearTimeout(id);
+  }, [flipped]);
 
   return (
     <button
@@ -49,10 +83,11 @@ export function AvatarFlip({
       data-cursor={flipped ? "Back to Eric" : "Meet Bert"}
       type="button"
       onClick={() => {
-        setShowDog(true);
-        setFlipped((f) => !f);
+        if (!flipped) setDogIn(true);
+        setFlipped(!flipped);
       }}
-      onPointerEnter={() => setShowDog(true)}
+      onFocus={warm}
+      onPointerEnter={warm}
     >
       <span
         className="relative block size-full transition-transform duration-[900ms] [transform-style:preserve-3d] [transition-timing-function:cubic-bezier(.3,1.35,.45,1)] group-active:scale-95"
@@ -75,7 +110,7 @@ export function AvatarFlip({
           className="absolute inset-0 overflow-hidden rounded-full bg-card-2 ring-1 ring-line [backface-visibility:hidden] [transform:rotateY(180deg)]"
           style={face(flipped)}
         >
-          {showDog && (
+          {dogIn && (
             <Image
               fill
               alt="Bert, Eric's dog"
