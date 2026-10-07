@@ -31,7 +31,7 @@ export function HeroCard({
   dogUrl: string;
 }) {
   return (
-    <div className="relative flex h-full flex-col justify-between p-5 [container:hero/inline-size] min-[480px]:[container:hero/size] sm:p-6">
+    <div className="relative flex h-full flex-col p-5 [container:hero/inline-size] md:[container:hero/size] sm:p-6">
       <div className="flex items-center gap-3.5">
         <AvatarFlip avatarUrl={avatarUrl} dogUrl={dogUrl} />
         <div className="leading-tight">
@@ -51,11 +51,13 @@ export function HeroCard({
           </p>
         </div>
       </div>
-      {/* Byline, statement, and links share any spare height evenly. On phones
-          the card is as tall as its content, so they sit at these minimum gaps. */}
-      <div className="pt-5 min-[480px]:pt-6">
+      {/* The byline holds the top; the statement and its links hold the bottom
+          as one block, so any spare height is a single field of space under
+          the byline rather than gaps that pull the block apart. Below 768px
+          the card is as tall as its content and nothing is spare. */}
+      <div className="mt-auto pt-5 min-[480px]:pt-6">
         <HeroTitle />
-        <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] lg:mt-5 lg:text-[19px]">
+        <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] md:mt-5 md:text-[clamp(16px,3.5cqi,21px)]">
           An SDE II at AWS building agentic systems and generative UI. UCLA
           &amp; Purdue alum. Passionate about crafting AI experiences that make
           life easier. Outside work, I&apos;m hiking with my dog Bert and
@@ -64,7 +66,7 @@ export function HeroCard({
       </div>
       <nav
         aria-label="Social links"
-        className="dock mt-6 flex items-center gap-2 lg:mt-7"
+        className="dock mt-6 flex items-center gap-2"
       >
         {socials.map((s) => (
           <a

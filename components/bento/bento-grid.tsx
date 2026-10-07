@@ -70,7 +70,7 @@ type Drag = {
   cell: { x: number; y: number } | null;
   /** Reading order when the drag began: the others always re-pack in this order. */
   base: string[];
-  /** Rows above the packed cards (a phone header row), and where those cards start. */
+  /** Rows above the packed cards (a header row), and where those cards start. */
   shift: number;
   top: number;
 };
@@ -78,8 +78,11 @@ type Drag = {
 // Pointer-downs on these never start a card drag.
 const INTERACTIVE =
   "a,button,input,textarea,select,label,canvas,[data-nodrag],[contenteditable=true]";
-/** The tier whose header cards become a content-height row above the grid. */
-const HEADER_TIER = 0;
+/**
+ * Tiers where header cards span the full width, so they become a
+ * content-height row above the grid instead of a forced square.
+ */
+const HEADER_TIERS: ReadonlySet<number> = new Set([0, 1, 2]);
 /** Press and hold this long before a touch drag starts (quicker moves scroll). */
 const HOLD_MS = 380;
 /** Holding a card this close to the top or bottom of the viewport scrolls. */
@@ -133,7 +136,7 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
         (t, i) =>
           custom[`${view}:${i}`] ??
           pack(
-            i === HEADER_TIER
+            HEADER_TIERS.has(i)
               ? display.filter((id) => !byId.get(id)?.header)
               : display,
             (id) => byId.get(id)?.size[i] ?? [1, 1],
@@ -313,7 +316,7 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
       d.grabX = Math.min(Math.max(d.startX - r.left, 0), r.width);
       d.grabY = Math.min(Math.max(d.startY - r.top, 0), r.height);
       d.base = readingOrder(layoutsRef.current[d.tier]);
-      // On phones the packed cards start below the header row (or its gap, when hidden).
+      // Under a header row the packed cards start below it (or its gap, when hidden).
       if (d.shift) {
         const header = grid.querySelector<HTMLElement>(
           ":scope > [data-header]",
@@ -414,8 +417,8 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
       if (!el || !grid.contains(el)) return;
       const tier = tierFor(window.innerWidth);
 
-      // A phone header is a fixed row, not a card to move.
-      if (tier === HEADER_TIER && el.hasAttribute("data-header")) return;
+      // A header row is fixed, not a card to move.
+      if (HEADER_TIERS.has(tier) && el.hasAttribute("data-header")) return;
       const r = el.getBoundingClientRect();
       const d: Drag = {
         id: el.dataset.card!,
@@ -435,7 +438,9 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
         cell: null,
         base: [],
         shift:
-          tier === HEADER_TIER && grid.hasAttribute("data-has-header") ? 1 : 0,
+          HEADER_TIERS.has(tier) && grid.hasAttribute("data-has-header")
+            ? 1
+            : 0,
         top: 0,
       };
 
@@ -550,8 +555,8 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
             const c = layout.find((cell) => cell.id === id);
 
             if (!c) return;
-            // Under a phone header row the cards start one row down.
-            const shift = t === HEADER_TIER && hasHeader ? 1 : 0;
+            // Under a header row the cards start one row down.
+            const shift = HEADER_TIERS.has(t) && hasHeader ? 1 : 0;
 
             place[`--c${t}`] = c.x + 1;
             place[`--r${t}`] = c.y + 1 + shift;
@@ -559,10 +564,12 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
             place[`--h${t}`] = c.h;
           });
           if (item.header) {
-            place[`--c${HEADER_TIER}`] = 1;
-            place[`--r${HEADER_TIER}`] = 1;
-            place[`--w${HEADER_TIER}`] = TIERS[HEADER_TIER].cols;
-            place[`--h${HEADER_TIER}`] = 1;
+            HEADER_TIERS.forEach((t) => {
+              place[`--c${t}`] = 1;
+              place[`--r${t}`] = 1;
+              place[`--w${t}`] = TIERS[t].cols;
+              place[`--h${t}`] = 1;
+            });
           }
 
           return (

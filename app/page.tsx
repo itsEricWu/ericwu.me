@@ -56,7 +56,8 @@ export default async function Page() {
         [2, 2],
       ],
       still: true,
-      // On phones a header row as tall as its content (its phone size is unused).
+      // Below 768px a full-width header row as tall as its content (the first
+      // three sizes go unused).
       header: true,
       content: <HeroCard avatarUrl={home.avatarUrl} dogUrl={home.dogUrl} />,
     },

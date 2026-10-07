@@ -430,9 +430,10 @@ html.ff {
     }
   }
 
-  /* Phones: a header card (the hero) is a full-width row of its own, as tall
-     as its content, so it never carries empty space. */
-  @media (max-width: 479px) {
+  /* Up to portrait tablets the header card (the hero) spans the full width, so
+     it is a row of its own, as tall as its content, never a square with empty
+     space in it (lib/bento-layout tiers 0 to 2). */
+  @media (max-width: 767px) {
     .bento[data-has-header] {
       grid-template-rows: auto;
     }
@@ -969,22 +970,21 @@ html .notion-yt-lite {
 }
 
 /*
- * The hero headline: one line that grows with its card (it runs ~6.2em wide),
- * or "Hey, I'm / Eric." on two lines when a square card has the height for
- * it. How much height that takes depends on how the bio wraps, so each type
- * size gets its own threshold. (On phones the card fits its content, so the
- * line stays single.)
+ * The hero headline: one line that grows with its card (it runs ~6.2em wide).
+ * Below 768px the hero is a full-width row as tall as its content, so the line
+ * stays single. From 768px it is a square beside other cards: the headline
+ * breaks to "Hey, I'm / Eric." and grows once the card is tall enough, while
+ * the bio scales with the card, so the square fills alike at every size
+ * (measured: the spare height under the byline stays within 28-75px).
  */
 .hero-title {
   font-size: clamp(2rem, 15.5cqi, 5.2rem);
   line-height: 1.02;
 }
 
-/* Square cards, from wide phones up. */
-@media (max-width: 639px) {
-  @container hero (min-height: 480px) and (min-aspect-ratio: 9 / 10) {
+@media (min-width: 768px) {
+  @container hero (min-aspect-ratio: 9 / 10) {
     .hero-title {
-      font-size: min(18.5cqi, 7.5rem);
       line-height: 0.98;
     }
 
@@ -992,30 +992,10 @@ html .notion-yt-lite {
       display: block;
     }
   }
-}
 
-@media (min-width: 640px) and (max-width: 1023px) {
-  @container hero (min-height: 470px) and (min-aspect-ratio: 9 / 10) {
+  @container hero (min-height: 472px) and (min-aspect-ratio: 9 / 10) {
     .hero-title {
       font-size: min(18.5cqi, 7.5rem);
-      line-height: 0.98;
-    }
-
-    .hero-tail {
-      display: block;
-    }
-  }
-}
-
-@media (min-width: 1024px) {
-  @container hero (min-height: 500px) and (min-aspect-ratio: 9 / 10) {
-    .hero-title {
-      font-size: min(18.5cqi, 7.5rem);
-      line-height: 0.98;
-    }
-
-    .hero-tail {
-      display: block;
     }
   }
 }
