@@ -127,7 +127,7 @@ export const zh: Messages = {
       },
       {
         title: "找到根因",
-        body: "CI 集群一直顶在上限，新开了 24 台 g5.2xlarge。",
+        body: "CI 集群顶满了，新开了 24 台 g5.2xlarge。",
       },
       {
         title: "已提工单",
