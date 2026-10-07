@@ -1,7 +1,8 @@
 "use client";
 
+import type { COBEOptions, Globe } from "cobe";
 import { useTheme } from "next-themes";
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
 
 const PURDUE: [number, number] = [40.4237, -86.9212];
 const UCLA: [number, number] = [34.0689, -118.4452];
@@ -38,6 +39,41 @@ const LABELS: { id: string; text: string; place: CSSProperties }[] = [
   },
 ];
 
+type Palette = Pick<
+  COBEOptions,
+  | "dark"
+  | "diffuse"
+  | "mapBrightness"
+  | "mapBaseBrightness"
+  | "baseColor"
+  | "markerColor"
+  | "glowColor"
+  | "arcColor"
+>;
+
+const PALETTES: Record<"light" | "dark", Palette> = {
+  light: {
+    dark: 0,
+    diffuse: 1.2,
+    mapBrightness: 7,
+    mapBaseBrightness: 0,
+    baseColor: [1, 1, 1],
+    markerColor: [0.16, 0.53, 0.87],
+    glowColor: [0.98, 0.9, 0.93],
+    arcColor: [0.85, 0.28, 0.48],
+  },
+  dark: {
+    dark: 1,
+    diffuse: 1.4,
+    mapBrightness: 4.5,
+    mapBaseBrightness: 0.02,
+    baseColor: [0.15, 0.2, 0.27],
+    markerColor: [0.55, 0.79, 1],
+    glowColor: [0.12, 0.22, 0.32],
+    arcColor: [1, 0.62, 0.74],
+  },
+};
+
 /** cobe's angles that put a place at the center of the view. */
 const facing = (lat: number, lon: number) => [
   Math.PI - ((lon * Math.PI) / 180 - Math.PI / 2),
@@ -54,18 +90,25 @@ const TAU = Math.PI * 2;
 export function GlobeCard() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const globeRef = useRef<Globe | null>(null);
   const { resolvedTheme } = useTheme();
+  const palette = PALETTES[resolvedTheme === "dark" ? "dark" : "light"];
+  const paletteRef = useRef(palette);
+  const ready = resolvedTheme !== undefined;
+
+  // A theme switch recolours the globe in place, in the same frame as the
+  // page: rebuilding it left a frame of the old globe, then an empty card.
+  useLayoutEffect(() => {
+    paletteRef.current = palette;
+    globeRef.current?.update(palette);
+  }, [palette]);
 
   useEffect(() => {
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
 
-    if (!wrap || !canvas || !resolvedTheme) return;
-    const dark = resolvedTheme === "dark";
-    let globe: {
-      update: (s: Record<string, unknown>) => void;
-      destroy: () => void;
-    } | null = null;
+    if (!wrap || !canvas || !ready) return;
+    let globe: Globe | null = null;
     let frame = 0;
     let visible = false;
     let disposed = false;
@@ -109,14 +152,8 @@ export function GlobeCard() {
         height: size * 2,
         phi,
         theta,
-        dark: dark ? 1 : 0,
-        diffuse: dark ? 1.4 : 1.2,
         mapSamples: 14000,
-        mapBrightness: dark ? 4.5 : 7,
-        mapBaseBrightness: dark ? 0.02 : 0,
-        baseColor: dark ? [0.15, 0.2, 0.27] : [1, 1, 1],
-        markerColor: dark ? [0.55, 0.79, 1] : [0.16, 0.53, 0.87],
-        glowColor: dark ? [0.12, 0.22, 0.32] : [0.98, 0.9, 0.93],
+        ...paletteRef.current,
         markers: [
           { location: SEATTLE, size: 0.075, id: "seattle" },
           { location: UCLA, size: 0.05, id: "ucla" },
@@ -126,12 +163,12 @@ export function GlobeCard() {
           { from: PURDUE, to: UCLA, id: "purdue-ucla" },
           { from: UCLA, to: SEATTLE, id: "ucla-seattle" },
         ],
-        arcColor: dark ? [1, 0.62, 0.74] : [0.85, 0.28, 0.48],
         arcWidth: 0.7,
         arcHeight: 0.28,
         markerElevation: 0.015,
         scale: 1.3,
       });
+      globeRef.current = globe;
       canvas.style.opacity = "1";
       start();
     };
@@ -182,13 +219,14 @@ export function GlobeCard() {
       cancelAnimationFrame(frame);
       io.disconnect();
       globe?.destroy();
+      globeRef.current = null;
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointercancel", onUp);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [resolvedTheme]);
+  }, [ready]);
 
   return (
     <div className="@container relative h-full overflow-hidden">
