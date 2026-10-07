@@ -1,6 +1,12 @@
+// Names this build, so a tab left open across a deploy can tell it is stale
+// (see components/update-on-return.tsx).
+const SITE_BUILD =
+  process.env.VERCEL_GIT_COMMIT_SHA || `local-${Date.now().toString(36)}`;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  env: { SITE_BUILD },
   experimental: {
     // Ship the (small) stylesheet inline so first paint never waits on a CSS request.
     inlineCss: true,

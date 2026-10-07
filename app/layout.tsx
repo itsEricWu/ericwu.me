@@ -8,6 +8,7 @@ import { Backdrop } from "@/components/backdrop/backdrop";
 import { CursorLens } from "@/components/glass/cursor-lens";
 import { SiteNav } from "@/components/nav/site-nav";
 import { SiteFooter } from "@/components/site-footer";
+import { UpdateOnReturn } from "@/components/update-on-return";
 import { FontLoader } from "@/components/font-loader";
 import { deferredFaces, fontDisplay, fontName, fontText } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
@@ -145,6 +146,7 @@ export default function RootLayout({
           </main>
           <SiteFooter />
           <CursorLens />
+          <UpdateOnReturn />
         </ThemeProvider>
         <FontLoader faces={deferredFaces} />
         <Analytics />
