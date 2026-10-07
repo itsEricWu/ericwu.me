@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: "gpt-6-luna",
       reasoning_effort: "none",
+      service_tier: "fast",
       max_completion_tokens: 8,
       messages: [
         {
