@@ -2,18 +2,26 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
+  siClaude,
+  siCrewai,
   siDocker,
   siFigma,
   siFirebase,
   siGit,
   siGithub,
+  siHuggingface,
   siJavascript,
+  siLangchain,
+  siLanggraph,
+  siModelcontextprotocol,
   siNextdotjs,
   siNodedotjs,
+  siOllama,
   siOpenjdk,
   siPostgresql,
   siPrisma,
   siPython,
+  siPytorch,
   siReact,
   siTailwindcss,
   siThreedotjs,
@@ -24,16 +32,25 @@ import {
 
 import { useT } from "@/components/locale-provider";
 
-// Most-used first: small tiles show only the first few.
+// Most-used first: small tiles show only the first few. The agent stack
+// (models, frameworks, MCP) sits right after the core languages.
 const ICONS = [
   siTypescript,
   siReact,
   siNextdotjs,
   siPython,
+  siClaude,
+  siLangchain,
+  siModelcontextprotocol,
+  siLanggraph,
   siNodedotjs,
   siDocker,
+  siHuggingface,
   siPostgresql,
   siTailwindcss,
+  siPytorch,
+  siCrewai,
+  siOllama,
   siOpenjdk,
   siGithub,
   siFigma,
