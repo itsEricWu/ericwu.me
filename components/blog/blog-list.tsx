@@ -20,12 +20,14 @@ export function BlogList({ blogPosts }: { blogPosts: Post[] }) {
   return (
     <div>
       <header className="mb-8 flex flex-col items-start gap-3 pt-2 sm:mb-10">
-        <Eyebrow>Writing · {blogPosts.length} posts</Eyebrow>
-        <h1 className="font-display text-[clamp(2.3rem,5.2vw,3.6rem)] leading-[1.02] font-semibold tracking-[-0.02em]">
-          Notes from the trail &amp; the terminal.
+        <Eyebrow>
+          Blog · {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"}
+        </Eyebrow>
+        <h1 className="font-display text-[clamp(2.6rem,6vw,3.8rem)] leading-[1.02] font-semibold tracking-[-0.02em]">
+          Writing<span className="text-glacier">.</span>
         </h1>
-        <p className="max-w-[56ch] text-[15px] text-ink-2">
-          Things I&apos;ve built, broken, and learned along the way.
+        <p className="max-w-[56ch] text-[15px] text-pretty text-ink-2 sm:text-[16px]">
+          Notes on AI agents, software engineering, and hiking with my dog Bert.
         </p>
       </header>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
