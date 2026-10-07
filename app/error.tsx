@@ -10,21 +10,22 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    /* eslint-disable no-console */
     console.error(error);
   }, [error]);
 
   return (
-    <div>
-      <h2>Something went wrong!</h2>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
+      <p className="eyebrow">Something went wrong</p>
+      <h1 className="text-4xl font-semibold tracking-tight">
+        We hit a crevasse.
+      </h1>
       <button
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
+        className="lg mt-2 inline-flex h-10 items-center rounded-full px-5 text-sm font-medium"
+        type="button"
+        onClick={() => reset()}
       >
-        Try again
+        <span aria-hidden className="lg-caustic" />
+        <span>Try again</span>
       </button>
     </div>
   );

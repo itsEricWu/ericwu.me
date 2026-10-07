@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import { customMapImageUrl, getAllBlogPosts } from "@/lib/notion";
 import { notionBlogConfig } from "@/config/site";
-import { BlogList } from "@/components/blog-list";
+import { BlogList } from "@/components/blog/blog-list";
 
 export const revalidate = 3600;
 

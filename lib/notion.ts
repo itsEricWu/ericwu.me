@@ -1,44 +1,19 @@
 import { cache } from "react";
 
 import { NotionAPI } from "notion-client";
-import { Block, BlockMap, ExtendedRecordMap, Role } from "notion-types";
-import { getPageTitle } from "notion-utils";
+import { Block, ExtendedRecordMap } from "notion-types";
+import { getBlockValue, getPageTitle } from "notion-utils";
 
 import { Blog } from "@/types/blog";
 import { notionBlogConfig } from "@/config/site";
 
-// Notion now returns { spaceId, value: { value, role } }; notion-client 7.x expects { value, role }.
-type NestedBlockEntry = {
-  spaceId?: string;
-  value: { value: Block; role: Role };
-};
+// notion-client 8 sends a browser-acceptable User-Agent and understands Notion's
+// nested { value: { value, role } } block entries, so no workarounds are needed.
+const notion = new NotionAPI();
 
-function unwrapBlocks(block: BlockMap) {
-  for (const [id, entry] of Object.entries(block)) {
-    const nested = entry as unknown as NestedBlockEntry;
-    if (
-      nested?.value?.value !== undefined &&
-      nested?.value?.role !== undefined
-    ) {
-      block[id] = nested.value;
-    }
-  }
-}
-
-const notion = new NotionAPI({
-  ofetchOptions: {
-    // Notion's Cloudflare rejects Node's default "node" User-Agent with a 403.
-    headers: {
-      "User-Agent":
-        "notion-client (+https://github.com/NotionX/react-notion-x)",
-    },
-    // Must run before notion-client walks the page, or it never fetches blocks past the first chunk.
-    onResponse({ response }) {
-      const block = response._data?.recordMap?.block;
-      if (block) unwrapBlocks(block);
-    },
-  },
-});
+/** A block's value, whether Notion returned it flat or nested. */
+export const blockOf = (entry: ExtendedRecordMap["block"][string] | undefined) =>
+  getBlockValue<Block>(entry);
 
 export const getPageContent = cache(async (pageId: string) => {
   const recordMap = await notion.getPage(pageId);
@@ -52,14 +27,15 @@ export async function getAllBlogPosts(pageId: string) {
   const recordMap = await notion.getPage(pageId);
   const blocks = recordMap.block;
 
-  let blogPosts: Blog[] = [];
+  const blogPosts: Blog[] = [];
 
   Object.entries(blocks).forEach(([key, value]) => {
-    const block = value.value;
+    const block = blockOf(value);
     if (
+      !block ||
       key === notionBlogConfig.blogParentId ||
-      block?.type !== "page" ||
-      !block?.properties?.title
+      block.type !== "page" ||
+      !block.properties?.title
     ) {
       return;
     }
@@ -89,7 +65,7 @@ export function extractDescription(recordMap: ExtendedRecordMap): string {
   const blocks = Object.values(recordMap.block);
 
   for (const block of blocks) {
-    const value = block?.value;
+    const value = blockOf(block);
 
     if (!value) continue;
     if (value.type !== "text" && value.type !== "quote") continue;

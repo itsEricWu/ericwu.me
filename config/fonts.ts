@@ -1,12 +1,10 @@
-import { Ubuntu, Oleo_Script } from "next/font/google";
+import { Inter } from "next/font/google";
 
-export const fontUbuntu = Ubuntu({
-  weight: ["400", "500", "700"],
+// Apple devices render SF Pro straight from the system font stack (zero bytes).
+// Inter is the closest match elsewhere and only downloads when SF isn't available.
+export const fontInter = Inter({
   subsets: ["latin"],
-});
-
-export const fontOleoScript = Oleo_Script({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-oleo",
+  variable: "--font-inter",
+  display: "swap",
+  preload: false,
 });

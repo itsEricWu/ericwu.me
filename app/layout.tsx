@@ -1,15 +1,15 @@
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 import "@/styles/globals.css";
 
-import { Metadata, Viewport } from "next";
-import clsx from "clsx";
-import { Analytics } from "@vercel/analytics/react";
+import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { ThemeProvider } from "next-themes";
 
-import { Providers } from "./providers";
-
+import { Backdrop } from "@/components/backdrop/backdrop";
+import { CursorLens } from "@/components/glass/cursor-lens";
+import { SiteNav } from "@/components/nav/site-nav";
+import { SiteFooter } from "@/components/site-footer";
+import { fontInter } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
-import { fontOleoScript, fontUbuntu } from "@/config/fonts";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -55,8 +55,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f2f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f11" },
   ],
 };
 
@@ -103,28 +103,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning className={fontInter.variable} lang="en">
       <head>
         <script
-          type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          type="application/ld+json"
         />
       </head>
-      <body
-        className={clsx(
-          fontUbuntu.className,
-          "tracking-wide",
-          fontOleoScript.variable,
-        )}
-      >
-        <Providers themeProps={{ attribute: "class" }}>
-          <div className="relative flex flex-col bg-[#f6f2f2] dark:bg-[#0b0f11] overflow-y-auto scrollbar-hide min-h-screen">
-            <main className="container mx-auto max-w-7xl pt-10 pb-[25px] md:pt-16 flex flex-col">
-              {children}
-              <Analytics />
-            </main>
-          </div>
-        </Providers>
+      <body>
+        <ThemeProvider
+          disableTransitionOnChange
+          enableSystem
+          attribute="class"
+          defaultTheme="system"
+        >
+          <a
+            className="sr-only fixed top-3 left-3 z-[80] rounded-full bg-ink px-4 py-2 text-bg focus:not-sr-only"
+            href="#main"
+          >
+            Skip to content
+          </a>
+          <Backdrop />
+          <SiteNav />
+          <main
+            className="relative z-10 mx-auto w-full max-w-[1240px] px-3 pt-6 pb-28 sm:px-6 sm:pt-24 sm:pb-16"
+            id="main"
+          >
+            {children}
+          </main>
+          <SiteFooter />
+          <CursorLens />
+        </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

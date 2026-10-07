@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  poweredByHeader: false,
   experimental: {
-    viewTransition: true,
+    // Ship the (small) stylesheet inline so first paint never waits on a CSS request.
+    inlineCss: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 7,
     remotePatterns: [
       {
         protocol: "https",
@@ -12,13 +15,23 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "raw.githubusercontent.com",
-      },
-      {
-        protocol: "https",
         hostname: "www.notion.so",
       },
     ],
+  },
+  async headers() {
+    const cached = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    ];
+
+    return [
+      { source: "/data/:path*", headers: cached },
+      { source: "/emoji/:path*", headers: cached },
+      { source: "/mini.:ext", headers: cached },
+    ];
   },
 };
 

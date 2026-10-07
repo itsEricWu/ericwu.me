@@ -1,102 +1,646 @@
 @import "tailwindcss";
 
-@plugin '../hero.ts';
+@custom-variant dark (&:where(.dark, .dark *));
 
-@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@theme inline {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter),
+    system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 
-@custom-variant dark (&:is(.dark *));
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-inset: var(--card-inset);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-glacier: var(--glacier);
+  --color-glacier-ink: var(--glacier-ink);
+  --color-ember: var(--ember);
+  --color-ember-ink: var(--ember-ink);
+  --color-sky: var(--sky);
+  --color-mint: var(--mint);
+  --color-blush: var(--blush);
+  --color-butter: var(--butter);
 
-@theme {
-  --font-sans: "font", sans-serif;
-  --font-mono: "monospace", monospace;
-  
-  --color-midnight: #eef0f7;
-  --color-knight: #2a2f35;
-  --color-darkBg: #0f1217;
-  --color-cardBlue: #8cc9fe;
-  --color-cardGreen: #63ccae;
-  --color-cardPink: #ffbfd1;
-  --color-cardYellow: #ffdf9a;
-  
-  --font-oleo: var(--font-oleo);
-  --animate-fade: fade 1s ease-in-out;
+  /* backwards, not both: a held end state would override drag/FLIP transforms */
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  --animate-ping-soft: ping-soft 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
 }
 
-@keyframes fade {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+/* ---------- Tokens ---------- */
+
+:root {
+  /* Neutrals: the original warm off-white with white cards. */
+  --bg: #f6f2f2;
+  --card: #ffffff;
+  --card-2: #f8f5f5;
+  --ink: #17161b;
+  --ink-2: #45424c;
+  --muted: #6c6874;
+  --line: rgb(23 22 27 / 0.07);
+  --line-strong: rgb(23 22 27 / 0.13);
+
+  /* Brand pastels from the original site, plus contrast-safe inks for text and strokes. */
+  --sky: #8cc9fe;
+  --mint: #63ccae;
+  --blush: #ffbfd1;
+  --butter: #ffdf9a;
+  --glacier: #2a86dd;
+  --ember: #d9487a;
+  /* Deeper shades of the same hues for small text (WCAG AA on white). */
+  --glacier-ink: #1b6cc2;
+  --ember-ink: #c23668;
+
+  --topo: rgb(110 92 104 / 0.1);
+  --topo-lit: rgb(42 134 221 / 0.42);
+  --aurora-a: rgb(140 201 254 / 0.42);
+  --aurora-b: rgb(255 191 209 / 0.5);
+  --aurora-c: rgb(99 204 174 / 0.2);
+  --shadow:
+    0 0 0 0.5px rgb(23 22 27 / 0.05), 0 1px 2px rgb(23 22 27 / 0.04),
+    0 12px 32px -14px rgb(70 40 55 / 0.2);
+  --shadow-hover:
+    0 0 0 0.5px rgb(23 22 27 / 0.06), 0 1px 2px rgb(23 22 27 / 0.05),
+    0 24px 48px -18px rgb(70 40 55 / 0.3);
+
+  /* Glass cards: a translucent material over the wallpaper with a lit rim. */
+  --card-glass: rgb(255 255 255 / 0.56);
+  --card-sheen: rgb(255 255 255 / 0.42);
+  --card-inset: rgb(255 255 255 / 0.58);
+  --card-blur: 28px;
+  --rim-hi: rgb(255 255 255 / 1);
+  --rim-lo: rgb(255 255 255 / 0.45);
+  --rim-end: rgb(255 255 255 / 0.8);
+  /* visionOS-style hover light */
+  --spot-fill: rgb(140 201 254 / 0.1);
+  --spot-rim: rgb(42 134 221 / 0.28);
+
+  /* Liquid glass */
+  --glass-tint: rgb(255 255 255 / 0.34);
+  --glass-rim: rgb(255 255 255 / 0.95);
+  --glass-rim-dim: rgb(255 255 255 / 0.28);
+  --glass-shadow:
+    0 1px 2px rgb(40 20 30 / 0.08), 0 14px 34px -14px rgb(60 30 45 / 0.3);
+  --glass-ink: #17161b;
 }
 
-/* react-grid-layout styles */
-.react-grid-item.react-grid-placeholder {
-  background: gray;
-  transition-duration: 300ms;
-  border-radius: 1.5rem;
-  z-index: 0;
+.dark {
+  /* Neutrals: the original night palette. */
+  --bg: #0b0f11;
+  --card: #0f1217;
+  --card-2: #151a20;
+  --ink: #eef0f7;
+  --ink-2: #b7bec9;
+  --muted: #8a929e;
+  --line: #20262c;
+  --line-strong: #2a2f35;
+
+  --glacier: #8cc9fe;
+  --ember: #ff9fbd;
+  --glacier-ink: #8cc9fe;
+  --ember-ink: #ff9fbd;
+
+  --topo: rgb(140 201 254 / 0.07);
+  --topo-lit: rgb(140 201 254 / 0.5);
+  --aurora-a: rgb(70 140 210 / 0.24);
+  --aurora-b: rgb(255 150 190 / 0.12);
+  --aurora-c: rgb(99 204 174 / 0.08);
+  --shadow: 0 1px 1px rgb(0 0 0 / 0.4), 0 16px 40px -22px rgb(0 0 0 / 0.8);
+  --shadow-hover:
+    0 1px 1px rgb(0 0 0 / 0.4), 0 26px 50px -22px rgb(0 0 0 / 0.95);
+
+  --card-glass: rgb(26 31 39 / 0.5);
+  --card-sheen: rgb(255 255 255 / 0.035);
+  --card-inset: rgb(255 255 255 / 0.045);
+  --rim-hi: rgb(255 255 255 / 0.3);
+  --rim-lo: rgb(255 255 255 / 0.07);
+  --rim-end: rgb(255 255 255 / 0.14);
+  --spot-fill: rgb(255 255 255 / 0.05);
+  --spot-rim: rgb(255 255 255 / 0.3);
+
+  --glass-tint: rgb(255 255 255 / 0.05);
+  --glass-rim: rgb(255 255 255 / 0.55);
+  --glass-rim-dim: rgb(255 255 255 / 0.08);
+  --glass-shadow:
+    0 1px 2px rgb(0 0 0 / 0.5), 0 18px 40px -16px rgb(0 0 0 / 0.85);
+  --glass-ink: #eef0f7;
 }
 
-.react-grid-item {
-  transition: transform 400ms ease, width 400ms ease, height 400ms ease;
+/* ---------- Base ---------- */
+
+@layer base {
+  html {
+    color-scheme: light;
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 96px;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--glacier) 28%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--glacier);
+    outline-offset: 3px;
+  }
 }
 
-/* Disable grid item transitions during initial layout to prevent visible repositioning */
-.layout-initializing .react-grid-item {
-  transition: none !important;
+/* ---------- Components (kept below utilities so utilities can override) ---------- */
+
+@layer components {
+  /* Apple-style eyebrow: small, semibold, sentence case. */
+  .eyebrow {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    letter-spacing: -0.006em;
+    color: var(--muted);
+  }
+
+  .title {
+    font-weight: 600;
+    letter-spacing: -0.022em;
+    line-height: 1.12;
+    color: var(--ink);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* macOS-style dock magnification, pure CSS. */
+  .dock > a:hover {
+    scale: 1.16;
+    translate: 0 -3px;
+  }
+
+  .dock > a:hover + a,
+  .dock > a:has(+ a:hover) {
+    scale: 1.07;
+    translate: 0 -1px;
+  }
+
+  /* ---------- Bento grid ---------- */
+
+  .bento-wrap {
+    container-type: inline-size;
+  }
+
+  .bento {
+    --cols: 2;
+    --gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    grid-auto-rows: calc(
+      (100cqi - (var(--cols) - 1) * var(--gap)) / var(--cols)
+    );
+    grid-auto-flow: row dense;
+    gap: var(--gap);
+  }
+
+  @media (min-width: 640px) {
+    .bento {
+      --cols: 4;
+      --gap: 14px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento {
+      --gap: 18px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .card {
+      border-radius: 24px;
+    }
+  }
+
+  .card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 28px;
+    background:
+      linear-gradient(180deg, var(--card-sheen), transparent 36%),
+      var(--card-glass);
+    -webkit-backdrop-filter: blur(var(--card-blur)) saturate(1.8);
+    backdrop-filter: blur(var(--card-blur)) saturate(1.8);
+    box-shadow: var(--shadow);
+    transition:
+      opacity 0.45s ease,
+      filter 0.45s ease,
+      box-shadow 0.4s ease,
+      scale 0.3s ease;
+    touch-action: pan-y;
+  }
+
+  @media (hover: hover) {
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+  }
+
+  /* visionOS-style hover light: a soft wash where the cursor is and a lit rim nearby. */
+  .card::before,
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: var(--spot, 0);
+    transition: opacity 0.4s ease;
+    z-index: 30;
+  }
+
+  .card::before {
+    background: radial-gradient(
+      380px circle at var(--mx, -999px) var(--my, -999px),
+      var(--spot-fill),
+      transparent 50%
+    );
+    z-index: -1;
+  }
+
+  .card::after {
+    padding: 1px;
+    background: radial-gradient(
+      240px circle at var(--mx, -999px) var(--my, -999px),
+      var(--spot-rim),
+      transparent 65%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .card[data-dim="true"] {
+    opacity: 0.32;
+    filter: saturate(0.35);
+  }
+
+  .card[data-dragging="true"] {
+    z-index: 50;
+    scale: 1.025;
+    box-shadow:
+      0 30px 60px -20px rgb(0 0 0 / 0.45),
+      0 0 0 1px var(--line-strong);
+    cursor: grabbing;
+  }
+
+  .card[data-enter] {
+    animation: var(--animate-rise);
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+
+  /* The glass edge: brightest where the light comes from, catching again at the bottom. */
+  .card-rim {
+    position: absolute;
+    inset: 0;
+    z-index: 29;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      172deg,
+      var(--rim-hi),
+      var(--rim-lo) 22%,
+      transparent 50%,
+      var(--rim-lo) 84%,
+      var(--rim-end)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  @supports not (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+  ) {
+    .card {
+      background: var(--card);
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .card {
+      background: var(--card);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  /* ---------- Liquid glass ---------- */
+
+  .lg {
+    position: relative;
+    isolation: isolate;
+    background: var(--glass-tint);
+    -webkit-backdrop-filter: blur(var(--lg-blur, 12px)) saturate(1.7);
+    backdrop-filter: blur(var(--lg-blur, 12px)) saturate(1.7);
+    box-shadow: var(--glass-shadow);
+    color: var(--glass-ink);
+  }
+
+  .lg[data-refract="true"] {
+    -webkit-backdrop-filter: var(--lg-filter);
+    backdrop-filter: var(--lg-filter);
+  }
+
+  /* Specular sheen: follows the light (the cursor). */
+  .lg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        120% 90% at var(--lx, 30%) var(--ly, -10%),
+        rgb(255 255 255 / 0.42),
+        rgb(255 255 255 / 0.06) 38%,
+        transparent 60%
+      ),
+      linear-gradient(
+        180deg,
+        rgb(255 255 255 / 0.14),
+        transparent 40%,
+        rgb(255 255 255 / 0.04)
+      );
+    mix-blend-mode: soft-light;
+    z-index: 1;
+  }
+
+  .dark .lg::before {
+    mix-blend-mode: screen;
+    opacity: 0.55;
+  }
+
+  /* Rim light: a bright edge where the light hits, a dim one opposite. */
+  .lg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      var(--la, 135deg),
+      var(--glass-rim),
+      var(--glass-rim-dim) 30%,
+      transparent 50%,
+      var(--glass-rim-dim) 72%,
+      color-mix(in oklab, var(--glass-rim) 70%, transparent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 2;
+  }
+
+  .lg > * {
+    position: relative;
+    z-index: 3;
+  }
+
+  /* Inner caustic: a soft bright pool on the side away from the light. */
+  .lg-caustic {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1 !important;
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 0.55),
+      inset 0 -8px 16px -10px rgb(255 255 255 / 0.35),
+      inset 0 0 0 0.5px rgb(255 255 255 / 0.2);
+  }
+
+  .dark .lg-caustic {
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 0.28),
+      inset 0 -8px 16px -10px rgb(255 255 255 / 0.12),
+      inset 0 0 0 0.5px rgb(255 255 255 / 0.1);
+  }
 }
 
-/* Mobile: hide layout until correct width is applied, then fade in */
-@media (max-width: 768px) {
-  .layout-initializing {
+/* ---------- Motion ---------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ping-soft {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
     opacity: 0;
   }
+}
 
-  .layout-settled {
-    animation: fade 0.3s ease-out;
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }
 
-.react-grid-item > .react-resizable-handle {
-  display: none;
+@keyframes notify {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-/* Mapbox */
-.mapboxgl-control-container {
-  display: none !important;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
-/* Notion styles */
-.medium-zoom-image {
-  border-radius: 2rem !important;
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
-.notion-code {
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Globe labels need CSS anchor positioning; hide them where it's missing. */
+@supports not (anchor-name: --a) {
+  .globe-label {
+    display: none !important;
+  }
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.12;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Unlayered and prefixed with html so it beats react-notion-x's own unlayered CSS. */
+/* ---------- Notion (blog) ---------- */
+
+html .notion {
+  --fg-color: var(--ink);
+  --fg-color-0: var(--line);
+  --fg-color-1: var(--line-strong);
+  --fg-color-2: var(--muted);
+  --fg-color-3: var(--muted);
+  --fg-color-4: var(--ink-2);
+  --fg-color-5: var(--ink-2);
+  --fg-color-6: var(--ink);
+  --fg-color-icon: var(--ink-2);
+  --bg-color: transparent;
+  --bg-color-0: var(--card-2);
+  --bg-color-1: var(--card-2);
+  --bg-color-2: var(--card-2);
+  --notion-max-width: 760px;
+  font-family: var(--font-sans) !important;
+  color: var(--ink);
+}
+
+html .notion-page {
+  padding-bottom: 6rem;
+}
+
+html .notion-text,
+html .notion-list li {
+  line-height: 1.75;
+}
+
+html .notion-link {
+  color: var(--glacier-ink);
+  border-bottom-color: color-mix(in oklab, var(--glacier) 40%, transparent);
+}
+
+html .notion-asset-wrapper img,
+html .medium-zoom-image {
+  border-radius: 1.25rem !important;
+}
+
+html .notion-code {
   border-radius: 1rem;
   overflow: hidden !important;
+  background: var(--card-2) !important;
+  border: 1px solid var(--line);
 }
 
-.notion-code code {
+html .notion-code code {
   scrollbar-width: none;
 }
 
-.notion-code code::-webkit-scrollbar {
+html .notion-code code::-webkit-scrollbar {
   display: none;
 }
 
-.notion-code-copy-button {
+html .notion-code-copy-button {
   display: none;
 }
 
-iframe.notion-asset-object-fit {
-  background-color: transparent;
-  border-radius: 1rem;
-}
-
-.video-stream html5-main-video {
+html iframe.notion-asset-object-fit,
+html .notion-yt-lite {
   border-radius: 1rem;
   background-color: transparent;
 }
 
-.notion-yt-lite {
-  border-radius: 1rem;
-  background-color: transparent;
+/* The name in the hero: a sky-to-blush gradient, Apple Intelligence style. */
+.hero-name {
+  background-image: linear-gradient(
+    100deg,
+    var(--glacier) 5%,
+    var(--ember) 95%
+  );
+  background-image: linear-gradient(
+    in oklab 100deg,
+    var(--glacier) 5%,
+    var(--ember) 95%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

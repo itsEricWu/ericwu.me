@@ -1,14 +1,27 @@
 import { Metadata } from "next";
 
-import { NotionPage } from "@/components/notion-page";
+import { NotionPage } from "@/components/blog/notion-page";
 import {
+  blockOf,
+  getAllBlogPosts,
   getPageContent,
   extractDescription,
   customMapImageUrl,
 } from "@/lib/notion";
-import { siteConfig } from "@/config/site";
+import { notionBlogConfig, siteConfig } from "@/config/site";
 
 export const revalidate = 3600;
+
+// Prebuild every post so first visits are static; new posts render on demand.
+export async function generateStaticParams() {
+  try {
+    const posts = await getAllBlogPosts(notionBlogConfig.blogParentId);
+
+    return posts.map((p) => ({ blogId: p.id }));
+  } catch {
+    return [];
+  }
+}
 
 export async function generateMetadata({
   params,
@@ -20,10 +33,9 @@ export async function generateMetadata({
 
   const postTitle = title || "Blog Post";
   const description =
-    extractDescription(recordMap) ||
-    `${postTitle} - by ${siteConfig.author}`;
+    extractDescription(recordMap) || `${postTitle} - by ${siteConfig.author}`;
 
-  const block = recordMap.block[blogId]?.value;
+  const block = blockOf(recordMap.block[blogId]);
   const coverUrl = block?.format?.page_cover;
   const ogImages = coverUrl
     ? [{ url: customMapImageUrl(coverUrl, block), alt: postTitle }]
@@ -66,11 +78,10 @@ export default async function Page({
   const { blogId } = await params;
   const { recordMap, title } = await getPageContent(blogId);
 
-  const block = recordMap.block[blogId]?.value;
+  const block = blockOf(recordMap.block[blogId]);
   const coverUrl = block?.format?.page_cover;
   const description =
-    extractDescription(recordMap) ||
-    `${title} - by ${siteConfig.author}`;
+    extractDescription(recordMap) || `${title} - by ${siteConfig.author}`;
 
   const jsonLd = {
     "@context": "https://schema.org",

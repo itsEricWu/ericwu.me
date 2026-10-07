@@ -2,18 +2,20 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4 text-center">
-      <h1 className="text-7xl md:text-9xl font-bold text-[#2a2f35] dark:text-[#eef0f7]">
-        404
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-5 px-4 text-center">
+      <p className="eyebrow">Error 404</p>
+      <h1 className="text-[clamp(4rem,14vw,8rem)] leading-none font-semibold tracking-[-0.06em]">
+        Lost<span className="text-glacier">.</span>
       </h1>
-      <p className="text-lg md:text-xl text-[#666] dark:text-[#888]">
-        This page doesn&apos;t exist.
+      <p className="max-w-[40ch] text-[15px] text-ink-2">
+        This trail doesn&apos;t exist. Even Bert couldn&apos;t sniff it out.
       </p>
       <Link
-        className="mt-2 px-6 py-3 rounded-full bg-[#ece7e7] dark:bg-[#1e2228] dark:border-2 dark:border-knight text-sm font-medium hover:opacity-80 transition-opacity"
+        className="lg mt-2 inline-flex h-10 items-center rounded-full px-5 text-sm font-medium"
         href="/"
       >
-        Back to Home
+        <span aria-hidden className="lg-caustic" />
+        <span>Back to basecamp</span>
       </Link>
     </div>
   );

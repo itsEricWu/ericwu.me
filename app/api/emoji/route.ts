@@ -1,12 +1,25 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import OpenAI from "openai";
+import emojiMap from "unicode-emoji-json";
 
-function promptConstructor(prompt: string) {
-  return `Provide a single emoji for the following prompt: ${prompt}`;
+import { fuzzySearch } from "@/lib/fuzzySearch";
+
+const MAX_PROMPT = 80;
+
+function firstGrapheme(text: string) {
+  const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+
+  for (const { segment } of segmenter.segment(text.trim())) return segment;
+
+  return "";
 }
 
 export async function POST(req: NextRequest) {
-  const { prompt } = await req.json();
+  const body = await req.json().catch(() => null);
+  const prompt =
+    typeof body?.prompt === "string"
+      ? body.prompt.trim().slice(0, MAX_PROMPT)
+      : "";
 
   if (!prompt) {
     return NextResponse.json(
@@ -19,12 +32,25 @@ export async function POST(req: NextRequest) {
     const openai = new OpenAI();
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [{ role: "user", content: promptConstructor(prompt) }],
+      max_tokens: 8,
+      messages: [
+        {
+          role: "system",
+          content:
+            "Reply with exactly one emoji that best matches the user's text. No words.",
+        },
+        { role: "user", content: prompt },
+      ],
     });
+    const emoji = firstGrapheme(completion.choices[0]?.message?.content ?? "");
+    const entry =
+      emojiMap[emoji as keyof typeof emojiMap] ??
+      emojiMap[emoji.replace(/️/g, "") as keyof typeof emojiMap];
+    const match = entry ? fuzzySearch(entry.name) : null;
 
     return NextResponse.json(
-      { result: completion.choices[0].message.content },
-      { status: 200 },
+      { emoji, name: entry?.name ?? null, url: match?.url ?? null },
+      { status: match ? 200 : 404 },
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
