@@ -439,6 +439,8 @@ export function HeroTitle() {
     const onDown = (e: PointerEvent) => {
       e.preventDefault();
       handle.setPointerCapture(e.pointerId);
+      // The press is cancelled, so it no longer clears a selection by itself.
+      getSelection()?.removeAllRanges();
       copyCard();
       held = true;
       lift = e.pointerType === "touch" ? size * 0.85 : 0;
@@ -464,6 +466,13 @@ export function HeroTitle() {
     const onLeave = () => {
       hover = false;
       kick();
+    };
+    // iOS turns a long press into a text selection (loupe and handles
+    // included) whatever touch-action says, and the pull then drags it across
+    // the card. A handled touchstart keeps the press the bead's.
+    const onTouchStart = (e: TouchEvent) => e.preventDefault();
+    const onSelectStart = (e: Event) => {
+      if (held) e.preventDefault();
     };
 
     relayout.current = () => {
@@ -493,6 +502,8 @@ export function HeroTitle() {
     handle.addEventListener("pointercancel", onUp);
     handle.addEventListener("pointerenter", onEnter);
     handle.addEventListener("pointerleave", onLeave);
+    handle.addEventListener("touchstart", onTouchStart, { passive: false });
+    document.addEventListener("selectstart", onSelectStart);
     window.addEventListener("resize", onResize);
     ro.observe(card);
     document.fonts.ready.then(() => {
@@ -523,6 +534,8 @@ export function HeroTitle() {
       handle.removeEventListener("pointercancel", onUp);
       handle.removeEventListener("pointerenter", onEnter);
       handle.removeEventListener("pointerleave", onLeave);
+      handle.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("selectstart", onSelectStart);
       window.removeEventListener("resize", onResize);
       ro.disconnect();
       mo.disconnect();
@@ -536,7 +549,7 @@ export function HeroTitle() {
         ref={orbRef}
         aria-hidden
         data-droplet
-        className="lg pointer-events-none absolute top-0 left-0 z-10 size-[76px] rounded-full opacity-0 shadow-[0_14px_28px_-14px_rgb(0_0_0/0.4),0_2px_6px_-2px_rgb(0_0_0/0.18)] transition-opacity duration-700 [--lg-blur:0px] [backdrop-filter:none] [background:transparent] sm:size-[96px]"
+        className="lg pointer-events-none absolute top-0 left-0 z-10 size-[76px] rounded-full opacity-0 select-none shadow-[0_14px_28px_-14px_rgb(0_0_0/0.4),0_2px_6px_-2px_rgb(0_0_0/0.18)] transition-opacity duration-700 [--lg-blur:0px] [backdrop-filter:none] [background:transparent] sm:size-[96px]"
       >
         {map && (
           <GlassFilter
@@ -567,7 +580,7 @@ export function HeroTitle() {
       <span
         ref={handleRef}
         aria-hidden
-        className="absolute top-0 left-0 z-20 -mt-6 -ml-6 size-12 cursor-grab touch-none rounded-full active:cursor-grabbing"
+        className="absolute top-0 left-0 z-20 -mt-6 -ml-6 size-12 cursor-grab touch-none rounded-full select-none active:cursor-grabbing"
         data-cursor="Pull the period"
         data-grab
         data-nodrag
