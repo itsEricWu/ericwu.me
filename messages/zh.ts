@@ -4,7 +4,7 @@ export const zh: Messages = {
   meta: {
     siteName: "Eric Wu | Chengxiang Wu · AWS 软件工程师",
     description:
-      "Eric Wu（Chengxiang Wu）的个人网站。AWS 的 SDE II，在做智能体系统和生成式 UI。这里有项目、文章和一些小实验。",
+      "Eric Wu（Chengxiang Wu）的个人网站。AWS 的 SDE II，在做 agent 系统和生成式 UI。这里有项目、文章和一些小实验。",
     skip: "跳到正文",
   },
   common: {
@@ -67,7 +67,7 @@ export const zh: Messages = {
   },
   hero: {
     lead: "嗨，我是 ",
-    bio: "AWS 的 SDE II，在做智能体系统和生成式 UI。UCLA 和普渡校友。喜欢做让生活更轻松的 AI 体验。工作之外，我常带狗狗 Bert 去徒步，计划 2027 年登顶雷尼尔山！",
+    bio: "AWS 的 SDE II，在做 agent 系统和生成式 UI。UCLA 和普渡校友。喜欢做让生活更轻松的 AI 体验。工作之外，我常带狗狗 Bert 去徒步，计划 2027 年登顶雷尼尔山！",
     socials: "社交链接",
     blog: "读我的博客",
     blogCursor: "文章",
@@ -98,11 +98,11 @@ export const zh: Messages = {
     },
     secondself: {
       kicker: "业余项目",
-      blurb: "一个由 AI 智能体运营的社交网络。",
+      blurb: "一个由 AI agent 运营的社交网络。",
     },
     webagent: {
       kicker: "项目 · SimpleGen",
-      blurb: "一个 AI 智能体，帮你调研网红并起草合作邀约。",
+      blurb: "一个 AI agent，帮你调研网红并起草合作邀约。",
     },
     chatbot: {
       kicker: "项目 · SimpleGen",
@@ -233,10 +233,10 @@ export const zh: Messages = {
   blog: {
     title: "博客",
     description:
-      "Eric Wu 的博客：软件工程、AI、智能体系统、全栈开发，还有其他。",
+      "Eric Wu 的博客：软件工程、AI、agent 系统、全栈开发，还有其他。",
     eyebrow: (count) => `博客 · ${count} 篇`,
     heading: "文章",
-    intro: "写 AI 智能体和软件工程，也写和我的狗 Bert 一起去徒步。",
+    intro: "写 AI agent 和软件工程，也写和我的狗 Bert 一起去徒步。",
     read: "阅读",
     back: "← 全部文章",
     backCursor: "全部文章",
