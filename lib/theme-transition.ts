@@ -9,6 +9,17 @@ type ViewTransitionDoc = Document & {
 };
 
 /**
+ * WebKit (Safari, and every browser on iOS) paints view-transition snapshots
+ * without backdrop blur, so the glass nav and cards turned clear for the
+ * length of the reveal and flashed back. There the theme switches at once.
+ */
+const snapshotsDropGlass = () => {
+  const ua = navigator.userAgent;
+
+  return /AppleWebKit/.test(ua) && !/(Chrome|Chromium|Edg|OPR)\//.test(ua);
+};
+
+/**
  * Switches the theme with a circular reveal that grows from `origin`
  * (usually the button that was clicked). Falls back to an instant switch.
  */
@@ -24,7 +35,11 @@ export function switchTheme(
     flushSync(() => setTheme(next));
   };
 
-  if (!doc.startViewTransition || prefersReducedMotion()) {
+  if (
+    !doc.startViewTransition ||
+    prefersReducedMotion() ||
+    snapshotsDropGlass()
+  ) {
     apply();
 
     return;
