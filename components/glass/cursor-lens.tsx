@@ -55,6 +55,7 @@ function LensLayer() {
     let frame = 0;
     let currentMode: Mode = "none";
     let currentLabel = "";
+    let last: PointerEvent | null = null;
 
     const tick = () => {
       frame = 0;
@@ -78,6 +79,7 @@ function LensLayer() {
 
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
+      last = e;
       target.x = e.clientX;
       target.y = e.clientY;
       const el = (e.target as Element | null)?.closest?.(
@@ -109,8 +111,16 @@ function LensLayer() {
       currentLabel = "";
       setMode("none");
     };
+    // A click can change what the thing under the cursor does (Meet Bert →
+    // Back to Eric), so read its label again once it has re-rendered.
+    const onClick = () => {
+      requestAnimationFrame(() => {
+        if (last && currentMode !== "none") onMove(last);
+      });
+    };
 
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("click", onClick, { passive: true });
     window.addEventListener("scroll", onLeave, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
     window.addEventListener("blur", onLeave);
@@ -118,6 +128,7 @@ function LensLayer() {
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("click", onClick);
       window.removeEventListener("scroll", onLeave);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("blur", onLeave);
