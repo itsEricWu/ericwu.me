@@ -170,7 +170,13 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
   const snapshot = useCallback(() => {
     const m = new Map<string, DOMRect>();
 
-    nodes.current.forEach((el, id) => m.set(id, el.getBoundingClientRect()));
+    nodes.current.forEach((el, id) => {
+      const r = el.getBoundingClientRect();
+
+      // A card the view hid has no box to glide from (it would fly in from
+      // the corner); it settles in where it lands instead.
+      if (r.width || r.height) m.set(id, r);
+    });
 
     return m;
   }, []);
@@ -211,10 +217,24 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
       if (d?.id === id) return;
       const a = first.get(id);
 
-      if (!a) return;
       el.getAnimations().forEach((anim) => anim.id === "flip" && anim.cancel());
       if (still) return;
       const b = el.getBoundingClientRect();
+
+      if (!a) {
+        if (!b.width) return;
+        const anim = el.animate(
+          [
+            { opacity: 0, scale: "0.96" },
+            { opacity: 1, scale: "1" },
+          ],
+          { duration: s.duration, easing: s.easing },
+        );
+
+        anim.id = "flip";
+
+        return;
+      }
       const dx = a.left - b.left;
       const dy = a.top - b.top;
 

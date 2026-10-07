@@ -192,6 +192,9 @@ export function HeroTitle() {
     // leaving a dark disc with a stray fragment. Elsewhere the copy is simply
     // scaled up under the lens.
     const refract = supportsBackdropRefraction();
+    // Ancestors may be scaled (a pressed card), so rects are turned back into
+    // the wrapper's own pixels before they place anything.
+    const scaleOf = (w: DOMRect) => w.width / wrap.offsetWidth || 1;
 
     // Real glass is subtle: a gentle loupe in the middle, light bending hard only at the rim.
     if (refract) {
@@ -212,6 +215,8 @@ export function HeroTitle() {
     // size and each time the bead is picked up (the avatar may have flipped).
     const area = { x: 0, y: 0, w: 0, h: 0 };
     const copyCard = () => {
+      // Hidden by a view (phones hide the hero for Work): keep the copy we have.
+      if (!card.offsetWidth) return;
       clone.replaceChildren();
       const copy = card.cloneNode(true) as HTMLElement;
 
@@ -232,11 +237,12 @@ export function HeroTitle() {
       // The card's box, in the same frame as the bead's position.
       const c = card.getBoundingClientRect();
       const w = wrap.getBoundingClientRect();
+      const k = scaleOf(w);
 
-      area.x = c.left - w.left;
-      area.y = c.top - w.top;
-      area.w = c.width;
-      area.h = c.height;
+      area.x = (c.left - w.left) / k;
+      area.y = (c.top - w.top) / k;
+      area.w = c.width / k;
+      area.h = c.height / k;
     };
 
     // Where the period's dot is, from the font's real ink bounds.
@@ -246,8 +252,10 @@ export function HeroTitle() {
       const period = wrap.querySelector<HTMLElement>("[data-period]");
       const base = wrap.querySelector<HTMLElement>("[data-baseline]");
 
-      if (!period || !base) return;
+      // Hidden, there's nothing to measure: keep the last home.
+      if (!period || !base || !wrap.offsetWidth) return;
       const w = wrap.getBoundingClientRect();
+      const k = scaleOf(w);
       const r = period.getBoundingClientRect();
       const css = getComputedStyle(period);
       const fontSize = parseFloat(css.fontSize);
@@ -267,8 +275,8 @@ export function HeroTitle() {
       // for its width, so trust the smaller measure.
       const dot = Math.min(right - left, ascent);
 
-      home.x = r.left - w.left + (left + right) / 2;
-      home.y = base.getBoundingClientRect().top - w.top - ascent / 2;
+      home.x = (r.left - w.left) / k + (left + right) / 2;
+      home.y = (base.getBoundingClientRect().top - w.top) / k - ascent / 2;
       home.s = Math.min(0.5, (dot * 1.12) / size);
       handle.style.transform = `translate(${home.x}px, ${home.y}px)`;
     };
@@ -411,13 +419,18 @@ export function HeroTitle() {
 
     const aim = (e: PointerEvent) => {
       const w = wrap.getBoundingClientRect();
+      const k = scaleOf(w);
 
       // On touch, float the lens above the finger like iOS's loupe. It stays
       // on the card, where its copy has something to show.
       target = {
-        x: clamp(e.clientX - w.left, area.x + half, area.x + area.w - half),
+        x: clamp(
+          (e.clientX - w.left) / k,
+          area.x + half,
+          area.x + area.w - half,
+        ),
         y: clamp(
-          e.clientY - w.top - lift,
+          (e.clientY - w.top) / k - lift,
           area.y + half,
           area.y + area.h - half,
         ),
@@ -462,9 +475,16 @@ export function HeroTitle() {
       render();
     };
     const onResize = () => relayout.current();
+    // Resized, or shown again after a view hid it: the bead goes straight
+    // home rather than springing there from wherever it was last measured.
     const ro = new ResizeObserver(() => {
+      if (!card.offsetWidth) return;
       copyCard();
-      relayout.current();
+      findHome();
+      if (held) return;
+      cancelAnimationFrame(frame);
+      frame = 0;
+      settle();
     });
 
     handle.addEventListener("pointerdown", onDown);
