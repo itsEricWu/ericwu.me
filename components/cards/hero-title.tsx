@@ -131,9 +131,15 @@ export function HeroTitle() {
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
       const { clientX: x, clientY: y } = e;
+      // Pulling the bead captures the pointer, so moves keep arriving once it
+      // has left the headline: out there the letters rest, as on leaving.
+      const r = wrap.getBoundingClientRect();
+      const inside = x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
 
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setWeights(near(x, y)));
+      frame = requestAnimationFrame(() =>
+        setWeights(inside ? near(x, y) : () => null),
+      );
     };
     const onLeave = () => {
       cancelAnimationFrame(frame);
