@@ -3,34 +3,38 @@ import Link from "next/link";
 import { FitList } from "./fit-list";
 import { Chevron } from "./ui";
 
+import { formatDate, localePath, type Locale } from "@/lib/i18n";
+import { getMessages } from "@/messages";
+
 export type PostSummary = {
   id: string;
   title: string;
   createdAt: string | null;
 };
 
-const fmt = (iso: string | null) =>
-  iso
-    ? new Date(iso).toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      })
-    : "";
+export function WritingCard({
+  posts,
+  lang,
+}: {
+  posts: PostSummary[];
+  lang: Locale;
+}) {
+  const t = getMessages(lang);
+  const fmt = (iso: string | null) =>
+    iso ? formatDate(lang, iso, { month: "short", year: "numeric" }) : "";
 
-export function WritingCard({ posts }: { posts: PostSummary[] }) {
   return (
     <div className="flex h-full flex-col p-5 sm:p-6">
       <div className="flex items-center justify-between">
         <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
-          Writing
+          {t.writing.title}
         </p>
         <Link
           className="inline-flex items-center gap-1 text-[13px] font-medium text-glacier-ink hover:underline hover:underline-offset-4"
-          data-cursor="All posts"
-          href="/blog"
+          data-cursor={t.writing.all}
+          href={localePath(lang, "/blog")}
         >
-          All posts
+          {t.writing.all}
           <Chevron />
         </Link>
       </div>
@@ -45,8 +49,8 @@ export function WritingCard({ posts }: { posts: PostSummary[] }) {
           >
             <Link
               className="group flex flex-1 items-center py-2.5"
-              data-cursor="Read"
-              href={`/blog/${p.id}`}
+              data-cursor={t.writing.read}
+              href={localePath(lang, `/blog/${p.id}`)}
               prefetch={false}
             >
               <span className="flex w-full min-w-0 items-baseline justify-between gap-4">
@@ -65,8 +69,11 @@ export function WritingCard({ posts }: { posts: PostSummary[] }) {
         ))}
         {posts.length === 0 && (
           <li className="py-3 text-[14px] text-ink-2">
-            <Link className="hover:text-glacier" href="/blog">
-              Read the blog →
+            <Link
+              className="hover:text-glacier"
+              href={localePath(lang, "/blog")}
+            >
+              {t.writing.readBlog}
             </Link>
           </li>
         )}

@@ -42,21 +42,23 @@ There's no UI kit: the cards, the glass material and the motion are all hand-mad
 
 ## Tech stack
 
-| Part      | Built with                                                                                                                                                                                            |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework | [Next.js 16](https://nextjs.org) (App Router), [React 19](https://react.dev), [TypeScript](https://www.typescriptlang.org)                                                                            |
-| Styling   | [Tailwind CSS v4](https://tailwindcss.com), container queries, hand-built liquid glass                                                                                                                |
-| Type      | [Fraunces](https://fonts.google.com/specimen/Fraunces) for display, [Figtree](https://fonts.google.com/specimen/Figtree) for text (SF Pro on Apple devices)                                           |
-| Blog      | [Notion](https://www.notion.so) through [notion-client](https://github.com/NotionX/react-notion-x/tree/master/packages/notion-client) and [react-notion-x](https://github.com/NotionX/react-notion-x) |
-| Graphics  | [cobe](https://github.com/shuding/cobe) for the globe, [three.js](https://threejs.org) with [React Three Fiber](https://r3f.docs.pmnd.rs) and [drei](https://drei.docs.pmnd.rs) for the MINI          |
-| Data      | [Firebase Storage](https://firebase.google.com/docs/storage) for photos, [OpenAI](https://platform.openai.com) for the emoji card                                                                     |
-| Search    | [Fuse.js](https://www.fusejs.io)                                                                                                                                                                      |
-| Hosting   | [Vercel](https://vercel.com), with Vercel Analytics                                                                                                                                                   |
+| Part      | Built with                                                                                                                                                                                                                                              |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework | [Next.js 16](https://nextjs.org) (App Router), [React 19](https://react.dev), [TypeScript](https://www.typescriptlang.org)                                                                                                                              |
+| Styling   | [Tailwind CSS v4](https://tailwindcss.com), container queries, hand-built liquid glass                                                                                                                                                                  |
+| Type      | [Fraunces](https://fonts.google.com/specimen/Fraunces) for display, [Figtree](https://fonts.google.com/specimen/Figtree) for text (SF Pro on Apple devices), [Noto Serif SC](https://fonts.google.com/noto/specimen/Noto+Serif+SC) for Chinese headings |
+| Blog      | [Notion](https://www.notion.so) through [notion-client](https://github.com/NotionX/react-notion-x/tree/master/packages/notion-client) and [react-notion-x](https://github.com/NotionX/react-notion-x)                                                   |
+| Graphics  | [cobe](https://github.com/shuding/cobe) for the globe, [three.js](https://threejs.org) with [React Three Fiber](https://r3f.docs.pmnd.rs) and [drei](https://drei.docs.pmnd.rs) for the MINI                                                            |
+| Data      | [Firebase Storage](https://firebase.google.com/docs/storage) for photos, [OpenAI](https://platform.openai.com) for the emoji card                                                                                                                       |
+| Search    | [Fuse.js](https://www.fusejs.io)                                                                                                                                                                                                                        |
+| Hosting   | [Vercel](https://vercel.com), with Vercel Analytics                                                                                                                                                                                                     |
 
 ## Project structure
 
 ```text
-app/              Routes: home, /blog, /blog/[blogId], the emoji and version APIs, OG image, sitemap
+app/[lang]/       Pages in each language (English at /, Chinese at /zh): home, /blog, /blog/[blogId]
+app/              The emoji and version APIs, OG image, sitemap
+messages/         Every string on the site, in English and Chinese
 components/
   bento/          The grid: layout per view, drag to swap, FLIP view changes
   cards/          Every card on the home page
@@ -103,10 +105,11 @@ Copy `.env.local.example` to `.env.local`. Both variables are optional.
 
 ## Make it yours
 
-- **Who you are:** edit your name, links and projects in `config/site.ts`, and the bio in `components/cards/hero.tsx`.
+- **Who you are:** edit your name, links and projects in `config/site.ts`, and the bio and every other string in `messages/en.ts` and `messages/zh.ts`.
 - **Your blog:** point `notionBlogConfig.blogParentId` at your own public Notion page.
 - **Your images:** point `firebase/firebase.ts` at your own Firebase project and upload your photos and avatar (the paths are in `lib/data.ts`).
-- **Your cards:** cards live in `components/cards`. `app/page.tsx` lists them with their size at each breakpoint and the views they belong to.
+- **Your cards:** cards live in `components/cards`. `app/[lang]/page.tsx` lists them with their size at each breakpoint and the views they belong to.
+- **Chinese versions of posts:** inside a post in Notion, add a sub-page titled with the post's Chinese title and put the translation in it. An empty sub-page translates only the title. A post without one shows the English original on `/zh`, under a note.
 
 ## Deployment
 

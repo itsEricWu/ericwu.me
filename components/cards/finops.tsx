@@ -10,6 +10,7 @@ import {
 
 import { Eyebrow, SampleNote, TextLink } from "./ui";
 
+import { useT } from "@/components/locale-provider";
 import { projects } from "@/config/site";
 import { springs } from "@/lib/motion";
 import { cn, prefersReducedMotion } from "@/lib/utils";
@@ -21,17 +22,8 @@ const DAYS = [
 ];
 const SPIKE = 22;
 
-const NOTES = [
-  {
-    title: "Anomaly detected",
-    body: "EC2 spend is up 38% today in us-east-1.",
-  },
-  {
-    title: "Root cause found",
-    body: "CI fleet stuck at max: 24 new g5.2xlarge.",
-  },
-  { title: "Ticket filed", body: "COST-142 opened and posted to #team-cost." },
-];
+// The notifications' words live in messages/ (finops.notes); there are three.
+const NOTE_COUNT = 3;
 
 const W = 300;
 const H = 100;
@@ -48,6 +40,10 @@ const PATH = DAYS.map(
  * the stack before it runs again.
  */
 export function FinOpsCard() {
+  const {
+    finops: t,
+    common: { open, sample },
+  } = useT();
   const [shown, setShown] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLOListElement>(null);
@@ -77,7 +73,7 @@ export function FinOpsCard() {
     const start = () => {
       if (id !== run.current) return;
       show(0);
-      timers.current = NOTES.map((_, i) =>
+      timers.current = Array.from({ length: NOTE_COUNT }, (_, i) =>
         window.setTimeout(() => show(i + 1), 500 + i * 1000),
       );
     };
@@ -183,26 +179,26 @@ export function FinOpsCard() {
   return (
     <div className="flex h-full flex-col gap-4 p-5 sm:flex-row sm:gap-5 sm:p-6">
       <div className="flex flex-col sm:w-[43%] sm:shrink-0">
-        <Eyebrow accent>AWS · Public preview</Eyebrow>
+        <Eyebrow accent>{t.eyebrow}</Eyebrow>
         <div className="mt-1 flex items-baseline justify-between gap-3">
           <h2 className="title text-[26px] lg:text-[28px]">FinOps Agent</h2>
           <TextLink
             className="sm:hidden"
+            cursor={open}
             href={projects.finops.href}
-            label="See it on AWS: FinOps Agent"
+            label={t.ctaLabel}
           >
-            See it on AWS
+            {t.cta}
           </TextLink>
         </div>
-        <p className="mt-2 text-[15px] leading-snug text-muted">
-          Always-on cost expertise for every engineer, right where they work.
-        </p>
+        <p className="mt-2 text-[15px] leading-snug text-muted">{t.pitch}</p>
         <div className="mt-auto pt-3 max-sm:hidden">
           <TextLink
+            cursor={open}
             href={projects.finops.href}
-            label="See it on AWS: FinOps Agent"
+            label={t.ctaLabel}
           >
-            See it on AWS
+            {t.cta}
           </TextLink>
         </div>
       </div>
@@ -212,7 +208,7 @@ export function FinOpsCard() {
       <div
         ref={rootRef}
         className="relative -mx-2.5 -mb-2.5 min-h-0 flex-1 cursor-pointer overflow-hidden rounded-[14px] [container-type:size] bg-gradient-to-b from-inset to-[color-mix(in_oklab,var(--blush)_34%,var(--card-inset))] ring-1 ring-line ring-inset sm:mx-0 sm:-my-3 sm:-mr-3 sm:rounded-[16px] dark:to-[color-mix(in_oklab,var(--ember)_12%,var(--card-inset))]"
-        data-cursor="Replay"
+        data-cursor={t.replay}
         data-nodrag
         role="button"
         tabIndex={0}
@@ -223,7 +219,7 @@ export function FinOpsCard() {
             tall enough, else two (46px each, 6px apart, from 10px down). */}
         <div className="absolute inset-x-0 top-[168px] bottom-0 [@container(height<220px)]:top-[116px]">
           <svg
-            aria-label="Daily cost over 30 days with a spike on day 23"
+            aria-label={t.chart}
             className="absolute inset-0 size-full"
             preserveAspectRatio="none"
             role="img"
@@ -267,7 +263,8 @@ export function FinOpsCard() {
           aria-live="polite"
           className="absolute inset-x-2.5 top-2.5 flex flex-col gap-1.5"
         >
-          {NOTES.slice(0, shown)
+          {t.notes
+            .slice(0, shown)
             .map((n, i) => ({ ...n, i }))
             .reverse()
             .map((n, k) => (
@@ -291,7 +288,7 @@ export function FinOpsCard() {
                       {n.title}
                     </span>
                     <span className="shrink-0 text-[10.5px] text-muted">
-                      {k === 0 ? "now" : `${k}m ago`}
+                      {k === 0 ? t.now : t.ago(k)}
                     </span>
                   </span>
                   <span className="block truncate text-[12px] text-ink-2">
@@ -301,7 +298,7 @@ export function FinOpsCard() {
               </li>
             ))}
         </ol>
-        <SampleNote className="absolute right-3 bottom-2" />
+        <SampleNote className="absolute right-3 bottom-2">{sample}</SampleNote>
       </div>
     </div>
   );

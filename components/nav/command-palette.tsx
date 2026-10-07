@@ -1,11 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { LiquidGlass } from "@/components/glass/liquid-glass";
+import { useLocale, useT } from "@/components/locale-provider";
 import { projects, siteConfig } from "@/config/site";
+import { localePath, stripLocale } from "@/lib/i18n";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
 import type { View } from "@/lib/view-store";
@@ -56,6 +58,9 @@ export default function CommandPalette({
   onSelectTab: (id: View | "blog") => void;
 }) {
   const router = useRouter();
+  const lang = useLocale();
+  const { palette: t, projects: projectCopy } = useT();
+  const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -86,23 +91,23 @@ export default function CommandPalette({
     return [
       {
         id: "all",
-        group: "Navigate",
-        label: "Everything",
-        hint: "All cards",
+        group: t.groups.navigate,
+        label: t.everything,
+        hint: t.allCards,
         icon: <Dot className="bg-glacier" />,
         run: go("all"),
       },
       {
         id: "about",
-        group: "Navigate",
-        label: "About me",
+        group: t.groups.navigate,
+        label: t.about,
         icon: <Dot className="bg-glacier" />,
         run: go("about"),
       },
       {
         id: "work",
-        group: "Navigate",
-        label: "Work and projects",
+        group: t.groups.navigate,
+        label: t.work,
         keywords:
           "aws amazon finops q artifacts side projects packbook secondself",
         icon: <Dot className="bg-ember" />,
@@ -110,24 +115,24 @@ export default function CommandPalette({
       },
       {
         id: "blog",
-        group: "Navigate",
-        label: "Read the blog",
+        group: t.groups.navigate,
+        label: t.blog,
         keywords: "writing posts",
         icon: <Dot className="bg-ink-2" />,
         run: go("blog"),
       },
       ...Object.values(projects).map((p) => ({
         id: p.id,
-        group: "Projects",
+        group: t.groups.projects,
         label: p.name,
         hint: p.linkLabel,
-        keywords: p.kicker,
+        keywords: `${p.kicker} ${projectCopy[p.id as keyof typeof projectCopy].kicker}`,
         icon: <Arrow />,
         run: open(p.href),
       })),
       {
         id: "github",
-        group: "Connect",
+        group: t.groups.connect,
         label: "GitHub",
         hint: "@itsEricWu",
         icon: <Arrow />,
@@ -135,21 +140,21 @@ export default function CommandPalette({
       },
       {
         id: "linkedin",
-        group: "Connect",
+        group: t.groups.connect,
         label: "LinkedIn",
         icon: <Arrow />,
         run: open(siteConfig.links.linkedin),
       },
       {
         id: "email",
-        group: "Connect",
-        label: "Copy email address",
+        group: t.groups.connect,
+        label: t.copyEmail,
         hint: siteConfig.email,
         keywords: "mail contact",
         icon: <Dot className="bg-glacier" />,
         run: () => {
           navigator.clipboard?.writeText(siteConfig.email).then(
-            () => setToast("Email copied"),
+            () => setToast(t.emailCopied),
             () => setToast(siteConfig.email),
           );
           window.setTimeout(onClose, 900);
@@ -157,11 +162,8 @@ export default function CommandPalette({
       },
       {
         id: "theme",
-        group: "Settings",
-        label:
-          resolvedTheme === "dark"
-            ? "Turn the lights on"
-            : "Turn the lights off",
+        group: t.groups.settings,
+        label: resolvedTheme === "dark" ? t.lightsOn : t.lightsOff,
         keywords: "theme dark light mode",
         icon: <Dot className="bg-ink" />,
         run: () => {
@@ -173,35 +175,60 @@ export default function CommandPalette({
         },
       },
       {
+        id: "language",
+        group: t.groups.settings,
+        label: t.language,
+        hint: t.languageHint,
+        keywords: "language chinese english 语言 中文 英文",
+        icon: <Dot className="bg-glacier" />,
+        run: () => {
+          // The other language is a different root layout: a full load.
+          window.location.assign(
+            localePath(lang === "en" ? "zh" : "en", stripLocale(pathname)) +
+              window.location.hash,
+          );
+        },
+      },
+      {
         id: "bert",
-        group: "Fun",
-        label: "Meet Bert",
-        hint: "the dog",
+        group: t.groups.fun,
+        label: t.bert,
+        hint: t.bertHint,
         keywords: "dog avatar",
         icon: <Dot className="bg-ember" />,
         run: fire("eric:bert"),
       },
       {
         id: "mini",
-        group: "Fun",
-        label: "Spin up the Mini in 3D",
+        group: t.groups.fun,
+        label: t.mini,
         keywords: "car three",
         icon: <Dot className="bg-ember" />,
         run: fire("eric:mini"),
       },
       {
         id: "home",
-        group: "Fun",
-        label: "Back to the top",
+        group: t.groups.fun,
+        label: t.top,
         icon: <Dot className="bg-muted" />,
         run: () => {
-          router.push("/");
+          router.push(localePath(lang, "/"));
           window.scrollTo({ top: 0, behavior: "smooth" });
           onClose();
         },
       },
     ];
-  }, [onClose, onSelectTab, resolvedTheme, router, setTheme]);
+  }, [
+    lang,
+    onClose,
+    onSelectTab,
+    pathname,
+    projectCopy,
+    resolvedTheme,
+    router,
+    setTheme,
+    t,
+  ]);
 
   const results = useMemo(
     () =>
@@ -243,7 +270,7 @@ export default function CommandPalette({
 
   return (
     <div
-      aria-label="Command palette"
+      aria-label={t.dialog}
       aria-modal="true"
       className="fixed inset-0 z-[60] flex items-start justify-center px-3 pt-[12vh]"
       role="dialog"
@@ -293,9 +320,9 @@ export default function CommandPalette({
               results[active] ? `cmd-${results[active].id}` : undefined
             }
             aria-controls="cmd-list"
-            aria-label="Search commands"
+            aria-label={t.input}
             className="h-14 w-full bg-transparent text-[15px] outline-none placeholder:text-muted"
-            placeholder="Jump to a project, copy my email, meet Bert…"
+            placeholder={t.placeholder}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -326,7 +353,7 @@ export default function CommandPalette({
         >
           {results.length === 0 && (
             <p className="px-3 py-8 text-center text-sm text-muted">
-              Nothing matches “{query}”.
+              {t.empty(query)}
             </p>
           )}
           {results.map((c, i) => {
@@ -364,7 +391,7 @@ export default function CommandPalette({
           })}
         </div>
         <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[12px] text-muted">
-          <span>↑↓ to move · ↵ to open</span>
+          <span>{t.help}</span>
           <span aria-live="polite">{toast ?? "ericwu.me"}</span>
         </div>
       </LiquidGlass>

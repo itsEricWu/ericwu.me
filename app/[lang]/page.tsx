@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import secondselfShot from "@/assets/projects/secondself.webp";
 import { BentoGrid, type BentoItem } from "@/components/bento/bento-grid";
 import { ArtifactsCard } from "@/components/cards/artifacts";
@@ -14,12 +16,30 @@ import { TechSphere } from "@/components/cards/tech-sphere";
 import { WritingCard } from "@/components/cards/writing";
 import { projects } from "@/config/site";
 import { getHomeData, getLatestPosts } from "@/lib/data";
+import { isLocale } from "@/lib/i18n";
+import { getMessages } from "@/messages";
 
 // Static, refreshed hourly: Firebase URLs and the latest posts are baked in.
 export const revalidate = 3600;
 
-export default async function Page() {
-  const [home, posts] = await Promise.all([getHomeData(), getLatestPosts()]);
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+
+  if (!isLocale(lang)) notFound();
+  const t = getMessages(lang);
+  const [home, posts] = await Promise.all([
+    getHomeData(),
+    getLatestPosts(lang),
+  ]);
+  // A project's name and link from the config, its words in this language.
+  const project = (id: keyof typeof projects) => ({
+    ...projects[id],
+    ...t.projects[id],
+  });
 
   // Order matters: cards pack first-fit in this order. Sizes are columns × rows
   // on phones (2 columns, below the hero's header row), wide phones (2), small
@@ -47,7 +67,7 @@ export default async function Page() {
     {
       id: "hero",
       tags: ["about"],
-      label: "About Eric",
+      label: t.cards.hero,
       size: [
         [2, 1],
         [2, 2],
@@ -59,7 +79,9 @@ export default async function Page() {
       // Below 768px a full-width header row as tall as its content (the first
       // three sizes go unused).
       header: true,
-      content: <HeroCard avatarUrl={home.avatarUrl} dogUrl={home.dogUrl} />,
+      content: (
+        <HeroCard avatarUrl={home.avatarUrl} dogUrl={home.dogUrl} lang={lang} />
+      ),
     },
     {
       id: "finops",
@@ -90,7 +112,7 @@ export default async function Page() {
     {
       id: "sky",
       tags: ["about"],
-      label: "Seattle sky and theme switch",
+      label: t.cards.sky,
       size: [
         [1, 1],
         [1, 1],
@@ -103,7 +125,7 @@ export default async function Page() {
     {
       id: "globe",
       tags: ["about"],
-      label: "Purdue, UCLA, Seattle",
+      label: t.cards.globe,
       size: [
         [1, 1],
         [1, 1],
@@ -128,7 +150,8 @@ export default async function Page() {
         <ProjectCard
           image={secondselfShot}
           look="secondself"
-          project={projects.secondself}
+          lang={lang}
+          project={project("secondself")}
         />
       ),
     },
@@ -148,7 +171,7 @@ export default async function Page() {
     {
       id: "photos",
       tags: ["about"],
-      label: "Photos",
+      label: t.cards.photos,
       size: [
         [2, 2],
         [2, 2],
@@ -174,7 +197,8 @@ export default async function Page() {
           height={800}
           image={home.webagentUrl}
           look="webagent"
-          project={projects.webagent}
+          lang={lang}
+          project={project("webagent")}
           width={1000}
         />
       ),
@@ -195,7 +219,8 @@ export default async function Page() {
           height={1280}
           image={home.chatbotUrl}
           look="chatbot"
-          project={projects.chatbot}
+          lang={lang}
+          project={project("chatbot")}
           width={2629}
         />
       ),
@@ -203,7 +228,7 @@ export default async function Page() {
     {
       id: "tech",
       tags: ["about", "work"],
-      label: "Toolbox",
+      label: t.cards.tech,
       size: [
         [1, 1],
         [1, 1],
@@ -216,7 +241,7 @@ export default async function Page() {
     {
       id: "mini",
       tags: ["about"],
-      label: "Mini Cooper",
+      label: t.cards.mini,
       size: [
         [1, 1],
         [1, 1],
@@ -229,7 +254,7 @@ export default async function Page() {
     {
       id: "emoji",
       tags: ["work"],
-      label: "Text to emoji",
+      label: t.cards.emoji,
       size: [
         [1, 1],
         [1, 1],
@@ -255,7 +280,8 @@ export default async function Page() {
           height={1280}
           image={home.paperUrl}
           look="paper"
-          project={projects.paper}
+          lang={lang}
+          project={project("paper")}
           width={1577}
         />
       ),
@@ -263,7 +289,7 @@ export default async function Page() {
     {
       id: "writing",
       tags: ["about"],
-      label: "Latest writing",
+      label: t.cards.writing,
       size: [
         [2, 2],
         [2, 2],
@@ -271,7 +297,7 @@ export default async function Page() {
         [2, 1],
         [2, 1],
       ],
-      content: <WritingCard posts={posts} />,
+      content: <WritingCard lang={lang} posts={posts} />,
     },
   ];
 

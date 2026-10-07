@@ -9,6 +9,7 @@ import {
   type CSSProperties,
 } from "react";
 
+import { useT } from "@/components/locale-provider";
 import { cn, onIdle } from "@/lib/utils";
 
 /**
@@ -29,6 +30,7 @@ export function AvatarFlip({
   avatarUrl: string;
   dogUrl: string;
 }) {
+  const { avatar } = useT();
   const [flipped, setFlipped] = useState(false);
   // Bert is only in the page while he's showing or turning away, so nothing
   // (a theme switch, a browser's snapshot of the page) can paint him over Eric.
@@ -77,10 +79,10 @@ export function AvatarFlip({
 
   return (
     <button
-      aria-label={flipped ? "Show Eric again" : "Flip to meet Bert, my dog"}
+      aria-label={flipped ? avatar.showEric : avatar.meetBert}
       aria-pressed={flipped}
       className="group relative size-14 shrink-0 rounded-full [perspective:700px] sm:size-[60px]"
-      data-cursor={flipped ? "Back to Eric" : "Meet Bert"}
+      data-cursor={flipped ? avatar.backCursor : avatar.meetCursor}
       type="button"
       onClick={() => {
         if (!flipped) setDogIn(true);
@@ -102,7 +104,7 @@ export function AvatarFlip({
           <Image
             fill
             preload
-            alt="Eric Wu"
+            alt={avatar.eric}
             className="object-cover"
             sizes="60px"
             src={avatarUrl}
@@ -116,7 +118,7 @@ export function AvatarFlip({
           {dogIn && (
             <Image
               fill
-              alt="Bert, Eric's dog"
+              alt={avatar.bert}
               className="object-cover"
               sizes="60px"
               src={dogUrl}

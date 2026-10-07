@@ -1,12 +1,25 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+/* Chinese pages (html lang="zh-CN"), for the few places Han text sets differently. */
+@custom-variant zh (&:lang(zh));
 
 @theme inline {
+  /* Han characters fall through the Latin faces to the system's Chinese sans:
+     PingFang on Apple, Microsoft YaHei on Windows, Noto Sans CJK on Android. */
   --font-sans:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--ff-text, Figtree),
-    ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--display-face, ui-serif, Georgia, serif);
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans SC",
+    "Noto Sans CJK SC", "Source Han Sans SC", sans-serif;
+  /* In headings they fall through to Noto Serif SC, Fraunces' Han companion
+     (config/fonts.ts), and only then to a generic serif, which on Windows
+     would be SimSun. */
+  --font-display:
+    var(--display-face, ui-serif, Georgia),
+    var(--ff-display-zh, "Noto Serif SC"), "Noto Serif SC", "Songti SC",
+    "Noto Serif CJK SC", "Source Han Serif SC", "PingFang SC",
+    "Microsoft YaHei", serif;
   --font-name: var(--name-face, ui-serif, Georgia, serif);
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 
@@ -45,16 +58,32 @@
    first paint (components/font-loader.tsx), then Fraunces. Every var() has a
    fallback, so a missing variable (say, a page from an older deploy) can never
    void the whole stack and drop the headline to the body sans. */
+/* --display-face lists Latin faces only; --font-display adds the Han ones. */
 :root {
-  --display-face: "Fraunces Fallback", ui-serif, Georgia, serif;
+  --display-face: "Fraunces Fallback", ui-serif, Georgia;
   --name-face: "Fraunces Fallback", ui-serif, Georgia, serif;
 }
 
 html.ff {
-  --display-face: var(--ff-display, Fraunces), ui-serif, Georgia, serif;
+  --display-face: var(--ff-display, Fraunces), ui-serif, Georgia;
   --name-face:
     var(--ff-name, Fraunces), var(--ff-display, Fraunces), ui-serif, Georgia,
     serif;
+}
+
+/* ---------- Chinese ---------- */
+
+/* Han characters have no italics, so none are faked (Latin keeps its real
+   ones), and no line starts with closing punctuation. In display type the
+   punctuation is set proportionally ("palt"): a full-width comma would leave
+   half an em of air in a headline. */
+html:lang(zh) {
+  font-synthesis: none;
+  line-break: strict;
+}
+
+html:lang(zh) :is(.font-display, .title, .notion-h, .notion-title) {
+  font-feature-settings: "palt";
 }
 
 /* A gentle settle when the display face swaps in. */

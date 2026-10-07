@@ -11,6 +11,7 @@ import {
   SKYLINE_SIZE,
 } from "./rainier-skyline";
 
+import { useT } from "@/components/locale-provider";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
 
@@ -111,11 +112,14 @@ const STARS = Array.from({ length: 30 }, () => {
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E\")";
 
-const clock = (h: number) => {
+const clock = (h: number, hour12: boolean) => {
   const minutes = Math.round(h * 60) % (24 * 60);
   const hh = Math.floor(minutes / 60);
+  const mm = String(minutes % 60).padStart(2, "0");
 
-  return `${((hh + 11) % 12) + 1}:${String(minutes % 60).padStart(2, "0")} ${hh >= 12 ? "PM" : "AM"}`;
+  return hour12
+    ? `${((hh + 11) % 12) + 1}:${mm} ${hh >= 12 ? "PM" : "AM"}`
+    : `${hh}:${mm}`;
 };
 
 const LAT = 47.6062;
@@ -155,7 +159,7 @@ function sunTimes(doy: number, utcOffset: number) {
 }
 
 /** Seattle's sky right now: the sun's real position and the moon's phase and rough place. */
-function seattleSky(now: Date) {
+function seattleSky(now: Date, hour12: boolean) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
       timeZone: TZ,
@@ -203,15 +207,18 @@ function seattleSky(now: Date) {
     timeZone: TZ,
     hour: "numeric",
     minute: "2-digit",
+    ...(hour12 ? {} : { hourCycle: "h23" as const }),
   }).format(now);
   const sunUp = hour >= rise && hour < set;
 
   return {
     phase,
     label,
-    next: sunUp ? `Sunset ${clock(set)}` : `Sunrise ${clock(rise)}`,
+    next: sunUp
+      ? { kind: "sunset" as const, at: clock(set, hour12) }
+      : { kind: "sunrise" as const, at: clock(rise, hour12) },
     time: time.replace(/\s?[AP]M$/, ""),
-    meridiem: /PM$/.test(time) ? "PM" : "AM",
+    meridiem: hour12 ? (/PM$/.test(time) ? "PM" : "AM") : "",
     sun: (hour - rise) / (set - rise),
     moon,
     age,
@@ -395,17 +402,18 @@ function PhaseIcon({ phase, age }: { phase: Phase; age: number }) {
  * Park. It doubles as the light switch for the site.
  */
 export function SkyCard() {
+  const { sky: t, nav } = useT();
   const { resolvedTheme, setTheme } = useTheme();
   const [sky, setSky] = useState<ReturnType<typeof seattleSky> | null>(null);
 
   useEffect(() => {
-    const tick = () => setSky(seattleSky(new Date()));
+    const tick = () => setSky(seattleSky(new Date(), t.hour12));
 
     tick();
     const id = window.setInterval(tick, 20_000);
 
     return () => window.clearInterval(id);
-  }, []);
+  }, [t.hour12]);
 
   const phase = sky?.phase ?? "night";
   const colors = sky?.label === "Golden hour" ? GOLDEN : PALETTE[phase];
@@ -546,7 +554,7 @@ export function SkyCard() {
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1 leading-none">
             <p className="flex items-center gap-1 text-[15px] font-semibold">
-              Seattle
+              {t.city}
               <svg
                 aria-hidden
                 className="size-[10px] opacity-90"
@@ -561,9 +569,9 @@ export function SkyCard() {
             <GlassTime meridiem={sky?.meridiem ?? ""} time={sky?.time ?? ""} />
           </div>
           <button
-            aria-label="Toggle dark mode"
+            aria-label={nav.theme}
             className="lg grid size-8 shrink-0 place-items-center rounded-full text-white [--glass-ink:#fff] [--glass-tint:rgb(255_255_255/0.14)]"
-            data-cursor="Lights"
+            data-cursor={nav.lights}
             type="button"
             onClick={(e) => {
               const r = e.currentTarget.getBoundingClientRect();
@@ -600,9 +608,11 @@ export function SkyCard() {
         >
           <p className="flex items-center gap-1.5 font-semibold">
             {sky && <PhaseIcon age={sky.age} phase={phase} />}
-            {sky?.label ?? "Seattle"}
+            {sky ? (t.labels[sky.label] ?? sky.label) : t.city}
           </p>
-          <p className="opacity-85">{sky?.next ?? "Sunrise"}</p>
+          <p className="opacity-85">
+            {sky ? `${t[sky.next.kind]} ${sky.next.at}` : t.sunrise}
+          </p>
         </div>
       </div>
     </div>

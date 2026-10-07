@@ -4,22 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Eyebrow, SampleNote, TextLink } from "./ui";
 
+import { useT } from "@/components/locale-provider";
 import { projects } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-const TABS = [
-  {
-    id: "chart",
-    label: "Chart",
-    prompt: "Chart my costs by region last month",
-  },
-  { id: "table", label: "Table", prompt: "List my running EC2 instances" },
-  {
-    id: "forecast",
-    label: "Forecast",
-    prompt: "Forecast my spend for 6 months",
-  },
-] as const;
+// Each tab's label and prompt live in messages/ (artifacts.tabs).
+const TABS = [{ id: "chart" }, { id: "table" }, { id: "forecast" }] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
@@ -43,13 +33,14 @@ const ACTUAL = [8.1, 8.6, 9.4, 9.1, 10.2, 10.9];
 const FORECAST = [11.3, 11.9, 12.2, 12.9, 13.4, 14.1];
 
 function RegionChart() {
+  const { artifacts: t } = useT();
   const [hover, setHover] = useState<number | null>(null);
   const max = REGIONS[0].value;
 
   return (
     <div className="flex h-full flex-col">
       <p className="mb-1.5 flex justify-between text-[11.5px] text-muted">
-        <span className="font-medium text-ink">Cost by region</span>
+        <span className="font-medium text-ink">{t.costByRegion}</span>
         <span className="tabular-nums">
           {hover === null
             ? "$10,240"
@@ -92,6 +83,7 @@ function RegionChart() {
 }
 
 function InstanceTable() {
+  const { artifacts: t } = useT();
   const [dir, setDir] = useState<1 | -1>(-1);
   const rows = useMemo(
     () => [...INSTANCES].sort((a, b) => (a.cpu - b.cpu) * dir),
@@ -101,8 +93,8 @@ function InstanceTable() {
   return (
     <div className="flex h-full flex-col text-[11.5px]">
       <div className="grid grid-cols-[1fr_1.2fr_1fr] border-b border-line pb-1 text-muted">
-        <span>Instance</span>
-        <span>Type</span>
+        <span>{t.instance}</span>
+        <span>{t.type}</span>
         <button
           className="text-left hover:text-ink"
           type="button"
@@ -145,6 +137,7 @@ function InstanceTable() {
 }
 
 function ForecastChart() {
+  const { artifacts: t } = useT();
   const all = [...ACTUAL, ...FORECAST];
   const px = (i: number) => (i / (all.length - 1)) * 300;
   const py = (v: number) => 92 - ((v - 7) / 8.5) * 84;
@@ -172,11 +165,11 @@ function ForecastChart() {
   return (
     <div className="flex h-full flex-col">
       <p className="mb-1 flex justify-between text-[11.5px] text-muted">
-        <span className="font-medium text-ink">Monthly spend</span>
-        <span>+29% by March</span>
+        <span className="font-medium text-ink">{t.monthly}</span>
+        <span>{t.byMarch}</span>
       </p>
       <svg
-        aria-label="Spend forecast"
+        aria-label={t.forecast}
         className="min-h-0 w-full flex-1"
         preserveAspectRatio="none"
         role="img"
@@ -214,6 +207,10 @@ function ForecastChart() {
 
 /** Amazon Q artifacts: ask, and the answer arrives as interactive UI. */
 export function ArtifactsCard() {
+  const {
+    artifacts: copy,
+    common: { open, sample },
+  } = useT();
   const [active, setActive] = useState<TabId>("chart");
   const [busy, setBusy] = useState(false);
   const index = TABS.findIndex((t) => t.id === active);
@@ -233,22 +230,21 @@ export function ArtifactsCard() {
           <h2 className="title text-[26px] lg:text-[28px]">Q artifacts</h2>
           <TextLink
             className="sm:hidden"
+            cursor={open}
             href={projects.artifacts.href}
-            label="Docs for Amazon Q chat artifacts"
+            label={copy.docsLabel}
           >
-            Docs
+            {copy.docs}
           </TextLink>
         </div>
-        <p className="mt-2 text-[15px] leading-snug text-muted">
-          Answers that arrive as live charts and tables you can sort and
-          explore.
-        </p>
+        <p className="mt-2 text-[15px] leading-snug text-muted">{copy.pitch}</p>
         <div className="mt-auto pt-3 max-sm:hidden">
           <TextLink
+            cursor={open}
             href={projects.artifacts.href}
-            label="Read the docs for Amazon Q chat artifacts"
+            label={copy.readDocsLabel}
           >
-            Read the docs
+            {copy.readDocs}
           </TextLink>
         </div>
       </div>
@@ -275,7 +271,7 @@ export function ArtifactsCard() {
                 "relative z-10 h-7 rounded-full text-[12px] font-medium transition-colors",
                 t.id === active ? "text-ink" : "text-muted hover:text-ink",
               )}
-              data-cursor="Ask Q"
+              data-cursor={copy.ask}
               role="tab"
               type="button"
               onClick={() => {
@@ -284,12 +280,12 @@ export function ArtifactsCard() {
                 setBusy(true);
               }}
             >
-              {t.label}
+              {copy.tabs[t.id].label}
             </button>
           ))}
         </div>
         <p className="ml-auto max-w-[90%] truncate rounded-[14px] rounded-br-[5px] bg-glacier-ink px-2.5 py-1 text-[11.5px] text-white [@container(height<185px)]:hidden dark:text-[#06223a]">
-          {TABS[index].prompt}
+          {copy.tabs[active].prompt}
         </p>
         <div className="relative min-h-0 flex-1 rounded-[14px] bg-card/75 p-2.5 dark:bg-black/25">
           {busy ? (
@@ -305,7 +301,7 @@ export function ArtifactsCard() {
             </div>
           )}
         </div>
-        <SampleNote className="text-right" />
+        <SampleNote className="text-right">{sample}</SampleNote>
       </div>
     </div>
   );

@@ -2,32 +2,35 @@ import Link from "next/link";
 
 import { Cover } from "@/components/blog/cover";
 import { Eyebrow } from "@/components/cards/ui";
+import { formatDate, localePath, type Locale } from "@/lib/i18n";
+import { getMessages } from "@/messages";
 import type { Blog } from "@/types/blog";
 
 type Post = Blog & { imageUrl: string | undefined };
 
-const fmt = (d: Date | null) =>
-  d
-    ? d.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        timeZone: "UTC",
-      })
-    : "";
+export function BlogList({
+  blogPosts,
+  lang,
+}: {
+  blogPosts: Post[];
+  lang: Locale;
+}) {
+  const { blog, common } = getMessages(lang);
+  const fmt = (d: Date | null) =>
+    d
+      ? formatDate(lang, d, { month: "short", day: "numeric", year: "numeric" })
+      : "";
 
-export function BlogList({ blogPosts }: { blogPosts: Post[] }) {
   return (
     <div>
       <header className="mb-8 flex flex-col items-start gap-3 pt-2 sm:mb-10">
-        <Eyebrow>
-          Blog · {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"}
-        </Eyebrow>
+        <Eyebrow>{blog.eyebrow(blogPosts.length)}</Eyebrow>
         <h1 className="font-display text-[clamp(2.6rem,6vw,3.8rem)] leading-[1.02] font-semibold tracking-[-0.02em]">
-          Writing<span className="text-glacier">.</span>
+          {blog.heading}
+          <span className="text-glacier">{common.period}</span>
         </h1>
         <p className="max-w-[56ch] text-[15px] text-pretty text-ink-2 sm:text-[16px]">
-          Notes on AI agents, software engineering, and hiking with my dog Bert.
+          {blog.intro}
         </p>
       </header>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -35,8 +38,8 @@ export function BlogList({ blogPosts }: { blogPosts: Post[] }) {
           <Link
             key={id}
             className="card group flex flex-col transition-[translate,box-shadow] duration-500 hover:-translate-y-1"
-            data-cursor="Read"
-            href={`/blog/${id}`}
+            data-cursor={blog.read}
+            href={localePath(lang, `/blog/${id}`)}
           >
             <div className="relative aspect-[16/9] overflow-hidden bg-card-2">
               <Cover index={i} src={imageUrl} title={title} />

@@ -34,6 +34,27 @@ const nextConfig = {
       },
     ],
   },
+  // Pages live under app/[lang]. English keeps the bare URLs it always had
+  // (/blog is served from /en/blog), Chinese lives under /zh, and an /en URL
+  // redirects to its bare form so each page has one address.
+  async redirects() {
+    return [
+      { source: "/en", destination: "/", permanent: true },
+      { source: "/en/:path*", destination: "/:path*", permanent: true },
+    ];
+  },
+  async rewrites() {
+    return {
+      // After files: public files, API routes and metadata routes match first.
+      afterFiles: [
+        { source: "/", destination: "/en" },
+        {
+          source: "/:path((?!zh(?:/|$)|en(?:/|$)|_next/|api/).*)",
+          destination: "/en/:path",
+        },
+      ],
+    };
+  },
   async headers() {
     const cached = [
       {

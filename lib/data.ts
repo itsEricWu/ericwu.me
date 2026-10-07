@@ -2,8 +2,8 @@ import { cache } from "react";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 
 import { storage } from "@/firebase/firebase";
-import { notionBlogConfig } from "@/config/site";
-import { getAllBlogPosts } from "@/lib/notion";
+import type { Locale } from "@/lib/i18n";
+import { getBlogPosts } from "@/lib/notion";
 
 // Use React cache to dedupe requests within a single render pass
 export const getHomeData = cache(async () => {
@@ -43,9 +43,9 @@ export const getHomeData = cache(async () => {
 });
 
 /** Latest posts for the home page; the page still renders if Notion is down. */
-export const getLatestPosts = cache(async () => {
+export const getLatestPosts = cache(async (lang: Locale) => {
   try {
-    const posts = await getAllBlogPosts(notionBlogConfig.blogParentId);
+    const posts = await getBlogPosts(lang);
 
     return posts.map((p) => ({
       id: p.id,

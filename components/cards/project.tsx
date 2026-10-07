@@ -3,7 +3,9 @@ import Image, { type StaticImageData } from "next/image";
 import { ArrowUpRight } from "./ui";
 
 import type { Project } from "@/config/site";
+import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { getMessages } from "@/messages";
 
 /*
  * Each composition keeps the original, hand-tuned placement: a pastel card
@@ -49,8 +51,10 @@ export function ProjectCard({
   image,
   width,
   height,
+  lang,
 }: {
   project: Project;
+  lang: Locale;
   look: keyof typeof LOOKS;
   /** A local import (sized automatically) or a remote URL with its size. */
   image: string | StaticImageData;
@@ -88,7 +92,7 @@ export function ProjectCard({
       <a
         aria-label={`${project.name}: ${project.blurb}`}
         className="lg absolute bottom-2 left-2 z-10 flex h-10 max-w-10 items-center overflow-hidden rounded-full p-0 transition-[max-width] duration-500 ease-[cubic-bezier(.2,.9,.25,1)] group-hover:max-w-[calc(100%-1rem)] focus-visible:max-w-[calc(100%-1rem)] md:h-11 md:max-w-11"
-        data-cursor={`Open ${project.linkLabel} ↗`}
+        data-cursor={getMessages(lang).common.openLink(project.linkLabel)}
         href={project.href}
         rel="noopener noreferrer"
         target="_blank"

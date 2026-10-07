@@ -63,12 +63,15 @@ export function TextLink({
   children,
   className,
   label,
+  cursor = "Open ↗",
 }: {
   href: string;
   children: ReactNode;
   className?: string;
   /** A fuller accessible name; it should start with the visible text. */
   label?: string;
+  /** The cursor's label over an outside link. */
+  cursor?: string;
 }) {
   const external = href.startsWith("http");
 
@@ -79,7 +82,7 @@ export function TextLink({
         "group/link inline-flex items-center gap-1 text-[15px] font-medium text-glacier-ink hover:underline hover:underline-offset-4",
         className,
       )}
-      data-cursor={external ? "Open ↗" : undefined}
+      data-cursor={external ? cursor : undefined}
       href={href}
       rel={external ? "noopener noreferrer" : undefined}
       target={external ? "_blank" : undefined}
@@ -122,10 +125,12 @@ export function GlassLink({
   );
 }
 
-export function SampleNote({ className }: { className?: string }) {
-  return (
-    <p className={cn("text-[11px] text-muted", className)}>
-      Illustration with sample data
-    </p>
-  );
+export function SampleNote({
+  className,
+  children = "Illustration with sample data",
+}: {
+  className?: string;
+  children?: ReactNode;
+}) {
+  return <p className={cn("text-[11px] text-muted", className)}>{children}</p>;
 }

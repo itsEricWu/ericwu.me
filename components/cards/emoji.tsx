@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
+import { useT } from "@/components/locale-provider";
 import { cn } from "@/lib/utils";
 
 type Result = { url: string; name: string };
 
 /** Type a feeling, get an animated emoji (OpenAI picks it, server-side). */
 export function EmojiCard() {
+  const { emoji: t } = useT();
   const [text, setText] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");
   const [result, setResult] = useState<Result | null>(null);
@@ -86,7 +88,7 @@ export function EmojiCard() {
           <picture className="relative">
             {animate && <source srcSet="/emoji/wave.avif" type="image/avif" />}
             <img
-              alt="Waving hand"
+              alt={t.wave}
               className="size-16 sm:size-[104px]"
               height={104}
               src={animate ? "/emoji/wave.webp" : "/emoji/wave-poster.webp"}
@@ -97,24 +99,24 @@ export function EmojiCard() {
       </div>
       <div className="flex min-w-0 flex-col gap-2">
         <p className="text-[13px] font-semibold text-muted max-sm:hidden">
-          Text to emoji
+          {t.title}
         </p>
         <div className="flex items-center gap-1 rounded-full border border-line bg-card-2/60 p-0.5 pl-2.5 focus-within:border-glacier sm:gap-1.5 sm:p-1 sm:pl-3">
           <input
-            aria-label="Describe a mood"
+            aria-label={t.aria}
             className="min-w-0 flex-1 bg-transparent text-[12.5px] outline-none placeholder:text-muted sm:text-[13.5px]"
             maxLength={80}
-            placeholder={state === "error" ? "Try again?" : "Summit day!"}
+            placeholder={state === "error" ? t.retry : t.placeholder}
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
           <button
             className="h-7 rounded-full bg-ink px-2.5 text-[12px] font-semibold text-bg transition-transform hover:scale-[1.04] active:scale-95 disabled:opacity-60 sm:h-8 sm:px-3"
-            data-cursor="Generate"
+            data-cursor={t.cursor}
             disabled={state === "loading"}
             type="submit"
           >
-            Go
+            {t.go}
           </button>
         </div>
       </div>

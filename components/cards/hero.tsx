@@ -4,6 +4,8 @@ import { AvatarFlip } from "./avatar-flip";
 import { HeroTitle } from "./hero-title";
 
 import { siteConfig } from "@/config/site";
+import { localePath, type Locale } from "@/lib/i18n";
+import { getMessages } from "@/messages";
 
 const socials = [
   {
@@ -17,7 +19,7 @@ const socials = [
     path: "M13.6 13.6h-2.4V9.9c0-.9 0-2-1.2-2s-1.4.9-1.4 1.9v3.8H6.2V6h2.3v1h.1c.3-.6 1.1-1.2 2.3-1.2 2.4 0 2.8 1.6 2.8 3.6v4.2ZM3.5 4.9a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Zm1.2 8.7H2.3V6h2.4v7.6ZM14.8 0H1.2C.5 0 0 .5 0 1.2v13.6c0 .7.5 1.2 1.2 1.2h13.6c.7 0 1.2-.5 1.2-1.2V1.2c0-.7-.5-1.2-1.2-1.2Z",
   },
   {
-    label: "Email",
+    label: "email",
     href: siteConfig.links.email,
     path: "M1.5 3h13c.8 0 1.5.7 1.5 1.5v7c0 .8-.7 1.5-1.5 1.5h-13C.7 13 0 12.3 0 11.5v-7C0 3.7.7 3 1.5 3Zm.3 1.6L8 8.8l6.2-4.2H1.8Zm12.6 1.5L8.4 10.2a.8.8 0 0 1-.8 0L1.6 6.1v5.3h12.8V6.1Z",
   },
@@ -26,10 +28,15 @@ const socials = [
 export function HeroCard({
   avatarUrl,
   dogUrl,
+  lang,
 }: {
   avatarUrl: string;
   dogUrl: string;
+  lang: Locale;
 }) {
+  const t = getMessages(lang);
+  const name = (label: string) => (label === "email" ? t.common.email : label);
+
   return (
     <div
       className="relative flex h-full flex-col p-5 [container:hero/inline-size] md:[container:hero/size] sm:p-6"
@@ -50,7 +57,7 @@ export function HeroCard({
             >
               <path d="M10.9 1.1a.5.5 0 0 0-.53-.12L1.3 4.5a.5.5 0 0 0 .02.94l3.6 1.1 1.1 3.6a.5.5 0 0 0 .94.02l3.52-9.07a.5.5 0 0 0-.12-.53Z" />
             </svg>
-            Seattle, WA
+            {t.common.location}
           </p>
         </div>
       </div>
@@ -61,23 +68,20 @@ export function HeroCard({
           as its content and nothing is spare. */}
       <div className="mt-auto pt-5 min-[480px]:pt-6">
         <HeroTitle />
-        <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] md:mt-5 md:text-[clamp(16px,3.5cqi,21px)]">
-          An SDE II at AWS building agentic systems and generative UI. UCLA
-          &amp; Purdue alum. Passionate about crafting AI experiences that make
-          life easier. Outside work, I&apos;m hiking with my dog Bert and
-          planning to summit Mount Rainier in 2027!
+        <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted zh:leading-[1.65] @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] md:mt-5 md:text-[clamp(16px,3.5cqi,21px)]">
+          {t.hero.bio}
         </p>
       </div>
       <nav
-        aria-label="Social links"
+        aria-label={t.hero.socials}
         className="dock mt-6 flex items-center gap-2 md:mt-auto md:pt-6"
       >
         {socials.map((s) => (
           <a
             key={s.label}
-            aria-label={s.label}
+            aria-label={name(s.label)}
             className="lg grid size-10 place-items-center rounded-full transition-[scale,translate] duration-300 ease-out @max-[270px]/hero:size-9"
-            data-cursor={s.label}
+            data-cursor={name(s.label)}
             href={s.href}
             rel="noopener noreferrer"
             target={s.href.startsWith("http") ? "_blank" : undefined}
@@ -95,11 +99,11 @@ export function HeroCard({
         ))}
         <Link
           className="lg ml-1 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px] font-medium transition-[scale] duration-300 hover:scale-[1.04] @max-[270px]/hero:h-9 @max-[270px]/hero:px-3.5"
-          data-cursor="Writing"
-          href="/blog"
+          data-cursor={t.hero.blogCursor}
+          href={localePath(lang, "/blog")}
         >
           <span aria-hidden className="lg-caustic" />
-          Read my blog
+          {t.hero.blog}
         </Link>
       </nav>
     </div>

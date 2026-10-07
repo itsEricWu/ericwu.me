@@ -22,6 +22,8 @@ import {
   siVitest,
 } from "simple-icons";
 
+import { useT } from "@/components/locale-provider";
+
 // Most-used first: small tiles show only the first few.
 const ICONS = [
   siTypescript,
@@ -79,6 +81,7 @@ const lattice = (n: number) =>
 
 /** The toolbox as a sphere of brand marks: drag to spin, hover to read. */
 export function TechSphere() {
+  const { tech: t } = useT();
   const stageRef = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLSpanElement | null)[]>([]);
   const [active, setActive] = useState<string | null>(null);
@@ -221,7 +224,7 @@ export function TechSphere() {
   return (
     <div className="relative flex h-full flex-col p-5 sm:p-6">
       <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
-        Toolbox
+        {t.title}
       </p>
       {/* The sphere may run into the card's padding: only the text keeps the inset.
           Vertical swipes still scroll the page on touch. */}
@@ -258,7 +261,7 @@ export function TechSphere() {
         aria-live="polite"
         className="h-4 text-center text-[12px] text-muted max-sm:hidden"
       >
-        {active ?? "Drag to spin"}
+        {active ?? t.drag}
       </p>
     </div>
   );

@@ -10,34 +10,19 @@ import identify from "@/assets/packbook/identify.webp";
 import pack from "@/assets/packbook/pack.webp";
 import share from "@/assets/packbook/share.webp";
 import wall from "@/assets/packbook/wall.webp";
+import { useT } from "@/components/locale-provider";
 import { projects } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-const SCREENS = [
-  {
-    src: wall,
-    label: "Snap",
-    alt: "PackBook gear wall with die-cut gear photos",
-  },
-  {
-    src: identify,
-    label: "Identify",
-    alt: "PackBook identifying a Petzl GRIGRI",
-  },
-  {
-    src: pack,
-    label: "Pack",
-    alt: "PackBook packing list with base weight by category",
-  },
-  { src: share, label: "Share", alt: "PackBook share card for a trip" },
-  {
-    src: buy,
-    label: "Shop",
-    alt: "PackBook gear detail with where-to-buy prices",
-  },
-];
+// In order; each screen's label and alt text live in messages/ (packbook.screens).
+const SCREENS = [wall, identify, pack, share, buy];
 
 export function PackBookCard() {
+  const {
+    packbook: t,
+    common: { open },
+  } = useT();
+  const screens = SCREENS.map((src, i) => ({ src, ...t.screens[i] }));
   const [index, setIndex] = useState(0);
   const [hovering, setHovering] = useState(false);
   const [loaded, setLoaded] = useState(1);
@@ -80,14 +65,14 @@ export function PackBookCard() {
     >
       <div className="flex min-w-0 flex-col max-sm:flex-1 max-sm:justify-between">
         <div>
-          <Eyebrow>Side project · iOS</Eyebrow>
+          <Eyebrow>{t.eyebrow}</Eyebrow>
           <h2 className="title mt-1 text-[24px]">PackBook</h2>
           <p className="mt-1.5 text-[15px] leading-snug text-muted">
-            Snap your gear. Pack it. Share it.
+            {t.pitch}
           </p>
         </div>
         <div className="mt-3 flex flex-wrap gap-1 sm:hidden">
-          {SCREENS.map((s, i) => (
+          {screens.map((s, i) => (
             <button
               key={s.label}
               className={cn(
@@ -103,20 +88,24 @@ export function PackBookCard() {
             </button>
           ))}
         </div>
-        <TextLink className="mt-3 sm:hidden" href={projects.packbook.href}>
+        <TextLink
+          className="mt-3 sm:hidden"
+          cursor={open}
+          href={projects.packbook.href}
+        >
           {projects.packbook.linkLabel}
         </TextLink>
       </div>
 
       <button
-        aria-label="Next PackBook screen"
+        aria-label={t.next}
         className="relative mx-auto aspect-[720/1564] h-full max-h-full min-h-0 shrink-0 rounded-[1.6rem] bg-[#0b0b0c] p-[5px] shadow-[0_24px_48px_-24px_rgb(0_0_0/0.6)] transition-transform duration-500 ease-out [transform:perspective(900px)_rotateY(calc(var(--tx,0)*-12deg))_rotateX(calc(var(--ty,0)*8deg))] sm:min-h-0 sm:flex-1"
-        data-cursor="Next screen"
+        data-cursor={t.nextCursor}
         type="button"
         onClick={() => go((index + 1) % SCREENS.length)}
       >
         <span className="relative block size-full overflow-hidden rounded-[1.25rem] bg-[#f4f0e8]">
-          {SCREENS.slice(0, loaded).map((s, i) => (
+          {screens.slice(0, loaded).map((s, i) => (
             <Image
               key={s.label}
               fill
@@ -137,10 +126,10 @@ export function PackBookCard() {
       <div className="hidden items-center justify-between sm:flex">
         {/* On a narrow card the dots tighten up to leave room for the link. */}
         <div className="-ml-[9px] flex @max-[215px]:-ml-[5px]">
-          {SCREENS.map((s, i) => (
+          {screens.map((s, i) => (
             <button
               key={s.label}
-              aria-label={`Show ${s.label}`}
+              aria-label={t.show(s.label)}
               className="group/dot grid size-6 place-items-center @max-[215px]:w-4"
               type="button"
               onClick={() => go(i)}

@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
+import { useT } from "@/components/locale-provider";
 import { springs } from "@/lib/motion";
 import { cn, prefersReducedMotion } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ type Gesture = {
  * or step through with the buttons. Gestures move the whole card.
  */
 export function PhotoDeck({ photos }: { photos: string[] }) {
+  const { photos: t } = useT();
   const [order, setOrder] = useState(() => photos.map((_, i) => i));
   const [seen, setSeen] = useState(0);
   const [fanned, setFanned] = useState(false);
@@ -181,10 +183,10 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
     >
       <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-5 sm:p-6">
         <p className="font-display text-[17px] font-semibold tracking-[-0.005em]">
-          Field notes
+          {t.title}
         </p>
         <span className="text-[13px] text-muted tabular-nums">
-          {current} of {photos.length}
+          {t.count(current, photos.length)}
         </span>
       </div>
 
@@ -210,7 +212,7 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
                     ? "cursor-grab touch-pan-y active:cursor-grabbing"
                     : "pointer-events-none",
                 )}
-                data-cursor={top ? "Fling or tap" : undefined}
+                data-cursor={top ? t.fling : undefined}
                 style={{
                   zIndex: 10 - i,
                   translate: fanned
@@ -226,7 +228,7 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
               >
                 <Image
                   fill
-                  alt="A photo from Eric's camera roll"
+                  alt={t.alt}
                   className="pointer-events-none object-cover"
                   draggable={false}
                   sizes="(max-width: 640px) 80vw, 480px"
@@ -241,7 +243,7 @@ export function PhotoDeck({ photos }: { photos: string[] }) {
         {([-1, 1] as const).map((dir) => (
           <button
             key={dir}
-            aria-label={dir === 1 ? "Next photo" : "Previous photo"}
+            aria-label={dir === 1 ? t.next : t.previous}
             className="lg grid size-9 place-items-center rounded-full"
             type="button"
             onClick={() => (dir === 1 ? flyOut(-1, -0.35) : previous())}

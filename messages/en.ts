@@ -1,0 +1,275 @@
+export const en = {
+  meta: {
+    siteName: "Eric Wu | Chengxiang Wu - Software Engineer at AWS",
+    description:
+      "Personal website of Eric Wu (Chengxiang Wu), SDE II at AWS building agentic systems and generative UI. Projects, writing, and experiments.",
+    skip: "Skip to content",
+  },
+  common: {
+    period: ".",
+    open: "Open ↗",
+    openLink: (label: string) => `Open ${label} ↗`,
+    sample: "Illustration with sample data",
+    email: "Email",
+    location: "Seattle, WA",
+  },
+  nav: {
+    tabs: { all: "All", about: "About", work: "Work", blog: "Blog" },
+    sections: "Sections",
+    search: "Search",
+    theme: "Toggle dark mode",
+    lights: "Lights",
+    // The language button names the language it switches to, in that language.
+    switchShort: "中",
+    switchLabel: "阅读中文版",
+    switchCursor: "中文",
+  },
+  palette: {
+    dialog: "Command palette",
+    input: "Search commands",
+    placeholder: "Jump to a project, copy my email, meet Bert…",
+    empty: (query: string) => `Nothing matches “${query}”.`,
+    help: "↑↓ to move · ↵ to open",
+    groups: {
+      navigate: "Navigate",
+      projects: "Projects",
+      connect: "Connect",
+      settings: "Settings",
+      fun: "Fun",
+    },
+    everything: "Everything",
+    allCards: "All cards",
+    about: "About me",
+    work: "Work and projects",
+    blog: "Read the blog",
+    copyEmail: "Copy email address",
+    emailCopied: "Email copied",
+    lightsOn: "Turn the lights on",
+    lightsOff: "Turn the lights off",
+    language: "阅读中文版",
+    languageHint: "中文",
+    bert: "Meet Bert",
+    bertHint: "the dog",
+    mini: "Spin up the Mini in 3D",
+    top: "Back to the top",
+  },
+  footer: { explore: "to explore" },
+  cards: {
+    hero: "About Eric",
+    sky: "Seattle sky and theme switch",
+    globe: "Purdue, UCLA, Seattle",
+    photos: "Photos",
+    tech: "Toolbox",
+    mini: "Mini Cooper",
+    emoji: "Text to emoji",
+    writing: "Latest writing",
+  },
+  hero: {
+    lead: "Hey, I'm ",
+    bio: "An SDE II at AWS building agentic systems and generative UI. UCLA & Purdue alum. Passionate about crafting AI experiences that make life easier. Outside work, I'm hiking with my dog Bert and planning to summit Mount Rainier in 2027!",
+    socials: "Social links",
+    blog: "Read my blog",
+    blogCursor: "Writing",
+    pull: "Pull the period",
+  },
+  avatar: {
+    showEric: "Show Eric again",
+    meetBert: "Flip to meet Bert, my dog",
+    backCursor: "Back to Eric",
+    meetCursor: "Meet Bert",
+    eric: "Eric Wu",
+    bert: "Bert, Eric's dog",
+  },
+  projects: {
+    finops: {
+      kicker: "Shipped at AWS · Public preview",
+      blurb:
+        "Always-on cost expertise for every engineer: investigates anomalies, answers cost questions, and files the fix.",
+    },
+    artifacts: {
+      kicker: "Shipped at AWS · Generative UI",
+      blurb:
+        "Amazon Q answers with live tables, charts, and dashboards you can sort, filter, and page through.",
+    },
+    packbook: {
+      kicker: "Side project · iOS",
+      blurb: "Snap your gear, pack it for any trip, and share it as a page.",
+    },
+    secondself: {
+      kicker: "Side project",
+      blurb: "A social network run by AI agents.",
+    },
+    webagent: {
+      kicker: "Project · SimpleGen",
+      blurb: "An AI agent that researches and drafts influencer outreach.",
+    },
+    chatbot: {
+      kicker: "Project · SimpleGen",
+      blurb: "A collection of persona chatbots.",
+    },
+    paper: {
+      kicker: "Research · AAAI 2024",
+      blurb:
+        "Cumulative Difference Learning VAE for time series with temporally correlated inflow and outflow.",
+    },
+  },
+  finops: {
+    eyebrow: "AWS · Public preview",
+    cta: "See it on AWS",
+    ctaLabel: "See it on AWS: FinOps Agent",
+    pitch:
+      "Always-on cost expertise for every engineer, right where they work.",
+    replay: "Replay",
+    chart: "Daily cost over 30 days with a spike on day 23",
+    notes: [
+      {
+        title: "Anomaly detected",
+        body: "EC2 spend is up 38% today in us-east-1.",
+      },
+      {
+        title: "Root cause found",
+        body: "CI fleet stuck at max: 24 new g5.2xlarge.",
+      },
+      {
+        title: "Ticket filed",
+        body: "COST-142 opened and posted to #team-cost.",
+      },
+    ],
+    now: "now",
+    ago: (minutes: number) => `${minutes}m ago`,
+  },
+  artifacts: {
+    pitch:
+      "Answers that arrive as live charts and tables you can sort and explore.",
+    docs: "Docs",
+    docsLabel: "Docs for Amazon Q chat artifacts",
+    readDocs: "Read the docs",
+    readDocsLabel: "Read the docs for Amazon Q chat artifacts",
+    ask: "Ask Q",
+    tabs: {
+      chart: { label: "Chart", prompt: "Chart my costs by region last month" },
+      table: { label: "Table", prompt: "List my running EC2 instances" },
+      forecast: { label: "Forecast", prompt: "Forecast my spend for 6 months" },
+    },
+    costByRegion: "Cost by region",
+    instance: "Instance",
+    type: "Type",
+    monthly: "Monthly spend",
+    byMarch: "+29% by March",
+    forecast: "Spend forecast",
+  },
+  sky: {
+    city: "Seattle",
+    // Keyed by the names the sky model computes.
+    labels: {
+      "New moon": "New moon",
+      "Waxing crescent": "Waxing crescent",
+      "First quarter": "First quarter",
+      "Waxing gibbous": "Waxing gibbous",
+      "Full moon": "Full moon",
+      "Waning gibbous": "Waning gibbous",
+      "Last quarter": "Last quarter",
+      "Waning crescent": "Waning crescent",
+      "First light": "First light",
+      Sunrise: "Sunrise",
+      Sunset: "Sunset",
+      "Blue hour": "Blue hour",
+      "Golden hour": "Golden hour",
+      Daylight: "Daylight",
+    } as Record<string, string>,
+    sunrise: "Sunrise",
+    sunset: "Sunset",
+    /** 12-hour clock with AM/PM (English) or 24-hour (Chinese). */
+    hour12: true,
+  },
+  globe: {
+    title: "Purdue → UCLA → Seattle",
+    drag: "Drag to spin",
+    aria: "Globe showing Purdue, UCLA and Seattle",
+    cursor: "Spin the globe",
+    labels: {
+      seattle: "Seattle · now",
+      ucla: "UCLA",
+      purdue: "Purdue",
+    } as Record<string, string>,
+  },
+  packbook: {
+    eyebrow: "Side project · iOS",
+    pitch: "Snap your gear. Pack it. Share it.",
+    next: "Next PackBook screen",
+    nextCursor: "Next screen",
+    show: (label: string) => `Show ${label}`,
+    screens: [
+      { label: "Snap", alt: "PackBook gear wall with die-cut gear photos" },
+      { label: "Identify", alt: "PackBook identifying a Petzl GRIGRI" },
+      {
+        label: "Pack",
+        alt: "PackBook packing list with base weight by category",
+      },
+      { label: "Share", alt: "PackBook share card for a trip" },
+      { label: "Shop", alt: "PackBook gear detail with where-to-buy prices" },
+    ],
+  },
+  photos: {
+    title: "Field notes",
+    fling: "Fling or tap",
+    alt: "A photo from Eric's camera roll",
+    next: "Next photo",
+    previous: "Previous photo",
+    count: (current: number, total: number) => `${current} of ${total}`,
+  },
+  tech: { title: "Toolbox", drag: "Drag to spin" },
+  mini: {
+    title: "My Mini",
+    aria: "Tap for 3D Mini Cooper model",
+    cursor: "Start the engine",
+    alt: "Black Mini Cooper",
+    tap: "Tap for 3D",
+  },
+  emoji: {
+    title: "Text to emoji",
+    aria: "Describe a mood",
+    placeholder: "Summit day!",
+    retry: "Try again?",
+    cursor: "Generate",
+    go: "Go",
+    wave: "Waving hand",
+  },
+  writing: {
+    title: "Writing",
+    all: "All posts",
+    read: "Read",
+    readBlog: "Read the blog →",
+  },
+  blog: {
+    title: "Blog",
+    description:
+      "Read Eric Wu's blog posts on software engineering, AI, agentic systems, full stack development, and more.",
+    eyebrow: (count: number) =>
+      `Blog · ${count} ${count === 1 ? "post" : "posts"}`,
+    heading: "Writing",
+    intro:
+      "Notes on AI agents, software engineering, and hiking with my dog Bert.",
+    read: "Read",
+    back: "← All posts",
+    backCursor: "All posts",
+    fallbackTitle: "Blog Post",
+    byline: (title: string, author: string) => `${title} - by ${author}`,
+    /** Shown on a post that has no version in this language yet. */
+    untranslated: "",
+    loading: "Loading",
+  },
+  error: {
+    eyebrow: "Something went wrong",
+    title: "We hit a crevasse.",
+    retry: "Try again",
+  },
+  notFound: {
+    eyebrow: "Error 404",
+    title: "Lost",
+    body: "This trail doesn't exist. Even Bert couldn't sniff it out.",
+    home: "Back to basecamp",
+  },
+};
+
+export type Messages = typeof en;

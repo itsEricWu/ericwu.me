@@ -1,6 +1,12 @@
+"use client";
+
+import { useT } from "@/components/locale-provider";
+
 export default function BlogLoading() {
+  const { blog } = useT();
+
   return (
-    <div aria-busy="true" aria-label="Loading">
+    <div aria-busy="true" aria-label={blog.loading}>
       {/* The same shape as the list's header, so nothing jumps when it lands. */}
       <div className="mb-8 flex flex-col items-start gap-3 pt-2 sm:mb-10">
         <div className="h-4 w-28 animate-pulse rounded-full bg-card-2" />

@@ -6,7 +6,9 @@ import { useTheme } from "next-themes";
 import type { ExtendedRecordMap } from "notion-types";
 import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { NotionRenderer } from "react-notion-x";
-import { getBlockValue } from "notion-utils";
+
+import { useLocale, useT } from "@/components/locale-provider";
+import { formatDate, localePath } from "@/lib/i18n";
 
 const prismComponents = [
   "prism-markup-templating",
@@ -84,11 +86,19 @@ export const NotionPage = ({
   recordMap,
   rootPageId,
   title,
+  created,
+  notice,
 }: {
   recordMap: ExtendedRecordMap;
   rootPageId: string;
   title?: string;
+  /** When the post was first published (a translation keeps its original's date). */
+  created?: number;
+  /** A note above the body, e.g. that it hasn't been translated yet. */
+  notice?: string;
 }) => {
+  const lang = useLocale();
+  const { blog } = useT();
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
     noSubscribe,
@@ -132,41 +142,41 @@ export const NotionPage = ({
     return null;
   }
 
-  const created = getBlockValue(recordMap.block[rootPageId])?.created_time;
-
   return (
     <article ref={articleRef} className="mx-auto max-w-[760px]" data-col="post">
       {/* Header and back link line up with the Notion body (its page padding plus the text's 2px). */}
       <Link
         className="lg ml-[calc(min(16px,8vw)_+_2px)] inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium"
-        data-cursor="All posts"
-        href="/blog"
+        data-cursor={blog.backCursor}
+        href={localePath(lang, "/blog")}
       >
         <span aria-hidden className="lg-caustic" />
-        <span>← All posts</span>
+        <span>{blog.back}</span>
       </Link>
       <header className="mt-8 mb-6 px-[calc(min(16px,8vw)_+_2px)]">
         {created && (
           <time className="eyebrow" dateTime={new Date(created).toISOString()}>
-            {new Date(created).toLocaleDateString("en-US", {
+            {formatDate(lang, created, {
               month: "long",
               day: "numeric",
               year: "numeric",
-              timeZone: "UTC",
             })}
           </time>
         )}
-        <h1 className="mt-3 font-display text-[clamp(2.1rem,4.8vw,3.2rem)] leading-[1.06] font-semibold tracking-[-0.018em] text-balance">
+        <h1 className="mt-3 font-display text-[clamp(2.1rem,4.8vw,3.2rem)] leading-[1.06] font-semibold tracking-[-0.018em] text-balance zh:leading-[1.3]">
           {title}
         </h1>
+        {notice && <p className="mt-4 text-[14px] text-muted">{notice}</p>}
       </header>
-      <NotionRenderer
-        components={components}
-        darkMode={mounted && resolvedTheme === "dark"}
-        fullPage={false}
-        recordMap={recordMap}
-        rootPageId={rootPageId}
-      />
+      <div lang={notice ? "en" : undefined}>
+        <NotionRenderer
+          components={components}
+          darkMode={mounted && resolvedTheme === "dark"}
+          fullPage={false}
+          recordMap={recordMap}
+          rootPageId={rootPageId}
+        />
+      </div>
     </article>
   );
 };

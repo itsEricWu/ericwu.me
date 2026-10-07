@@ -4,15 +4,17 @@ import type { COBEOptions, Globe } from "cobe";
 import { useTheme } from "next-themes";
 import { useEffect, useLayoutEffect, useRef, type CSSProperties } from "react";
 
+import { useT } from "@/components/locale-provider";
+
 const PURDUE: [number, number] = [40.4237, -86.9212];
 const UCLA: [number, number] = [34.0689, -118.4452];
 const SEATTLE: [number, number] = [47.6062, -122.3321];
 
 /** Each label sits on the side of its marker that keeps the three apart. */
-const LABELS: { id: string; text: string; place: CSSProperties }[] = [
+// Each label's words live in messages/ (globe.labels).
+const LABELS: { id: string; place: CSSProperties }[] = [
   {
     id: "seattle",
-    text: "Seattle · now",
     place: {
       bottom: "anchor(top)",
       left: "anchor(center)",
@@ -21,7 +23,6 @@ const LABELS: { id: string; text: string; place: CSSProperties }[] = [
   },
   {
     id: "ucla",
-    text: "UCLA",
     place: {
       top: "anchor(center)",
       right: "anchor(left)",
@@ -30,7 +31,6 @@ const LABELS: { id: string; text: string; place: CSSProperties }[] = [
   },
   {
     id: "purdue",
-    text: "Purdue",
     place: {
       top: "anchor(bottom)",
       left: "anchor(center)",
@@ -88,6 +88,7 @@ const TAU = Math.PI * 2;
  * back.
  */
 export function GlobeCard() {
+  const { globe: t } = useT();
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const globeRef = useRef<Globe | null>(null);
@@ -232,11 +233,9 @@ export function GlobeCard() {
     <div className="@container relative h-full overflow-hidden">
       <div className="absolute top-5 left-5 z-10 leading-tight sm:top-6 sm:left-6">
         <p className="font-display text-[15px] leading-snug font-semibold tracking-[-0.005em] @min-[250px]:text-[17px]">
-          Purdue → UCLA → Seattle
+          {t.title}
         </p>
-        <p className="text-[12px] text-muted @max-[220px]:hidden">
-          Drag to spin
-        </p>
+        <p className="text-[12px] text-muted @max-[220px]:hidden">{t.drag}</p>
       </div>
       {/* The globe's rim sits just under the title. On small tiles it leans
           right, so the UCLA label has room on its left. */}
@@ -246,9 +245,9 @@ export function GlobeCard() {
       >
         <canvas
           ref={canvasRef}
-          aria-label="Globe showing Purdue, UCLA and Seattle"
+          aria-label={t.aria}
           className="size-full cursor-grab opacity-0 transition-opacity duration-1000 active:cursor-grabbing"
-          data-cursor="Spin the globe"
+          data-cursor={t.cursor}
           role="img"
         />
         {LABELS.map((l) => (
@@ -263,7 +262,7 @@ export function GlobeCard() {
               } as CSSProperties
             }
           >
-            {l.text}
+            {t.labels[l.id]}
           </span>
         ))}
       </div>

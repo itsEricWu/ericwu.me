@@ -8,11 +8,10 @@ import {
   type LensMap,
 } from "@/components/glass/displacement";
 import { GlassFilter, registerLight } from "@/components/glass/liquid-glass";
+import { useT } from "@/components/locale-provider";
 import { cn, prefersReducedMotion } from "@/lib/utils";
 
-const LEAD = "Hey, I'm ";
 const NAME = "Eric";
-const TEXT = `${LEAD}${NAME}.`;
 const BASE_WEIGHT = 640;
 /** At rest the letters are fully soft; the wave sharpens what it passes and melts what it touches. */
 const REST = { fontWeight: BASE_WEIGHT, fontVariationSettings: "'SOFT' 100" };
@@ -36,6 +35,9 @@ const letter = (ch: string, i: number) => (
 
 // Sized in CSS (.hero-title): one line, or two when the card has the height.
 function Title() {
+  const LEAD = useT().hero.lead;
+  const TEXT = `${LEAD}${NAME}.`;
+
   return (
     <h1
       aria-label={TEXT}
@@ -76,6 +78,7 @@ function Title() {
  * pixel-aligned copy of the card, so it works in every browser.
  */
 export function HeroTitle() {
+  const { hero } = useT();
   const wrapRef = useRef<HTMLDivElement>(null);
   const orbRef = useRef<HTMLDivElement>(null);
   const cloneRef = useRef<HTMLDivElement>(null);
@@ -587,7 +590,7 @@ export function HeroTitle() {
         ref={handleRef}
         aria-hidden
         className="absolute top-0 left-0 z-20 -mt-6 -ml-6 size-12 cursor-grab touch-none rounded-full select-none active:cursor-grabbing"
-        data-cursor="Pull the period"
+        data-cursor={hero.pull}
         data-grab
         data-nodrag
       />

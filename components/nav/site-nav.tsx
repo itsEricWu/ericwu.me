@@ -6,7 +6,9 @@ import { useTheme } from "next-themes";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LiquidGlass, useGlassLight } from "@/components/glass/liquid-glass";
+import { useLocale, useT } from "@/components/locale-provider";
 import { useShortcut } from "@/components/nav/shortcut";
+import { htmlLang, localePath, stripLocale, type Locale } from "@/lib/i18n";
 import { springs } from "@/lib/motion";
 import { switchTheme } from "@/lib/theme-transition";
 import { cn } from "@/lib/utils";
@@ -16,30 +18,28 @@ const CommandPalette = dynamic(() => import("./command-palette"), {
   ssr: false,
 });
 
-type Tab = { id: View | "blog"; label: string };
+type TabId = View | "blog";
 
-const TABS: Tab[] = [
-  { id: "all", label: "All" },
-  { id: "about", label: "About" },
-  { id: "work", label: "Work" },
-  { id: "blog", label: "Blog" },
-];
+// In order; the labels live in messages/ (nav.tabs).
+const TABS: TabId[] = ["all", "about", "work", "blog"];
 
 export function SiteNav() {
-  const pathname = usePathname();
+  const lang = useLocale();
+  const t = useT();
+  // The path without its language, so both languages share the logic below.
+  const pathname = stripLocale(usePathname());
   const router = useRouter();
   const view = useView();
   const onHome = pathname === "/";
   const activeId = pathname.startsWith("/blog") ? "blog" : onHome ? view : null;
-  const activeIndex = TABS.findIndex((t) => t.id === activeId);
+  const activeIndex = TABS.findIndex((id) => id === activeId);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const shortcut = useShortcut();
 
   const select = useCallback(
-    (id: Tab["id"]) => {
+    (id: TabId) => {
       if (id === "blog") {
-        if (!pathname.startsWith("/blog") || pathname !== "/blog")
-          router.push("/blog");
+        if (pathname !== "/blog") router.push(localePath(lang, "/blog"));
 
         return;
       }
@@ -48,10 +48,12 @@ export function SiteNav() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         setView(id, { updateUrl: false });
-        router.push(id === "all" ? "/" : `/#${id}`);
+        const home = localePath(lang, "/");
+
+        router.push(id === "all" ? home : `${home}#${id}`);
       }
     },
-    [onHome, pathname, router],
+    [lang, onHome, pathname, router],
   );
 
   useEffect(() => {
@@ -83,11 +85,18 @@ export function SiteNav() {
           className="pointer-events-auto flex items-center gap-1 rounded-full p-1.5 [--glass-tint:rgb(255_255_255/0.5)] dark:[--glass-tint:rgb(16_20_26/0.55)]"
           glass={{ chroma: 0.1, blur: 3, saturate: 1.8 }}
         >
-          <Tabs activeIndex={activeIndex} onSelect={select} />
+          <Tabs
+            activeIndex={activeIndex}
+            labels={TABS.map((id) => t.nav.tabs[id])}
+            sections={t.nav.sections}
+            onSelect={select}
+          />
           <SearchButton
+            label={t.nav.search}
             shortcut={shortcut}
             onOpen={() => setPaletteOpen(true)}
           />
+          <LanguageButton lang={lang} path={pathname} />
           <ThemeButton />
         </LiquidGlass>
       </header>
@@ -103,10 +112,14 @@ export function SiteNav() {
 
 function Tabs({
   activeIndex,
+  labels,
+  sections,
   onSelect,
 }: {
   activeIndex: number;
-  onSelect: (id: Tab["id"]) => void;
+  labels: string[];
+  sections: string;
+  onSelect: (id: TabId) => void;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
   const prevIndex = useRef(activeIndex);
@@ -224,13 +237,13 @@ function Tabs({
       });
     }
     prevIndex.current = index;
-    onSelect(TABS[index].id);
+    onSelect(TABS[index]);
   };
 
   return (
     <div
       ref={listRef}
-      aria-label="Sections"
+      aria-label={sections}
       className="relative flex touch-pan-y select-none"
       role="tablist"
       onPointerCancel={onPointerUp}
@@ -240,7 +253,7 @@ function Tabs({
     >
       {TABS.map((tab, i) => (
         <button
-          key={tab.id}
+          key={tab}
           aria-selected={i === activeIndex}
           className={cn(
             "relative z-10 h-10 w-[58px] rounded-full text-[13px] font-medium transition-[color,scale] duration-300 sm:w-[76px] sm:text-[14px]",
@@ -252,10 +265,10 @@ function Tabs({
           type="button"
           onClick={() => {
             if (drag.current?.moved) return;
-            onSelect(tab.id);
+            onSelect(tab);
           }}
         >
-          {tab.label}
+          {labels[i]}
         </button>
       ))}
       <span
@@ -275,9 +288,11 @@ function Tabs({
 
 /** Opens the command palette; its shortcut lives in the hover label and the footer. */
 function SearchButton({
+  label,
   shortcut,
   onOpen,
 }: {
+  label: string;
   shortcut: string;
   onOpen: () => void;
 }) {
@@ -289,9 +304,9 @@ function SearchButton({
     <button
       ref={ref}
       aria-keyshortcuts="Meta+K Control+K"
-      aria-label="Search"
+      aria-label={label}
       className="lg hidden size-10 place-items-center rounded-full md:grid"
-      data-cursor={`Search ${shortcut}`}
+      data-cursor={`${label} ${shortcut}`}
       type="button"
       onClick={onOpen}
     >
@@ -312,7 +327,36 @@ function SearchButton({
   );
 }
 
+/** Opens this page in the other language; its label is written in that language. */
+function LanguageButton({ lang, path }: { lang: Locale; path: string }) {
+  const { nav } = useT();
+  const ref = useRef<HTMLAnchorElement>(null);
+  const other: Locale = lang === "en" ? "zh" : "en";
+
+  useGlassLight(ref);
+
+  return (
+    <a
+      ref={ref}
+      aria-label={nav.switchLabel}
+      className="lg grid size-10 place-items-center rounded-full text-[13px] font-semibold max-[340px]:hidden"
+      data-cursor={nav.switchCursor}
+      href={localePath(other, path)}
+      hrefLang={htmlLang[other]}
+      lang={htmlLang[other]}
+      onClick={(e) => {
+        // Keep the home grid's view (its hash) across the switch.
+        e.currentTarget.href = localePath(other, path) + window.location.hash;
+      }}
+    >
+      <span aria-hidden className="lg-caustic" />
+      <span aria-hidden>{nav.switchShort}</span>
+    </a>
+  );
+}
+
 function ThemeButton() {
+  const { nav } = useT();
   const { resolvedTheme, setTheme } = useTheme();
   const ref = useRef<HTMLButtonElement>(null);
 
@@ -321,9 +365,9 @@ function ThemeButton() {
   return (
     <button
       ref={ref}
-      aria-label="Toggle dark mode"
+      aria-label={nav.theme}
       className="lg grid size-10 place-items-center rounded-full"
-      data-cursor="Lights"
+      data-cursor={nav.lights}
       type="button"
       onClick={(e) => {
         const r = e.currentTarget.getBoundingClientRect();

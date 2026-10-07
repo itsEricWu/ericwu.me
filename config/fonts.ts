@@ -1,4 +1,4 @@
-import { Figtree, Fraunces } from "next/font/google";
+import { Figtree, Fraunces, Noto_Serif_SC } from "next/font/google";
 import localFont from "next/font/local";
 
 /**
@@ -27,6 +27,21 @@ export const fontDisplay = Fraunces({
   display: "swap",
   // Loaded after the first paint by <FontLoader />.
   preload: false,
+});
+
+/**
+ * Chinese display: Noto Serif SC (思源宋体), the Han companion to Fraunces in
+ * headings. Google cuts it into about a hundred slices by unicode-range, so a
+ * page downloads only the slices holding the characters it shows; English
+ * pages show none and download nothing. Chinese body text uses the system's
+ * sans (see --font-sans).
+ */
+export const fontDisplayZh = Noto_Serif_SC({
+  weight: "600",
+  variable: "--ff-display-zh",
+  display: "swap",
+  preload: false,
+  adjustFontFallback: false,
 });
 
 /** The italic "Eric" in the headline: Fraunces Italic subset to four glyphs, all axes (6 KB). */
