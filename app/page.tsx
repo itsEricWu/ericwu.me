@@ -22,8 +22,8 @@ export default async function Page() {
   const [home, posts] = await Promise.all([getHomeData(), getLatestPosts()]);
 
   // Order matters: cards pack first-fit in this order. Sizes are columns × rows
-  // on phones (2 columns), wide phones (2), small tablets (2), tablets (3), and
-  // desktops (4).
+  // on phones (2 columns, below the hero's header row), wide phones (2), small
+  // tablets (2), tablets (3), and desktops (4).
   // On tablets:
   //   [hero      ][sky  ]
   //   [hero      ][globe]
@@ -49,13 +49,15 @@ export default async function Page() {
       tags: ["about"],
       label: "About Eric",
       size: [
-        [2, 3],
+        [2, 1],
         [2, 2],
         [2, 2],
         [2, 2],
         [2, 2],
       ],
       still: true,
+      // On phones a header row as tall as its content (its phone size is unused).
+      header: true,
       content: <HeroCard avatarUrl={home.avatarUrl} dogUrl={home.dogUrl} />,
     },
     {

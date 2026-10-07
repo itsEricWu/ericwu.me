@@ -426,6 +426,19 @@ html.ff {
     }
   }
 
+  /* Phones: a header card (the hero) is a full-width row of its own, as tall
+     as its content, so it never carries empty space. */
+  @media (max-width: 479px) {
+    .bento[data-has-header] {
+      grid-template-rows: auto;
+    }
+
+    /* When a filter doesn't include it, it steps aside so the matches lead. */
+    .bento > .card[data-header][data-dim] {
+      display: none;
+    }
+  }
+
   /* Where the held card will land: a soft, empty well of glass. */
   .bento-ghost {
     border-radius: 28px;
@@ -949,26 +962,15 @@ html .notion-yt-lite {
 }
 
 /*
- * The hero headline: one line that grows with its card (it runs ~6.4em wide),
- * or "Hey, I'm / Eric." on two lines when the card has the height for it.
- * How much height that takes depends on how the bio wraps, so each type size
- * (phones 16px, tablets 17px, desktops 18px) gets its own threshold.
+ * The hero headline: one line that grows with its card (it runs ~6.2em wide),
+ * or "Hey, I'm / Eric." on two lines when a square card has the height for
+ * it. How much height that takes depends on how the bio wraps, so each type
+ * size gets its own threshold. (On phones the card fits its content, so the
+ * line stays single.)
  */
 .hero-title {
   font-size: clamp(2rem, 15.5cqi, 5.2rem);
   line-height: 1.02;
-}
-
-/* Tall phone cards. */
-@container hero (min-height: 470px) and (max-aspect-ratio: 9 / 10) {
-  .hero-title {
-    font-size: 23cqi;
-    line-height: 0.98;
-  }
-
-  .hero-tail {
-    display: block;
-  }
 }
 
 /* Square cards, from wide phones up. */

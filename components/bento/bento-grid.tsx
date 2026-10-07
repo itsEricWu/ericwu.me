@@ -41,6 +41,11 @@ export type BentoItem = {
   content: ReactNode;
   /** Skip the entrance animation (keep it off the LCP card). */
   still?: boolean;
+  /**
+   * On phones, a full-width row above the cards, as tall as its content, and
+   * not draggable there. A regular card from wide phones up.
+   */
+  header?: boolean;
 };
 
 type Drag = {
@@ -65,11 +70,16 @@ type Drag = {
   cell: { x: number; y: number } | null;
   /** Reading order when the drag began: the others always re-pack in this order. */
   base: string[];
+  /** Rows above the packed cards (a phone header row), and where those cards start. */
+  shift: number;
+  top: number;
 };
 
 // Pointer-downs on these never start a card drag.
 const INTERACTIVE =
   "a,button,input,textarea,select,label,canvas,[data-nodrag],[contenteditable=true]";
+/** The tier whose header cards become a content-height row above the grid. */
+const HEADER_TIER = 0;
 /** Press and hold this long before a touch drag starts (quicker moves scroll). */
 const HOLD_MS = 380;
 /** Holding a card this close to the top or bottom of the viewport scrolls. */
@@ -84,6 +94,13 @@ const slotOf = (el: HTMLElement) => ({
   width: el.offsetWidth,
   height: el.offsetHeight,
 });
+
+/** Where the held card will land, in grid rows (below any header row). */
+const ghostOf = (d: Drag, layout: Cell[]) => {
+  const c = layout.find((cell) => cell.id === d.id);
+
+  return c ? { ...c, y: c.y + d.shift } : null;
+};
 
 /** Keep the dragged card under the pointer, wherever its slot is now. */
 function glue(grid: HTMLElement, d: Drag) {
@@ -109,12 +126,19 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
   // Layouts the visitor arranged by dragging, per view and tier.
   const [custom, setCustom] = useState<Record<string, Cell[]>>({});
   const [ghost, setGhost] = useState<Cell | null>(null);
+  const hasHeader = items.some((i) => i.header);
   const layouts = useMemo(
     () =>
       TIERS.map(
         (t, i) =>
           custom[`${view}:${i}`] ??
-          pack(display, (id) => byId.get(id)?.size[i] ?? [1, 1], t.cols),
+          pack(
+            i === HEADER_TIER
+              ? display.filter((id) => !byId.get(id)?.header)
+              : display,
+            (id) => byId.get(id)?.size[i] ?? [1, 1],
+            t.cols,
+          ),
       ),
     [custom, display, view, byId],
   );
@@ -242,7 +266,10 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
           Math.max(Math.round((d.x - g.left - d.grabX) / pitch), 0),
           d.cols - held.w,
         );
-        const y = Math.max(Math.round((d.y - g.top - d.grabY) / pitch), 0);
+        const y = Math.max(
+          Math.round((d.y - g.top - d.top - d.grabY) / pitch),
+          0,
+        );
 
         if (!d.cell || d.cell.x !== x || d.cell.y !== y) {
           d.cell = { x, y };
@@ -260,9 +287,17 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
 
             before.current = snapshot();
             setCustom((c) => ({ ...c, [key]: next }));
-            if (viewRef.current === "all") setOrder(readingOrder(next));
+            if (viewRef.current === "all") {
+              // The new reading order, with any header card kept in its place.
+              const packed = new Set(next.map((c) => c.id));
+              const rest = readingOrder(next);
+
+              setOrder((o) =>
+                o.map((id) => (packed.has(id) ? rest.shift()! : id)),
+              );
+            }
           }
-          setGhost(next.find((c) => c.id === d.id) ?? null);
+          setGhost(ghostOf(d, next));
         }
       }
       if (near) d.frame = requestAnimationFrame(frame);
@@ -278,9 +313,19 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
       d.grabX = Math.min(Math.max(d.startX - r.left, 0), r.width);
       d.grabY = Math.min(Math.max(d.startY - r.top, 0), r.height);
       d.base = readingOrder(layoutsRef.current[d.tier]);
+      // On phones the packed cards start below the header row (or its gap, when hidden).
+      if (d.shift) {
+        const header = grid.querySelector<HTMLElement>(
+          ":scope > [data-header]",
+        );
+
+        d.top =
+          (header?.offsetHeight ?? 0) +
+          (parseFloat(getComputedStyle(grid).rowGap) || 0);
+      }
       d.el.setAttribute("data-dragging", "true");
       wrapRef.current?.setAttribute("data-dragging", "true");
-      setGhost(layoutsRef.current[d.tier].find((c) => c.id === d.id) ?? null);
+      setGhost(ghostOf(d, layoutsRef.current[d.tier]));
       document.documentElement.style.userSelect = "none";
       window.getSelection()?.removeAllRanges();
       if (d.touch) navigator.vibrate?.(8);
@@ -367,6 +412,10 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
       const el = target.closest<HTMLElement>("[data-card]");
 
       if (!el || !grid.contains(el)) return;
+      const tier = tierFor(window.innerWidth);
+
+      // A phone header is a fixed row, not a card to move.
+      if (tier === HEADER_TIER && el.hasAttribute("data-header")) return;
       const r = el.getBoundingClientRect();
       const d: Drag = {
         id: el.dataset.card!,
@@ -381,10 +430,13 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
         active: false,
         frame: 0,
         hold: 0,
-        tier: tierFor(window.innerWidth),
+        tier,
         cols: 0,
         cell: null,
         base: [],
+        shift:
+          tier === HEADER_TIER && grid.hasAttribute("data-has-header") ? 1 : 0,
+        top: 0,
       };
 
       d.cols = TIERS[d.tier].cols;
@@ -480,7 +532,11 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
       onPointerLeave={onGridLeave}
       onPointerMove={onGridMove}
     >
-      <ul ref={gridRef} className="bento">
+      <ul
+        ref={gridRef}
+        className="bento"
+        data-has-header={hasHeader ? "" : undefined}
+      >
         {/* DOM order never changes (moving nodes would restart their animations
             and reload iframes); each card's cell comes from the layout. */}
         {items.map(({ id }) => {
@@ -494,11 +550,20 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
             const c = layout.find((cell) => cell.id === id);
 
             if (!c) return;
+            // Under a phone header row the cards start one row down.
+            const shift = t === HEADER_TIER && hasHeader ? 1 : 0;
+
             place[`--c${t}`] = c.x + 1;
-            place[`--r${t}`] = c.y + 1;
+            place[`--r${t}`] = c.y + 1 + shift;
             place[`--w${t}`] = c.w;
             place[`--h${t}`] = c.h;
           });
+          if (item.header) {
+            place[`--c${HEADER_TIER}`] = 1;
+            place[`--r${HEADER_TIER}`] = 1;
+            place[`--w${HEADER_TIER}`] = TIERS[HEADER_TIER].cols;
+            place[`--h${HEADER_TIER}`] = 1;
+          }
 
           return (
             <li
@@ -515,6 +580,7 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
               className="card"
               data-card={id}
               data-dim={dim ? "true" : undefined}
+              data-header={item.header ? "" : undefined}
               data-enter={item.still ? undefined : ""}
               id={`card-${id}`}
               style={place as CSSProperties}

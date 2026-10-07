@@ -31,7 +31,7 @@ export function HeroCard({
   dogUrl: string;
 }) {
   return (
-    <div className="relative flex h-full flex-col p-5 [container:hero/size] sm:p-6">
+    <div className="relative flex h-full flex-col justify-between p-5 [container:hero/inline-size] min-[480px]:[container:hero/size] sm:p-6">
       <div className="flex items-center gap-3.5">
         <AvatarFlip avatarUrl={avatarUrl} dogUrl={dogUrl} />
         <div className="leading-tight">
@@ -51,51 +51,51 @@ export function HeroCard({
           </p>
         </div>
       </div>
-      {/* Headline, bio, and links rest together at the foot of the card, so the
-          space above them is the only gap, whatever the card's height. */}
-      <div className="mt-auto pt-6">
+      {/* Byline, statement, and links share any spare height evenly. On phones
+          the card is as tall as its content, so they sit at these minimum gaps. */}
+      <div className="pt-5 min-[480px]:pt-6">
         <HeroTitle />
-        <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] lg:text-[18px]">
+        <p className="mt-4 max-w-[32em] text-[16px] leading-[1.5] text-pretty text-muted @max-[270px]/hero:text-[15px] min-[480px]:text-[17px] lg:mt-5 lg:text-[19px]">
           An SDE II at AWS building agentic systems and generative UI. UCLA
           &amp; Purdue alum. Passionate about crafting AI experiences that make
           life easier. Outside work, I&apos;m hiking with my dog Bert and
           planning to summit Mount Rainier in 2027!
         </p>
-        <nav
-          aria-label="Social links"
-          className="dock mt-6 flex items-center gap-2"
-        >
-          {socials.map((s) => (
-            <a
-              key={s.label}
-              aria-label={s.label}
-              className="lg grid size-10 place-items-center rounded-full transition-[scale,translate] duration-300 ease-out @max-[270px]/hero:size-9"
-              data-cursor={s.label}
-              href={s.href}
-              rel="noopener noreferrer"
-              target={s.href.startsWith("http") ? "_blank" : undefined}
-            >
-              <span aria-hidden className="lg-caustic" />
-              <svg
-                aria-hidden
-                className="size-4"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-              >
-                <path d={s.path} />
-              </svg>
-            </a>
-          ))}
-          <Link
-            className="lg ml-1 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px] font-medium transition-[scale] duration-300 hover:scale-[1.04] @max-[270px]/hero:h-9 @max-[270px]/hero:px-3.5"
-            data-cursor="Writing"
-            href="/blog"
+      </div>
+      <nav
+        aria-label="Social links"
+        className="dock mt-6 flex items-center gap-2 lg:mt-7"
+      >
+        {socials.map((s) => (
+          <a
+            key={s.label}
+            aria-label={s.label}
+            className="lg grid size-10 place-items-center rounded-full transition-[scale,translate] duration-300 ease-out @max-[270px]/hero:size-9"
+            data-cursor={s.label}
+            href={s.href}
+            rel="noopener noreferrer"
+            target={s.href.startsWith("http") ? "_blank" : undefined}
           >
             <span aria-hidden className="lg-caustic" />
-            Read my blog
-          </Link>
-        </nav>
-      </div>
+            <svg
+              aria-hidden
+              className="size-4"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+            >
+              <path d={s.path} />
+            </svg>
+          </a>
+        ))}
+        <Link
+          className="lg ml-1 inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px] font-medium transition-[scale] duration-300 hover:scale-[1.04] @max-[270px]/hero:h-9 @max-[270px]/hero:px-3.5"
+          data-cursor="Writing"
+          href="/blog"
+        >
+          <span aria-hidden className="lg-caustic" />
+          Read my blog
+        </Link>
+      </nav>
     </div>
   );
 }
