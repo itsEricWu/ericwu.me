@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { Eyebrow, SampleNote, TextLink } from "./ui";
 
 import { projects } from "@/config/site";
-import { cn } from "@/lib/utils";
+import { springs } from "@/lib/motion";
+import { cn, prefersReducedMotion } from "@/lib/utils";
 
 // 30 days of daily spend with one anomaly (sample data).
 const DAYS = [
@@ -34,22 +41,124 @@ const PATH = DAYS.map(
   (v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`,
 ).join(" ");
 
-/** FinOps Agent, told the way it shows up for an engineer: as notifications. */
+/**
+ * FinOps Agent, told the way it shows up for an engineer: as notifications.
+ * They move the way iOS notifications do: a new one drops in at the top on a
+ * spring while the ones below glide down to make room, and a replay clears
+ * the stack before it runs again.
+ */
 export function FinOpsCard() {
   const [shown, setShown] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLOListElement>(null);
   const timers = useRef<number[]>([]);
+  const run = useRef(0);
+  // Where each notification sat on screen just before the list last changed.
+  const from = useRef(new Map<string, number>());
 
-  const play = () => {
+  const rows = useCallback(
+    () => [...(listRef.current?.children ?? [])] as HTMLElement[],
+    [],
+  );
+
+  /** Shows the first `n` notifications, noting where the current ones are. */
+  const show = useCallback(
+    (n: number) => {
+      from.current = new Map(
+        rows().map((li) => [li.dataset.note!, li.getBoundingClientRect().top]),
+      );
+      setShown(n);
+    },
+    [rows],
+  );
+
+  const play = useCallback(() => {
+    const id = ++run.current;
+    const start = () => {
+      if (id !== run.current) return;
+      show(0);
+      timers.current = NOTES.map((_, i) =>
+        window.setTimeout(() => show(i + 1), 500 + i * 1000),
+      );
+    };
+    const current = rows();
+
     timers.current.forEach(window.clearTimeout);
-    setShown(0);
-    timers.current = NOTES.map((_, i) =>
-      window.setTimeout(() => setShown(i + 1), 450 + i * 900),
-    );
-  };
+    if (!current.length || prefersReducedMotion()) return start();
+    // Clear the stack first, as iOS does: a quick fade and shrink, top first.
+    Promise.all(
+      current.map((li, i) => {
+        const out = li.animate(
+          [
+            { opacity: 1, transform: "none" },
+            { opacity: 0, transform: "translateY(-6px) scale(0.96)" },
+          ],
+          {
+            duration: 200,
+            delay: i * 40,
+            easing: "cubic-bezier(0.4, 0, 1, 1)",
+            fill: "forwards",
+          },
+        );
+
+        out.id = "note";
+
+        return out.finished;
+      }),
+    ).then(start, start);
+  }, [rows, show]);
+
+  // The stack moves down a slot as one: the ones already up glide from where
+  // they were (FLIP) while the new one slides in from above the top edge, all
+  // on the same spring, so the gaps between them never change.
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) return;
+    const glide = springs.glide();
+    const list = listRef.current;
+    const gap = list ? parseFloat(getComputedStyle(list).rowGap) || 0 : 0;
+
+    rows().forEach((li) => {
+      const before = from.current.get(li.dataset.note!);
+
+      li.getAnimations().forEach((a) => a.id === "note" && a.cancel());
+      const moves =
+        before === undefined
+          ? [
+              li.animate(
+                [
+                  {
+                    transform: `translateY(${-(li.offsetHeight + gap)}px) scale(0.94)`,
+                  },
+                  { transform: "none" },
+                ],
+                glide,
+              ),
+              li.animate([{ opacity: 0 }, { opacity: 1 }], {
+                duration: 320,
+                easing: "cubic-bezier(0.2, 0, 0, 1)",
+              }),
+            ]
+          : [
+              li.animate(
+                [
+                  {
+                    transform: `translateY(${before - li.getBoundingClientRect().top}px)`,
+                  },
+                  { transform: "none" },
+                ],
+                glide,
+              ),
+            ];
+
+      moves.forEach((a) => (a.id = "note"));
+    });
+    from.current.clear();
+  }, [rows, shown]);
 
   useEffect(() => {
     const el = rootRef.current;
+    const runs = run;
+    const pending = timers;
 
     if (!el) return;
     const io = new IntersectionObserver(
@@ -66,9 +175,10 @@ export function FinOpsCard() {
 
     return () => {
       io.disconnect();
-      timers.current.forEach(window.clearTimeout);
+      runs.current++;
+      pending.current.forEach(window.clearTimeout);
     };
-  }, []);
+  }, [play]);
 
   return (
     <div className="flex h-full flex-col gap-4 p-5 sm:flex-row sm:gap-5 sm:p-6">
@@ -153,8 +263,9 @@ export function FinOpsCard() {
         </div>
 
         <ol
-          className="absolute inset-x-2.5 top-2.5 flex flex-col gap-1.5"
+          ref={listRef}
           aria-live="polite"
+          className="absolute inset-x-2.5 top-2.5 flex flex-col gap-1.5"
         >
           {NOTES.slice(0, shown)
             .map((n, i) => ({ ...n, i }))
@@ -163,9 +274,12 @@ export function FinOpsCard() {
               <li
                 key={n.title}
                 className={cn(
-                  "lg flex h-[46px] items-start gap-2.5 rounded-[16px] px-3 py-2 [--glass-tint:color-mix(in_oklab,var(--card)_60%,transparent)] [--lg-blur:14px] [animation:notify_.55s_cubic-bezier(.2,.9,.25,1.15)_both] dark:[--glass-tint:color-mix(in_oklab,var(--card)_45%,transparent)]",
-                  k > 1 && "[@container(height<220px)]:hidden",
+                  "lg flex h-[46px] items-start gap-2.5 rounded-[16px] px-3 py-2 transition-[opacity,scale] duration-300 ease-out [--glass-tint:color-mix(in_oklab,var(--card)_60%,transparent)] [--lg-blur:14px] dark:[--glass-tint:color-mix(in_oklab,var(--card)_45%,transparent)]",
+                  // Where only two fit, the oldest fades as it's pushed down.
+                  k > 1 &&
+                    "[@container(height<220px)]:scale-95 [@container(height<220px)]:opacity-0",
                 )}
+                data-note={n.title}
               >
                 <span className="lg-caustic" />
                 <span className="mt-0.5 grid size-[22px] shrink-0 place-items-center rounded-[7px] bg-gradient-to-br from-ember to-[#f6a04d] text-[12px] font-bold text-white shadow-sm">
