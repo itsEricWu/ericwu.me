@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-export const VIEWS = ["all", "about", "work", "projects"] as const;
+export const VIEWS = ["all", "about", "work"] as const;
 export type View = (typeof VIEWS)[number];
 
 type Listener = () => void;
@@ -13,6 +13,10 @@ const beforeChange = new Set<Listener>();
 
 export const isView = (value: string): value is View =>
   (VIEWS as readonly string[]).includes(value);
+
+/** The view a URL hash asks for. Work and projects were once two views; old #projects links land on Work. */
+export const viewFromHash = (hash: string): View =>
+  hash === "projects" ? "work" : isView(hash) ? hash : "all";
 
 export function getView() {
   return current;

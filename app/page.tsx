@@ -114,7 +114,7 @@ export default async function Page() {
     },
     {
       id: "secondself",
-      tags: ["projects"],
+      tags: ["work"],
       label: projects.secondself.name,
       size: [
         [2, 1],
@@ -133,7 +133,7 @@ export default async function Page() {
     },
     {
       id: "packbook",
-      tags: ["projects"],
+      tags: ["work"],
       label: "PackBook",
       size: [
         [2, 2],
@@ -159,7 +159,7 @@ export default async function Page() {
     },
     {
       id: "webagent",
-      tags: ["projects"],
+      tags: ["work"],
       label: projects.webagent.name,
       size: [
         [1, 2],
@@ -180,7 +180,7 @@ export default async function Page() {
     },
     {
       id: "chatbot",
-      tags: ["projects"],
+      tags: ["work"],
       label: projects.chatbot.name,
       size: [
         [2, 1],
@@ -227,7 +227,7 @@ export default async function Page() {
     },
     {
       id: "emoji",
-      tags: ["projects"],
+      tags: ["work"],
       label: "Text to emoji",
       size: [
         [1, 1],
@@ -240,7 +240,7 @@ export default async function Page() {
     },
     {
       id: "paper",
-      tags: ["projects", "work"],
+      tags: ["work"],
       label: projects.paper.name,
       size: [
         [1, 1],

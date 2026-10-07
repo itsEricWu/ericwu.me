@@ -102,18 +102,11 @@ export default function CommandPalette({
       {
         id: "work",
         group: "Navigate",
-        label: "Work at AWS",
-        keywords: "amazon finops q artifacts",
+        label: "Work and projects",
+        keywords:
+          "aws amazon finops q artifacts side projects packbook secondself",
         icon: <Dot className="bg-ember" />,
         run: go("work"),
-      },
-      {
-        id: "projects",
-        group: "Navigate",
-        label: "Side projects",
-        keywords: "packbook secondself",
-        icon: <Dot className="bg-ember" />,
-        run: go("projects"),
       },
       {
         id: "blog",

@@ -22,7 +22,6 @@ const TABS: Tab[] = [
   { id: "all", label: "All" },
   { id: "about", label: "About" },
   { id: "work", label: "Work" },
-  { id: "projects", label: "Projects" },
   { id: "blog", label: "Blog" },
 ];
 

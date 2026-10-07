@@ -25,10 +25,10 @@ import {
 import { springs } from "@/lib/motion";
 import { prefersReducedMotion } from "@/lib/utils";
 import {
-  isView,
   onBeforeViewChange,
   setView,
   useView,
+  viewFromHash,
   type View,
 } from "@/lib/view-store";
 
@@ -183,9 +183,9 @@ export function BentoGrid({ items }: { items: BentoItem[] }) {
 
   useEffect(() => {
     const fromHash = () => {
-      const hash = window.location.hash.slice(1);
-
-      setView(isView(hash) ? hash : "all", { updateUrl: false });
+      setView(viewFromHash(window.location.hash.slice(1)), {
+        updateUrl: false,
+      });
     };
 
     fromHash();
