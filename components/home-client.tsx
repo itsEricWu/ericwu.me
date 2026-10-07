@@ -144,8 +144,8 @@ export default function HomeClient({
         >
           <AvatarTransition avatarUrl={avatarUrl} dogUrl={dogUrl} />
           <p className="text-sm md:text-medium">
-            Hey! I&apos;m <span className="font-oleo text-2xl"> Eric</span>, a
-            SDE at AWS building agentic systems and generative UI. UCLA &amp;
+            Hey! I&apos;m <span className="font-oleo text-2xl"> Eric</span>, an
+            SDE II at AWS building agentic systems and generative UI. UCLA &amp;
             Purdue alum. Passionate about crafting AI experiences that make
             life easier. Outside work, I&apos;m hiking with my dog Bert and
             planning to summit Mount Rainier in 2027!

@@ -77,7 +77,7 @@ const jsonLd = {
       name: "Eric Wu",
       alternateName: "Chengxiang Wu",
       url: siteConfig.url,
-      jobTitle: "Software Development Engineer",
+      jobTitle: "Software Development Engineer II",
       worksFor: {
         "@type": "Organization",
         name: "Amazon Web Services",
