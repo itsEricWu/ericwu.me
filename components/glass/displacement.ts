@@ -1,3 +1,5 @@
+import { isWebKit } from "@/lib/utils";
+
 /**
  * Liquid glass optics.
  *
@@ -173,6 +175,8 @@ let refraction: boolean | undefined;
 /**
  * Only Chromium renders SVG filters inside backdrop-filter. Firefox parses
  * them and then draws nothing, so feature detection can't be trusted here.
+ * WebKit draws the displacement out of place, so iOS browsers never get it,
+ * whatever brands they report.
  */
 export function supportsBackdropRefraction() {
   if (refraction !== undefined) return refraction;
@@ -180,7 +184,9 @@ export function supportsBackdropRefraction() {
     userAgentData?: { brands?: { brand: string }[] };
   };
 
-  refraction = !!nav.userAgentData?.brands?.some((b) => b.brand === "Chromium");
+  refraction =
+    !isWebKit() &&
+    !!nav.userAgentData?.brands?.some((b) => b.brand === "Chromium");
 
   return refraction;
 }

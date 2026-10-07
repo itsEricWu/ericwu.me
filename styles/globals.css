@@ -697,6 +697,12 @@ html.ff {
     transform-style: flat !important;
   }
 
+  [data-clone] * {
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    will-change: auto !important;
+  }
+
   :is(a, button).lg {
     transition: scale var(--dur-wobble) var(--ease-wobble);
   }

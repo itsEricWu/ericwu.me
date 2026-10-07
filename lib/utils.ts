@@ -8,6 +8,13 @@ export const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** WebKit proper: Safari, and every browser on iOS (Chrome there included). */
+export const isWebKit = () => {
+  const ua = navigator.userAgent;
+
+  return /AppleWebKit/.test(ua) && !/(Chrome|Chromium|Edg|OPR)\//.test(ua);
+};
+
 export const hasFinePointer = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(hover: hover) and (pointer: fine)").matches;

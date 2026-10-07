@@ -516,7 +516,7 @@ export function HeroTitle() {
           />
         )}
         <div
-          className="absolute inset-0 overflow-hidden rounded-full bg-[#eff4fa] dark:bg-[#18212b]"
+          className="absolute inset-0 overflow-hidden rounded-full bg-[#eff4fa] [clip-path:circle(50%)] dark:bg-[#18212b]"
           style={{ filter: map ? `url(#${FILTER_ID})` : undefined }}
         >
           {/* Filled with a copy of the card from the effect; React keeps it empty. */}

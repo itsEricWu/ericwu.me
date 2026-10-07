@@ -2,7 +2,7 @@
 
 import { flushSync } from "react-dom";
 
-import { prefersReducedMotion } from "@/lib/utils";
+import { isWebKit, prefersReducedMotion } from "@/lib/utils";
 
 type ViewTransitionDoc = Document & {
   startViewTransition?: (update: () => void) => { ready: Promise<void> };
@@ -13,11 +13,7 @@ type ViewTransitionDoc = Document & {
  * without backdrop blur, so the glass nav and cards turned clear for the
  * length of the reveal and flashed back. There the theme switches at once.
  */
-const snapshotsDropGlass = () => {
-  const ua = navigator.userAgent;
-
-  return /AppleWebKit/.test(ua) && !/(Chrome|Chromium|Edg|OPR)\//.test(ua);
-};
+const snapshotsDropGlass = isWebKit;
 
 /**
  * Switches the theme with a circular reveal that grows from `origin`
