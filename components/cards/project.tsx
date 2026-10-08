@@ -66,9 +66,11 @@ export function ProjectCard({
   return (
     <div className={cn("group relative h-full w-full overflow-hidden", l.bg)}>
       <div className={cn("absolute rounded-full bg-stage-blob", l.blob)} />
+      {/* The lean is 3D only under the cursor (--tx/--ty are 0 elsewhere): a
+          perspective at rest held the screenshot in a GPU layer of its own. */}
       <div
         className={cn(
-          "absolute rounded-2xl -rotate-[30deg] transition-[rotate,scale,translate] duration-700 ease-[cubic-bezier(.2,.9,.25,1)] [transform:perspective(1100px)_rotateX(calc(var(--ty,0)*-6deg))_rotateY(calc(var(--tx,0)*8deg))] group-hover:scale-[1.03] group-hover:-rotate-[27deg]",
+          "absolute rounded-2xl -rotate-[30deg] transition-[rotate,scale,translate] duration-700 ease-[cubic-bezier(.2,.9,.25,1)] group-hover:scale-[1.03] group-hover:-rotate-[27deg] group-hover:[transform:perspective(1100px)_rotateX(calc(var(--ty,0)*-6deg))_rotateY(calc(var(--tx,0)*8deg))]",
           l.shot,
         )}
         data-lens

@@ -634,7 +634,11 @@ html:lang(zh) :is(.font-display, .title, .notion-h, .notion-title) {
     animation-delay: calc(var(--i, 0) * 45ms);
   }
 
-  /* The glint: a band of light swept across the rim once, on the compositor. */
+  /* The glint: a band of light swept across the rim once, on the compositor.
+     It fills backwards only: an animation that fills forwards never ends for
+     Chrome, which kept each band (2.2 cards wide) as a GPU layer for good, and
+     with fifteen of them, cards scrolled back into view came up blank. Done,
+     the band falls back to -100%, as far off the card as +100%. */
   .card[data-enter] .card-rim::after {
     content: "";
     position: absolute;
@@ -646,7 +650,7 @@ html:lang(zh) :is(.font-display, .title, .notion-h, .notion-title) {
       transparent 58%
     );
     translate: -100% 0;
-    animation: glint 1.4s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+    animation: glint 1.4s cubic-bezier(0.3, 0.6, 0.2, 1) backwards;
     animation-delay: calc(var(--i, 0) * 45ms + 0.25s);
   }
 
