@@ -18,6 +18,14 @@ const REST = { fontWeight: BASE_WEIGHT, fontVariationSettings: "'SOFT' 100" };
 const FILTER_ID = "hero-droplet-lens";
 /** How much the full-size lens magnifies. */
 const MAGNIFY = 1.18;
+/** Han characters and CJK punctuation, which the Chinese headline sets in Noto Serif SC. */
+const HAN = /[　-〿㐀-䶿一-鿿＀-￯]/;
+/**
+ * Noto Serif SC is loaded at one weight, so the wave can't make Han
+ * characters heavier. It thickens their strokes instead: this much at the
+ * crest, about the step from SemiBold to Black.
+ */
+const HAN_STROKE = 0.05;
 
 const clamp = (v: number, min: number, max: number) =>
   Math.min(max, Math.max(min, v));
@@ -26,6 +34,7 @@ const letter = (ch: string, i: number) => (
   <span
     key={i}
     className={cn("inline-block", ch === " " && "w-[0.24em]")}
+    data-han={HAN.test(ch) || undefined}
     data-wave={i}
     style={REST}
   >
@@ -99,7 +108,7 @@ export function HeroTitle() {
       const nodes = [...wrap.querySelectorAll<HTMLElement>("[data-wave]")];
       const originals = nodes.filter((el) => !el.closest("[data-clone]"));
       const boxes = originals.map((el) => el.getBoundingClientRect());
-      const styles = new Map<string, [string, string]>();
+      const styles = new Map<string, [string, string, string]>();
 
       originals.forEach((el, i) => {
         const g = fx(boxes[i]);
@@ -108,13 +117,26 @@ export function HeroTitle() {
           g === null
             ? REST.fontVariationSettings
             : `'SOFT' ${Math.round(20 + 80 * g)}`;
+        // Only the weight above rest shows on Han: a stroke can't make them lighter.
+        const stroke =
+          HAN_STROKE *
+          clamp((weight - REST.fontWeight) / (900 - REST.fontWeight), 0, 1);
 
-        styles.set(el.dataset.wave!, [String(weight), soft]);
+        styles.set(el.dataset.wave!, [
+          String(weight),
+          soft,
+          stroke ? `${stroke.toFixed(4)}em currentColor` : "",
+        ]);
       });
       nodes.forEach((node) => {
         const style = styles.get(node.dataset.wave!);
 
         if (!style) return;
+        if (node.dataset.han) {
+          node.style.webkitTextStroke = style[2];
+
+          return;
+        }
         node.style.fontWeight = style[0];
         node.style.fontVariationSettings = style[1];
       });
